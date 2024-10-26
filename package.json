@@ -1,0 +1,15 @@
+{
+    "name": "project-root",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "start": "concurrently \"npm run dev --prefix backend\" \"npm run start --prefix reservation-app\"",
+        "dev:backend": "npm run dev --prefix backend",
+        "dev:frontend": "npm run start --prefix frontend"
+    },
+    "devDependencies": {
+        "concurrently": "^7.6.0",
+        "eslint": "^8.33.0",
+        "prettier": "^2.8.1"
+    }
+}
