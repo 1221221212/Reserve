@@ -9,7 +9,9 @@ const Login = ({ setToken }) => {
         e.preventDefault();
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { username, password });
-            setToken(response.data.token);
+            const token = response.data.token;
+            setToken(token);
+            localStorage.setItem('token', token); // ローカルストレージに保存
         } catch (error) {
             alert('ログインに失敗しました。');
         }

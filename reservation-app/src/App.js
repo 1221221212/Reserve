@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import ReservationPage from './pages/ReservationPage';
@@ -9,9 +10,15 @@ const App = () => {
 
     return (
         <Routes>
+            {/* ユーザー用ルート */}
             <Route path="/reservation" element={<ReservationPage />} />
-            <Route path="/admin" element={token ? <AdminPage token={token} /> : <Login setToken={setToken} />} />
             <Route path="/" element={<Navigate to="/reservation" />} />
+
+            {/* 管理者用ルート */}
+            <Route 
+                path="/admin/*" 
+                element={token ? <AdminPage token={token} /> : <Login setToken={setToken} />} 
+            />
         </Routes>
     );
 };

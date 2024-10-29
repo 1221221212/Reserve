@@ -1,17 +1,10 @@
-const mysql = require('mysql2');
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'reservation_user',
-    password: 'naonao',              // 正しいパスワードを設定
-    database: 'reservation_app_db'  // 正確なデータベース名
-});
+const mysql = require('mysql2/promise'); // mysql2/promise を読み込み
 
-db.connect((err) => {
-    if (err) {
-        console.error('データベース接続エラー:', err);
-    } else {
-        console.log('データベースに接続しました');
-    }
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'reservation_user', // ユーザー名
+    password: 'naonao',       // パスワード
+    database: 'reservation_app_db' // データベース名
 });
 
 module.exports = db;
