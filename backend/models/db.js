@@ -7,4 +7,9 @@ const db = mysql.createPool({
     database: 'reservation_app_db' // データベース名
 });
 
+db.getConnection()
+.then(() => console.log("データベース接続に成功しました"))
+.catch((error) => console.error("データベース接続に失敗しました:", error));
+
+
 module.exports = db;

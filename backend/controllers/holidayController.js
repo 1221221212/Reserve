@@ -23,6 +23,7 @@ exports.getHolidays = async (req, res) => {
         }));
 
         res.status(200).json(holidays);
+        console.log("取得した祝日データ:", holidays);
     } catch (error) {
         console.error('祝日データ取得エラー:', error);
         res.status(500).json({ message: '祝日データの取得に失敗しました', error });

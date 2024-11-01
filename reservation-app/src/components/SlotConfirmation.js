@@ -1,21 +1,24 @@
+// src/components/SlotConfirmation.js
 import React from 'react';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-const SlotConfirmationPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { selectedDates, selectedPatterns } = location.state || { selectedDates: [], selectedPatterns: [] };
-
+const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
     const handleConfirm = async () => {
         try {
+            const token = localStorage.getItem('token'); // ローカルストレージからトークンを取得
+
             // API エンドポイントに POST リクエストを送信
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/slots/create`, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/assigned-slots`, {
                 dates: selectedDates,
                 patterns: selectedPatterns,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // トークンをヘッダーに追加
+                },
             });
+
             alert("予約枠が作成されました");
-            navigate('/admin'); // 作成完了後に管理画面へ遷移
+            onConfirm(); // 確認後のコールバックを実行
         } catch (error) {
             console.error("予約枠の作成に失敗しました:", error);
             alert("予約枠の作成に失敗しました");
@@ -28,7 +31,7 @@ const SlotConfirmationPage = () => {
             <h3>選択された日付:</h3>
             <ul>
                 {selectedDates.map((date, index) => (
-                    <li key={index}>{date}</li>
+                    <li key={index}>{new Date(date).toLocaleDateString()}</li>
                 ))}
             </ul>
             <h3>割り当てられるパターン:</h3>
@@ -44,4 +47,4 @@ const SlotConfirmationPage = () => {
     );
 };
 
-export default SlotConfirmationPage;
+export default SlotConfirmation;

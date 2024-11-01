@@ -1,26 +1,26 @@
+// src/components/PatternAssignment.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-const PatternAssignmentPage = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { selectedDates } = location.state || { selectedDates: [] };
+const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
     const [patterns, setPatterns] = useState([]);
     const [selectedPatterns, setSelectedPatterns] = useState([]);
+    const token = localStorage.getItem('token'); // ローカルストレージからトークンを取得
 
     // パターン一覧の取得
     useEffect(() => {
         const fetchPatterns = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/patterns`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/patterns`, {
+                    headers: { Authorization: `Bearer ${token}` } // 認証ヘッダーを追加
+                });
                 setPatterns(response.data);
             } catch (error) {
                 console.error("パターンの取得に失敗しました:", error);
             }
         };
         fetchPatterns();
-    }, []);
+    }, [token]);
 
     // パターンの選択切り替え
     const togglePatternSelection = (pattern) => {
@@ -31,9 +31,9 @@ const PatternAssignmentPage = () => {
         );
     };
 
-    // 確認画面に遷移
+    // パターン選択を親コンポーネントに伝える
     const handleNext = () => {
-        navigate('/slot-confirmation', { state: { selectedDates, selectedPatterns } });
+        onPatternSelect(selectedPatterns);
     };
 
     return (
@@ -42,7 +42,7 @@ const PatternAssignmentPage = () => {
             <p>以下の日付に割り当てるパターンを選択してください。</p>
             <ul>
                 {selectedDates.map((date, index) => (
-                    <li key={index}>{date}</li>
+                    <li key={index}>{new Date(date).toLocaleDateString()}</li>
                 ))}
             </ul>
             <h3>利用可能なパターン</h3>
@@ -66,4 +66,4 @@ const PatternAssignmentPage = () => {
     );
 };
 
-export default PatternAssignmentPage;
+export default PatternAssignment;
