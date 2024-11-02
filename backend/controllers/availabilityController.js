@@ -54,3 +54,20 @@ exports.getDailyAvailability = async (req, res) => {
         res.status(500).json({ message: '日単位の空き状況取得に失敗しました', error });
     }
 };
+
+// 現在の予約人数を取得
+exports.getCurrentReservationCount = async (req, res) => {
+    const { slotId } = req.query;
+
+    if (!slotId) {
+        return res.status(400).json({ message: "Slot IDが必要です" });
+    }
+
+    try {
+        const count = await availabilityModel.getCurrentReservationCount(slotId);
+        res.status(200).json({ count });
+    } catch (error) {
+        console.error("現在の予約人数の取得に失敗しました:", error);
+        res.status(500).json({ message: "現在の予約人数の取得に失敗しました", error });
+    }
+};

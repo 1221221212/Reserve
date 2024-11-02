@@ -1,21 +1,53 @@
 // src/components/ReservationForm.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '../styles/reservationForm.scss';
 
-const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
+const ReservationForm = ({ onSubmit, max_people, max_groups, slotId }) => {
     const [customerName, setCustomerName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [numPeople, setNumPeople] = useState(1);
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [currentCount, setCurrentCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCurrentReservationCount = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/current-reservation-count`, {
+                    params: { slotId },
+                });
+                setCurrentCount(response.data.count);
+            } catch (error) {
+                console.error("現在の予約人数の取得に失敗しました:", error);
+            }
+        };
+
+        fetchCurrentReservationCount();
+    }, [slotId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (numPeople > maxPeoplePerGroup) {
-            setError(`人数は最大 ${maxPeoplePerGroup} 人までです`);
+
+        // 最大人数のバリデーション
+        if (max_people && numPeople > max_people) {
+            setErrorMessage(`人数が多すぎます。最大${max_people}人までです。`);
             return;
         }
-        setError('');
+
+        // `max_groups`が`NULL`の場合のみ、残り人数のチェックを行う
+        if (!max_groups) {
+            const remainingCapacity = max_people - currentCount;
+
+            if (remainingCapacity < numPeople) {
+                setErrorMessage(`残りの人数が不足しています。予約可能な人数は最大${remainingCapacity}人です。`);
+                return;
+            }
+        }
+
+        // エラーメッセージをクリアして、予約情報を送信
+        setErrorMessage('');
         onSubmit({
             customer_name: customerName,
             phone_number: phoneNumber,
@@ -25,8 +57,8 @@ const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form onSubmit={handleSubmit} className="reservation-form">
+            <div className="form-group">
                 <label>名前:</label>
                 <input
                     type="text"
@@ -35,7 +67,7 @@ const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
                     required
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>電話番号:</label>
                 <input
                     type="tel"
@@ -44,7 +76,7 @@ const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
                     required
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>メールアドレス:</label>
                 <input
                     type="email"
@@ -53,25 +85,17 @@ const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
                     required
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>人数:</label>
                 <input
                     type="number"
                     value={numPeople}
-                    onChange={(e) => {
-                        const value = parseInt(e.target.value, 10);
-                        setNumPeople(value);
-                        if (value > maxPeoplePerGroup) {
-                            setError(`人数は最大 ${maxPeoplePerGroup} 人までです`);
-                        } else {
-                            setError('');
-                        }
-                    }}
+                    onChange={(e) => setNumPeople(parseInt(e.target.value, 10))}
                     min="1"
                     required
                 />
-                {error && <p style={{ color: 'red' }}>{error}</p>}
             </div>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit">予約を確認</button>
         </form>
     );

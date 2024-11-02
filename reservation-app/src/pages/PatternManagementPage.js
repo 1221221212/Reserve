@@ -36,7 +36,7 @@ const PatternManagementPage = () => {
                 {patterns.map((pattern) => (
                     <li key={pattern.id}>
                         {pattern.pattern_name} - {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)}
-                        （最大組数: {pattern.max_groups ?? "無制限"}, 各組の最大人数: {pattern.max_people}）
+                        （最大組数: {pattern.max_groups ?? "ー"}, 各組の最大人数: {pattern.max_people}）
                     </li>
                 ))}
             </ul>

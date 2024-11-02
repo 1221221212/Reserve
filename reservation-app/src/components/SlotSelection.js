@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/slotSelection.scss';
 
 const SlotSelection = ({ selectedDate, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);
@@ -24,7 +25,7 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
     }, [selectedDate, apiUrl]);
 
     return (
-        <div>
+        <div className="slot-selection">
             <h3>予約枠を選択してください</h3>
             <ul>
                 {slots.map((slot) => (

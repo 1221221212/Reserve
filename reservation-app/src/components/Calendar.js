@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
+import '../styles/calendar.scss';
 
 const Calendar = ({ onDateSelect }) => {
     const [dates, setDates] = useState([]);
@@ -27,7 +28,6 @@ const Calendar = ({ onDateSelect }) => {
 
         setDates(monthDates);
     };
-
 
     // データ取得とカレンダー初期化
     useEffect(() => {
@@ -67,17 +67,20 @@ const Calendar = ({ onDateSelect }) => {
                 {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
                     <div key={index} className="calendar-day">{day}</div>
                 ))}
-                {dates.map((date, index) => (
-    <div
-        key={index}
-        className={`calendar-date ${!date ? 'empty' : ''}`}
-        onClick={() => date && onDateSelect(date)} // 日付文字列をそのまま渡す
-    >
-        {date && moment(date).date()}
-        <span className="reservation-status">{getReservationStatus(date)}</span>
-    </div>
-))}
-
+                {dates.map((date, index) => {
+                    const status = getReservationStatus(date);
+                    const isSelectable = status !== '-';
+                    return (
+                        <div
+                            key={index}
+                            className={`calendar-date ${!date ? 'empty' : ''} ${isSelectable ? 'selectable' : 'not-selectable'}`}
+                            onClick={() => isSelectable && date && onDateSelect(date)} // `-` の日付は選択不可
+                        >
+                            {date && moment(date).date()}
+                            <span className="reservation-status">{status}</span>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

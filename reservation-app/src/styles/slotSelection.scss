@@ -1,0 +1,51 @@
+.slot-selection {
+    text-align: center;
+
+    h3 {
+        font-size: 1.2em;
+        margin-bottom: 12px;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    li {
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &.selectable {
+            color: #333;
+
+            &:hover {
+                background-color: #f0f0f0;
+            }
+        }
+
+        &.not-selectable {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// レスポンシブ対応
+@media (max-width: 600px) {
+    h3 {
+        font-size: 1em;
+    }
+
+    li {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+}

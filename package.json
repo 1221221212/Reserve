@@ -10,7 +10,8 @@
     "devDependencies": {
         "concurrently": "^7.6.0",
         "eslint": "^8.33.0",
-        "prettier": "^2.8.1"
+        "prettier": "^2.8.1",
+        "sass": "^1.80.6"
     },
     "dependencies": {
         "date-fns": "^4.1.0",

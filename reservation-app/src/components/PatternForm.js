@@ -67,8 +67,6 @@ const PatternForm = ({ onPatternSaved }) => {
                         type="number"
                         value={maxGroups}
                         onChange={(e) => setMaxGroups(parseInt(e.target.value, 10))}
-                        min="1"
-                        required
                     />
                 </div>
                 <div>

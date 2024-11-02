@@ -5,7 +5,8 @@ import Calendar from '../components/Calendar';
 import SlotSelection from '../components/SlotSelection';
 import ReservationForm from '../components/ReservationForm';
 import ReservationConfirmation from '../components/ReservationConfirmation';
-
+import '../styles/reservationCommon.scss';
+import '../styles/reservationPage.scss';
 
 const ReservationPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -29,9 +30,6 @@ const ReservationPage = () => {
     };
 
     const handleReservationConfirm = async () => {
-        console.log(selectedSlot);
-        console.log(selectedSlot.id);
-
         const requestData = {
             slot_id: selectedSlot.id,
             customer_name: reservationInfo.customer_name,
@@ -43,7 +41,7 @@ const ReservationPage = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations/create`, requestData);
             alert('予約が確定しました');
-            setCurrentStep(1); // 初期画面に戻る
+            setCurrentStep(1);
             setSelectedDate(null);
             setSelectedSlot(null);
             setReservationInfo({});
@@ -53,13 +51,24 @@ const ReservationPage = () => {
         }
     };
 
+    const handleBack = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
 
     return (
-        <div>
+        <div className="reservation-page">
             <h1>予約ページ</h1>
             {currentStep === 1 && <Calendar onDateSelect={handleDateSelect} />}
             {currentStep === 2 && <SlotSelection selectedDate={selectedDate} onSlotSelect={handleSlotSelect} />}
-            {currentStep === 3 && <ReservationForm onSubmit={handleFormSubmit} />}
+            {currentStep === 3 && (
+                <ReservationForm 
+                    onSubmit={handleFormSubmit} 
+                    max_people={selectedSlot.max_people}
+                    slotId={selectedSlot.id}
+                />
+            )}
             {currentStep === 4 && (
                 <ReservationConfirmation
                     date={selectedDate}
@@ -67,6 +76,11 @@ const ReservationPage = () => {
                     info={reservationInfo}
                     onConfirm={handleReservationConfirm}
                 />
+            )}
+            {currentStep > 1 && (
+                <button onClick={handleBack} className="back-button">
+                    戻る
+                </button>
             )}
         </div>
     );
