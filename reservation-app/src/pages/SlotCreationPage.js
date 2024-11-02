@@ -20,21 +20,26 @@ const SlotCreationPage = () => {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { startDate, endDate }
             });
-            setHolidays(response.data);
+            return response.data; // 祝日データを返す
         } catch (error) {
             console.error('祝日データの取得に失敗しました:', error);
             alert("祝日データの取得に失敗しました");
+            return [];
         }
     };
 
     const handleDateSelection = async ({ startDate, endDate, cycle, selectedDays }) => {
-        await fetchHolidays(startDate, endDate);
+        // fetchHolidays関数で祝日データを取得して、ローカル変数に格納
+        const fetchedHolidays = await fetchHolidays(startDate, endDate);
+        setHolidays(fetchedHolidays); // 祝日データを状態に保存
+    
+        // 取得した祝日データを使って日付を抽出およびフィルタリング
         const extractedDates = extractDates(new Date(startDate), new Date(endDate), cycle, selectedDays);
-        const filteredDates = filterDates(extractedDates, holidays, holidayOption);
+        const filteredDates = filterDates(extractedDates, fetchedHolidays, holidayOption); // ここで即座に祝日データを使う
         setSelectedDates(filteredDates);
         setCurrentStep(2);
     };
-
+    
     const handlePatternSelection = (patterns) => {
         setSelectedPatterns(patterns);
         setCurrentStep(3);
@@ -48,7 +53,7 @@ const SlotCreationPage = () => {
 
     return (
         <div>
-            <h1>予約枠の管理</h1>
+            <h1>予約枠作成</h1>
             {currentStep === 1 && (
                 <>
                     <DateSelectionForm onDateSelection={handleDateSelection} />

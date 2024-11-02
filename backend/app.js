@@ -14,6 +14,7 @@ const reservationRoutes = require('./routes/reservationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const patternRoutes = require('./routes/patternRoutes');
 const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
+const holidayRoutes = require('./routes/holidayRoutes');
 
 app.use('/api/auth', authRoutes); // 認証関連
 
@@ -24,6 +25,7 @@ app.use('/api/assigned-slots', authenticateToken, assignedSlotsRoutes);
 // 認証不要のエンドポイント
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/holidays', holidayRoutes);
 
 app.listen(3000, () => {
     console.log('サーバーがポート3000で起動しました');

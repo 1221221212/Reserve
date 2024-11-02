@@ -2,18 +2,24 @@
 
 import React, { useState } from 'react';
 
-const ReservationForm = ({ onSubmit }) => {
+const ReservationForm = ({ onSubmit, maxPeoplePerGroup }) => {
     const [customerName, setCustomerName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [numPeople, setNumPeople] = useState(1);
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (numPeople > maxPeoplePerGroup) {
+            setError(`人数は最大 ${maxPeoplePerGroup} 人までです`);
+            return;
+        }
+        setError('');
         onSubmit({
             customer_name: customerName,
             phone_number: phoneNumber,
-            email,
+            email: email,
             group_size: numPeople,
         });
     };
@@ -52,12 +58,21 @@ const ReservationForm = ({ onSubmit }) => {
                 <input
                     type="number"
                     value={numPeople}
-                    onChange={(e) => setNumPeople(parseInt(e.target.value, 10))}
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value, 10);
+                        setNumPeople(value);
+                        if (value > maxPeoplePerGroup) {
+                            setError(`人数は最大 ${maxPeoplePerGroup} 人までです`);
+                        } else {
+                            setError('');
+                        }
+                    }}
                     min="1"
                     required
                 />
+                {error && <p style={{ color: 'red' }}>{error}</p>}
             </div>
-            <button type="submit">確認画面へ</button>
+            <button type="submit">予約を確認</button>
         </form>
     );
 };

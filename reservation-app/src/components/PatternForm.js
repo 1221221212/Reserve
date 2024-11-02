@@ -1,43 +1,90 @@
-// src/components/ReservationForm.js
-
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const ReservationForm = ({ date, slot, onSubmit }) => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [groupSize, setGroupSize] = useState(1);
+const PatternForm = ({ onPatternSaved }) => {
+    const token = localStorage.getItem('token');
+    const [patternName, setPatternName] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [maxGroups, setMaxGroups] = useState(1);
+    const [maxPeople, setMaxPeople] = useState(1);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ name, phone, email, groupSize });
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+            await axios.post(`${apiUrl}/api/patterns`, {
+                pattern_name: patternName,
+                start_time: startTime,
+                end_time: endTime,
+                max_groups: maxGroups,
+                max_people: maxPeople,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            alert('パターンが保存されました');
+            onPatternSaved();
+        } catch (error) {
+            console.error('パターンの保存に失敗しました:', error);
+        }
     };
 
     return (
-        <div>
-            <h2>予約情報入力</h2>
-            <p>{date.toLocaleDateString()} - {slot.startTime} から {slot.endTime}</p>
+        <div className="pattern-form-container">
             <form onSubmit={handleSubmit}>
-                <label>
-                    名前:
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-                </label>
-                <label>
-                    電話番号:
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                </label>
-                <label>
-                    メールアドレス:
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </label>
-                <label>
-                    人数:
-                    <input type="number" value={groupSize} onChange={(e) => setGroupSize(e.target.value)} min="1" required />
-                </label>
-                <button type="submit">次へ</button>
+                <div>
+                    <label>パターン名:</label>
+                    <input
+                        type="text"
+                        value={patternName}
+                        onChange={(e) => setPatternName(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>開始時間:</label>
+                    <input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>終了時間:</label>
+                    <input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>最大組数:</label>
+                    <input
+                        type="number"
+                        value={maxGroups}
+                        onChange={(e) => setMaxGroups(parseInt(e.target.value, 10))}
+                        min="1"
+                        required
+                    />
+                </div>
+                <div>
+                    <label>一組あたりの最大人数:</label>
+                    <input
+                        type="number"
+                        value={maxPeople}
+                        onChange={(e) => setMaxPeople(parseInt(e.target.value, 10))}
+                        min="1"
+                        required
+                    />
+                </div>
+                <button type="submit">パターンを保存</button>
             </form>
         </div>
     );
 };
 
-export default ReservationForm;
+export default PatternForm;

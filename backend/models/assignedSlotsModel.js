@@ -1,8 +1,24 @@
 const db = require('./db');
 
+// 全ての予約枠を取得 (JOINでパターン情報を含める)
 exports.getAllAssignedSlots = async () => {
     try {
-        const [rows] = await db.query('SELECT * FROM assigned_slots');
+        const query = `
+            SELECT 
+                assigned_slots.id,
+                assigned_slots.date,
+                reservation_patterns.pattern_name,
+                reservation_patterns.start_time,
+                reservation_patterns.end_time,
+                reservation_patterns.max_groups,
+                reservation_patterns.max_people
+            FROM assigned_slots
+            LEFT JOIN reservation_patterns 
+            ON assigned_slots.pattern_id = reservation_patterns.id
+            ORDER BY assigned_slots.date, reservation_patterns.start_time;
+        `;
+        
+        const [rows] = await db.query(query);
         return rows;
     } catch (error) {
         console.error('予約枠データの取得エラー:', error);
@@ -10,6 +26,7 @@ exports.getAllAssignedSlots = async () => {
     }
 };
 
+// 予約枠を作成
 exports.createAssignedSlot = async (slotData) => {
     const { date, patternId } = slotData;
     try {

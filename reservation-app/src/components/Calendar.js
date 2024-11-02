@@ -1,37 +1,39 @@
-// src/components/Calendar.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import moment from 'moment-timezone';
 
 const Calendar = ({ onDateSelect }) => {
     const [dates, setDates] = useState([]);
     const [reservations, setReservations] = useState([]);
-    const today = new Date();
+    const today = moment().tz('Asia/Tokyo');  // JSTで今日の日付を取得
 
     // カレンダーの初期化処理
     const initializeCalendar = () => {
         const monthDates = [];
-        const year = today.getFullYear();
-        const month = today.getMonth();
+        const year = today.year();
+        const month = today.month();
 
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = moment([year, month, 1]).day();
+        const daysInMonth = today.daysInMonth();
 
         for (let i = 0; i < firstDay; i++) {
             monthDates.push(null); // 空白日を追加
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
-            monthDates.push(new Date(year, month, day));
+            // JST形式の文字列を保持
+            monthDates.push(moment([year, month, day]).tz('Asia/Tokyo').format('YYYY-MM-DD'));
         }
 
         setDates(monthDates);
     };
 
+
     // データ取得とカレンダー初期化
     useEffect(() => {
         initializeCalendar();
-        const year = today.getFullYear();
-        const month = today.getMonth() + 1;
+        const year = today.year();
+        const month = today.month() + 1;
 
         const fetchReservationsForMonth = async () => {
             try {
@@ -51,7 +53,7 @@ const Calendar = ({ onDateSelect }) => {
     const getReservationStatus = (date) => {
         if (!date) return '';
         const reservation = reservations.find(
-            (res) => new Date(res.date).toDateString() === date.toDateString()
+            (res) => moment(res.date).tz('Asia/Tokyo').isSame(moment(date).tz('Asia/Tokyo'), 'day')
         );
         return reservation ? (reservation.availability === '0' ? '〇' : '✕') : '-';
     };
@@ -59,22 +61,23 @@ const Calendar = ({ onDateSelect }) => {
     return (
         <div className="calendar">
             <div className="calendar-header">
-                {today.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                {today.format('MMMM YYYY')}
             </div>
             <div className="calendar-grid">
                 {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
                     <div key={index} className="calendar-day">{day}</div>
                 ))}
                 {dates.map((date, index) => (
-                    <div
-                        key={index}
-                        className={`calendar-date ${!date ? 'empty' : ''}`}
-                        onClick={() => date && onDateSelect(date)}
-                    >
-                        {date && date.getDate()}
-                        <span className="reservation-status">{getReservationStatus(date)}</span>
-                    </div>
-                ))}
+    <div
+        key={index}
+        className={`calendar-date ${!date ? 'empty' : ''}`}
+        onClick={() => date && onDateSelect(date)} // 日付文字列をそのまま渡す
+    >
+        {date && moment(date).date()}
+        <span className="reservation-status">{getReservationStatus(date)}</span>
+    </div>
+))}
+
             </div>
         </div>
     );

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { removeSecond } from '../utils/dateUtils';
 
 const PatternManagementPage = () => {
     const [patterns, setPatterns] = useState([]);
@@ -34,7 +35,7 @@ const PatternManagementPage = () => {
             <ul>
                 {patterns.map((pattern) => (
                     <li key={pattern.id}>
-                        {pattern.pattern_name} - {pattern.start_time} から {pattern.end_time}
+                        {pattern.pattern_name} - {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)}
                         （最大組数: {pattern.max_groups ?? "無制限"}, 各組の最大人数: {pattern.max_people}）
                     </li>
                 ))}

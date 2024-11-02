@@ -1,21 +1,21 @@
-// src/utils/dateUtils.js
+import moment from 'moment';
 
 export const extractDates = (startDate, endDate, cycle, selectedDays) => {
     const dates = [];
-    let currentDate = new Date(startDate);
+    let currentDate = moment(startDate);
 
-    while (currentDate <= endDate) {
-        const dayOfWeek = currentDate.getDay();
+    while (currentDate.isSameOrBefore(endDate, 'day')) {
+        const dayOfWeek = currentDate.day();
 
         if (cycle === 'weekly' && selectedDays.includes(dayOfWeek)) {
-            dates.push(new Date(currentDate));
-        } else if (cycle === 'monthly' && selectedDays.includes(currentDate.getDate())) {
-            dates.push(new Date(currentDate));
+            dates.push(currentDate.clone().toDate());
+        } else if (cycle === 'monthly' && selectedDays.includes(currentDate.date())) {
+            dates.push(currentDate.clone().toDate());
         } else if (cycle === 'daily') {
-            dates.push(new Date(currentDate));
+            dates.push(currentDate.clone().toDate());
         }
 
-        currentDate.setDate(currentDate.getDate() + 1);
+        currentDate.add(1, 'days'); // 一日ずつ進める
     }
 
     return dates;
@@ -23,14 +23,25 @@ export const extractDates = (startDate, endDate, cycle, selectedDays) => {
 
 // 祝日リストに基づいたフィルタリング関数
 export const filterDates = (dates, holidays, option) => {
-    const holidayDates = holidays.map(h => h.date);
+    const holidayDates = holidays.map(h => moment(h.date).format('YYYY-MM-DD'));
 
-    if (option === 'Include') {
-        return dates;
-    } else if (option === 'Exclude') {
-        return dates.filter(date => !holidayDates.includes(date.toISOString().split('T')[0]));
-    } else if (option === 'Only') {
-        return dates.filter(date => holidayDates.includes(date.toISOString().split('T')[0]));
-    }
-    return dates;
+    return dates.filter(date => {
+        const dateStr = moment(date).format('YYYY-MM-DD');
+
+        if (option === 'Include') {
+            return true;
+        } else if (option === 'Exclude') {
+            return !holidayDates.includes(dateStr);
+        } else if (option === 'Only') {
+            return holidayDates.includes(dateStr);
+        }
+        
+        return true;
+    });
+};
+
+//秒がいらないとき
+
+export const removeSecond = (timeString) => {
+    return moment(timeString, 'HH:mm:ss').format('HH:mm'); // 時間文字列から秒を削除
 };

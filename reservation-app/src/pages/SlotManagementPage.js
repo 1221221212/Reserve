@@ -2,16 +2,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { removeSecond } from '../utils/dateUtils';
 
 const SlotManagementPage = () => {
     const [assignedSlots, setAssignedSlots] = useState([]);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const apiUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchAssignedSlots = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/assigned-slots', {
+                const response = await axios.get(`${apiUrl}/api/assigned-slots`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setAssignedSlots(response.data);
@@ -20,7 +22,7 @@ const SlotManagementPage = () => {
             }
         };
         fetchAssignedSlots();
-    }, [token]);
+    }, [token, apiUrl]);
 
     return (
         <div>
@@ -32,7 +34,8 @@ const SlotManagementPage = () => {
                         <th>日付</th>
                         <th>開始時間</th>
                         <th>終了時間</th>
-                        <th>パターン名</th>
+                        <th>組数</th>
+                        <th>最大人数</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -40,9 +43,10 @@ const SlotManagementPage = () => {
                     {assignedSlots.map((slot, index) => (
                         <tr key={index}>
                             <td>{slot.date}</td>
-                            <td>{slot.startTime}</td>
-                            <td>{slot.endTime}</td>
-                            <td>{slot.patternName}</td>
+                            <td>{removeSecond(slot.start_time)}</td>
+                            <td>{removeSecond(slot.end_time)}</td>
+                            <td>{slot.max_groups || 'なし'}</td>
+                            <td>{slot.max_people}</td>
                             <td>
                                 <button>編集</button>
                                 <button>削除</button>

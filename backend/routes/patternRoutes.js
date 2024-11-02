@@ -5,7 +5,7 @@ const authenticateToken = require('../middleware/auth'); // 認証用ミドル�
 const patternModel = require('../models/patternModel'); // DB操作をモデルで処理
 
 // 予約パターンの保存エンドポイント
-router.post('/patterns', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     const { pattern_name, start_time, end_time, max_groups, max_people } = req.body;
 
     try {
@@ -23,7 +23,7 @@ router.post('/patterns', authenticateToken, async (req, res) => {
 });
 
 // 予約パターンの取得エンドポイント
-router.get('/patterns', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const patterns = await patternModel.getPatterns(); // 保存されたパターンを取得
         res.status(200).json(patterns);

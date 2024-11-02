@@ -4,8 +4,7 @@ import PatternForm from '../components/PatternForm';
 
 const PatternCreationPage = () => {
     const handlePatternSaved = () => {
-        alert("パターンが正常に作成されました");
-        // 必要に応じて他の処理（リダイレクトやリフレッシュなど）
+        // 要対応！！必要に応じて他の処理（リダイレクトやリフレッシュなど）
     };
 
     return (

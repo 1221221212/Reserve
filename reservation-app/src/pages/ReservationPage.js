@@ -29,6 +29,9 @@ const ReservationPage = () => {
     };
 
     const handleReservationConfirm = async () => {
+        console.log(selectedSlot);
+        console.log(selectedSlot.id);
+
         const requestData = {
             slot_id: selectedSlot.id,
             customer_name: reservationInfo.customer_name,

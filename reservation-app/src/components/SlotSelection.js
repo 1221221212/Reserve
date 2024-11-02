@@ -9,7 +9,7 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
         const fetchSlots = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/api/availability/day`, {
-                    params: { date: selectedDate.toISOString().split('T')[0] }
+                    params: { date: selectedDate }
                 });
                 setSlots(response.data);
             } catch (error) {
