@@ -1,31 +1,30 @@
 // app.js
-require('dotenv').config(); // .envファイルから環境変数を読み込む
+
 const express = require('express');
 const cors = require('cors');
-const authenticateToken = require('./middleware/auth');
 const app = express();
+require('dotenv').config();
+const authenticateToken = require('./middleware/auth');
 
-// CORSの設定
 app.use(cors({ origin: 'http://localhost:3001' }));
-app.use(express.json()); // JSONボディを解析
+app.use(express.json());
 
-// ルートのインポート
 const availabilityRoutes = require('./routes/availabilityRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const authRoutes = require('./routes/authRoutes');
 const patternRoutes = require('./routes/patternRoutes');
-const holidayRoutes = require('./routes/holidayRoutes'); // 祝日取得のルートをインポート
 const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
 
-// 各ルートの設定
-app.use('/api/auth', authRoutes);
-app.use('/api', authenticateToken, availabilityRoutes);
-app.use('/api', authenticateToken, reservationRoutes);
-app.use('/api', authenticateToken, patternRoutes);
-app.use('/api', holidayRoutes); // 祝日取得のルートを追加
-app.use('/api', authenticateToken, assignedSlotsRoutes);
+app.use('/api/auth', authRoutes); // 認証関連
 
-// サーバー起動
+// 認証が必要なエンドポイント
+app.use('/api/patterns', authenticateToken, patternRoutes);
+app.use('/api/assigned-slots', authenticateToken, assignedSlotsRoutes);
+
+// 認証不要のエンドポイント
+app.use('/api/availability', availabilityRoutes);
+app.use('/api/reservations', reservationRoutes);
+
 app.listen(3000, () => {
     console.log('サーバーがポート3000で起動しました');
 });

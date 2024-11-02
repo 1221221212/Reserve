@@ -1,4 +1,3 @@
-// src/pages/ReservationSlotPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import DateSelectionForm from '../components/DateSelectionForm';
@@ -7,7 +6,7 @@ import PatternAssignment from '../components/PatternAssignment';
 import SlotConfirmation from '../components/SlotConfirmation';
 import { extractDates, filterDates } from '../utils/dateUtils';
 
-const ReservationSlotPage = () => {
+const SlotCreationPage = () => {
     const [currentStep, setCurrentStep] = useState(1); // 現在のステップを追跡
     const [selectedDates, setSelectedDates] = useState([]);
     const [selectedPatterns, setSelectedPatterns] = useState([]);
@@ -78,4 +77,4 @@ const ReservationSlotPage = () => {
     );
 };
 
-export default ReservationSlotPage;
+export default SlotCreationPage;

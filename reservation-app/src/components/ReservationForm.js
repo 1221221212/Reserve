@@ -1,58 +1,63 @@
 // src/components/ReservationForm.js
+
 import React, { useState } from 'react';
-import axios from 'axios';
 
-const ReservationForm = () => {
-    const [slotTime, setSlotTime] = useState('');
-    const [maxGroups, setMaxGroups] = useState(1);
-    const [maxPeople, setMaxPeople] = useState(1);
+const ReservationForm = ({ onSubmit }) => {
+    const [customerName, setCustomerName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [email, setEmail] = useState('');
+    const [numPeople, setNumPeople] = useState(1);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post('/api/availability', {
-                slotTime,
-                maxGroups,
-                maxPeople,
-            });
-            alert('予約枠が作成されました');
-        } catch (error) {
-            console.error('予約枠の作成に失敗しました:', error);
-        }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({
+            customer_name: customerName,
+            phone_number: phoneNumber,
+            email,
+            group_size: numPeople,
+        });
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <div>
-                <label>スロット時間:</label>
-                <input 
-                    type="time" 
-                    value={slotTime} 
-                    onChange={(e) => setSlotTime(e.target.value)} 
-                    required 
+                <label>名前:</label>
+                <input
+                    type="text"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
                 />
             </div>
             <div>
-                <label>最大グループ数:</label>
-                <input 
-                    type="number" 
-                    value={maxGroups} 
-                    onChange={(e) => setMaxGroups(e.target.value)} 
-                    min="1" 
-                    required 
+                <label>電話番号:</label>
+                <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
                 />
             </div>
             <div>
-                <label>一組あたりの最大人数:</label>
-                <input 
-                    type="number" 
-                    value={maxPeople} 
-                    onChange={(e) => setMaxPeople(e.target.value)} 
-                    min="1" 
-                    required 
+                <label>メールアドレス:</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                 />
             </div>
-            <button type="submit">予約枠を作成</button>
+            <div>
+                <label>人数:</label>
+                <input
+                    type="number"
+                    value={numPeople}
+                    onChange={(e) => setNumPeople(parseInt(e.target.value, 10))}
+                    min="1"
+                    required
+                />
+            </div>
+            <button type="submit">確認画面へ</button>
         </form>
     );
 };

@@ -56,7 +56,7 @@ const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
                                 onChange={() => togglePatternSelection(pattern)}
                             />
                             {pattern.name} - {pattern.start_time} から {pattern.end_time} 
-                            (最大 {pattern.max_groups} 組, 各組 {pattern.max_people_per_group} 人)
+                            (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)
                         </label>
                     </li>
                 ))}

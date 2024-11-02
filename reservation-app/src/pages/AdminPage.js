@@ -2,9 +2,11 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminNav from '../components/AdminNav';
-import SlotManagementPage from './SlotManagementPage'; // 予約枠の管理ページ
-import ReservationSlotPage from './ReservationSlotPage'; // 統合された予約枠作成ページ
-import ReservationManagementPage from './ReservationManagementPage'; // 予約管理ページ
+import SlotManagementPage from './SlotManagementPage';
+import SlotCreationPage from './SlotCreationPage';
+import ReservationManagementPage from './ReservationManagementPage';
+import PatternManagementPage from './PatternManagementPage';
+import PatternCreationPage from './PatternCreationPage';
 
 const AdminPage = () => {
     return (
@@ -13,8 +15,10 @@ const AdminPage = () => {
             <div className="admin-content">
                 <Routes>
                     <Route path="slots" element={<SlotManagementPage />} />
-                    <Route path="create-slot" element={<ReservationSlotPage />} />
+                    <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
+                    <Route path="patterns" element={<PatternManagementPage />} />
+                    <Route path="patterns/create" element={<PatternCreationPage />} />
                 </Routes>
             </div>
         </div>

@@ -33,7 +33,7 @@ const ReservationSlotList = () => {
             <ul>
                 {slots.map(slot => (
                     <li key={slot.id}>
-                        {slot.slot_time} - 最大{slot.max_groups}グループ ({slot.max_people_per_group}人/グループ)
+                        {slot.slot_time} - 最大{slot.max_groups}グループ ({slot.max_people}人/グループ)
                         <button onClick={() => handleDelete(slot.id)}>削除</button>
                     </li>
                 ))}

@@ -4,7 +4,7 @@ import axios from 'axios';
 const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
     const [slotTime, setSlotTime] = useState(slotToEdit ? slotToEdit.slot_time : '');
     const [maxGroups, setMaxGroups] = useState(slotToEdit ? slotToEdit.max_groups : 1);
-    const [maxPeople, setMaxPeople] = useState(slotToEdit ? slotToEdit.max_people_per_group : 1);
+    const [maxPeople, setMaxPeople] = useState(slotToEdit ? slotToEdit.max_people : 1);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -14,7 +14,7 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
                 await axios.put(`/api/availability/${slotToEdit.id}`, {
                     slot_time: slotTime,
                     max_groups: maxGroups,
-                    max_people_per_group: maxPeople,
+                    max_people: maxPeople,
                 });
                 alert('予約枠が更新されました');
             } else {
@@ -22,7 +22,7 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
                 await axios.post('/api/availability', {
                     slot_time: slotTime,
                     max_groups: maxGroups,
-                    max_people_per_group: maxPeople,
+                    max_people: maxPeople,
                 });
                 alert('予約枠が作成されました');
             }

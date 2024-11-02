@@ -1,3 +1,4 @@
+// src/routes/patternRoutes.js
 const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../middleware/auth'); // 認証用ミドルウェア
@@ -5,7 +6,7 @@ const patternModel = require('../models/patternModel'); // DB操作をモデル�
 
 // 予約パターンの保存エンドポイント
 router.post('/patterns', authenticateToken, async (req, res) => {
-    const { pattern_name, start_time, end_time, max_groups, max_people_per_group } = req.body;
+    const { pattern_name, start_time, end_time, max_groups, max_people } = req.body;
 
     try {
         const newPattern = await patternModel.createPattern({
@@ -13,7 +14,7 @@ router.post('/patterns', authenticateToken, async (req, res) => {
             start_time,
             end_time,
             max_groups,
-            max_people_per_group,
+            max_people,
         });
         res.status(201).json({ message: 'パターンが保存されました', pattern: newPattern });
     } catch (error) {
@@ -21,7 +22,7 @@ router.post('/patterns', authenticateToken, async (req, res) => {
     }
 });
 
-// 予約パターンの取得エンドポイント（GETメソッドを追加）
+// 予約パターンの取得エンドポイント
 router.get('/patterns', authenticateToken, async (req, res) => {
     try {
         const patterns = await patternModel.getPatterns(); // 保存されたパターンを取得

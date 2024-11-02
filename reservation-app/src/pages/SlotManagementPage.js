@@ -22,14 +22,10 @@ const SlotManagementPage = () => {
         fetchAssignedSlots();
     }, [token]);
 
-    const handleCreateSlot = () => {
-        navigate('/admin/create-slot');
-    };
-
     return (
         <div>
             <h1>予約枠管理</h1>
-            <button onClick={() => navigate('/admin/create-slot')}>予約枠を作成</button>
+            <button onClick={() => navigate('/admin/slots/create')}>予約枠を作成</button>
             <table>
                 <thead>
                     <tr>
