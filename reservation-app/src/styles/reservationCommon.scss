@@ -1,3 +1,5 @@
+@import "./Common.scss";
+
 /* 共通のスタイル */
 body, .reservation-page, .reservation-form, .reservation-confirmation, .slot-selection, .calendar {
     font-family: Arial, sans-serif;
@@ -11,22 +13,6 @@ h1, h2, h3 {
     color: #333;
 }
 
-button, .back-button, .confirm-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    color: #555;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-        background-color: #e0e0e0;
-    }
-}
-
 /* エラーメッセージのスタイル */
 .error-message {
     color: red;
@@ -37,7 +23,7 @@ button, .back-button, .confirm-button {
 /* レスポンシブ対応 */
 @media (max-width: 600px) {
     body, .reservation-page, .reservation-form, .reservation-confirmation, .slot-selection, .calendar {
-        padding: 16px;
+        padding: 5px;
     }
 
     h1 {

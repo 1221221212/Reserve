@@ -1,0 +1,79 @@
+.date-selection-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+
+    .form-group {
+        margin-bottom: 16px;
+
+        label {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            display: block;
+            color: #333;
+        }
+
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: #888;
+                outline: none;
+            }
+        }
+    }
+
+    .selection-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .day-button {
+        padding: 8px;
+        font-size: 0.9em;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        &:hover:not(.selected) {
+            background-color: #e0e0e0;
+        }
+    }
+
+    .button {
+        padding: 10px;
+        font-size: 1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}

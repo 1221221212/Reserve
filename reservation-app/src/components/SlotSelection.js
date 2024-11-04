@@ -4,40 +4,81 @@ import '../styles/slotSelection.scss';
 
 const SlotSelection = ({ selectedDate, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);
-    const apiUrl = process.env.REACT_APP_API_URL;
+    const [availabilityInfo, setAvailabilityInfo] = useState({});
 
+    // スロット情報を取得
     useEffect(() => {
         const fetchSlots = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/availability/day`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/day`, {
                     params: { date: selectedDate }
                 });
                 setSlots(response.data);
             } catch (error) {
-                console.error("予約枠の取得に失敗しました:", error);
-                alert("予約枠の取得に失敗しました。");
+                console.error("スロットの取得に失敗しました:", error);
             }
         };
 
-        if (selectedDate) {
-            fetchSlots();
+        fetchSlots();
+    }, [selectedDate]);
+
+    // 現在の予約人数を取得
+    useEffect(() => {
+        const fetchAvailabilityInfo = async () => {
+            if (slots.length === 0) return;  // スロットがまだ取得されていない場合は実行しない
+
+            try {
+                const slotIds = slots.map(slot => slot.id);  // 各スロットのIDを取得
+                const responses = await Promise.all(
+                    slotIds.map(id =>
+                        axios.get(`${process.env.REACT_APP_API_URL}/api/availability/current-reservation-count`, {
+                            params: { slotId: id }
+                        })
+                    )
+                );
+        
+                // 各スロットの予約人数情報を取得してセット
+                const info = responses.reduce((acc, response, index) => {
+                    acc[slotIds[index]] = response.data.count;
+                    return acc;
+                }, {});
+                setAvailabilityInfo(info);
+            } catch (error) {
+                console.error("空き状況の取得に失敗しました:", error);
+            }
+        };
+
+        fetchAvailabilityInfo();
+    }, [slots]);
+
+    const renderSlotInfo = (slot) => {
+        const { id, max_groups, max_people } = slot;
+        const currentCount = availabilityInfo[id] || 0;
+
+        // 最大組数が設定されている場合と設定されていない場合で表示内容を分ける
+        if (max_groups) {
+            return `最大 ${max_people} 人`;
+        } else {
+            const remainingPeople = max_people - currentCount;
+            return `残り ${remainingPeople} 人予約可能`;
         }
-    }, [selectedDate, apiUrl]);
+    };
 
     return (
         <div className="slot-selection">
-            <h3>予約枠を選択してください</h3>
+            <h2>スロット選択</h2>
             <ul>
                 {slots.map((slot) => (
                     <li
-                        key={slot.pattern_id}
+                        key={slot.id}
                         onClick={() => slot.availability === '0' && onSlotSelect(slot)}
-                        style={{
-                            cursor: slot.availability === '0' ? 'pointer' : 'not-allowed',
-                            color: slot.availability === '0' ? 'black' : 'gray',
-                        }}
+                        className={slot.availability === '0' ? 'selectable' : 'not-selectable'}
+                        style={{ cursor: slot.availability === '0' ? 'pointer' : 'not-allowed' }}
                     >
-                        {slot.slot_time} - {slot.availability === '0' ? '〇' : '✕'}
+                        <div>
+                            {slot.start_time} - {slot.end_time}
+                        </div>
+                        <div>{renderSlotInfo(slot)}</div>
                     </li>
                 ))}
             </ul>

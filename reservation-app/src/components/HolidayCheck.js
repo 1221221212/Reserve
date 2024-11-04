@@ -1,9 +1,10 @@
 // src/components/HolidayCheck.js
 import React from 'react';
+import '../styles/HolidayCheck.scss';
 
 const HolidayCheck = ({ holidayOption, setHolidayOption }) => {
     return (
-        <div>
+        <div className="holiday-check">
             <label>祝日の扱い:</label>
             <select value={holidayOption} onChange={(e) => setHolidayOption(e.target.value)}>
                 <option value="Include">祝日を含める</option>

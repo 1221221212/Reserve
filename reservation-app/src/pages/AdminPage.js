@@ -10,10 +10,11 @@ import PatternCreationPage from './PatternCreationPage';
 
 const AdminPage = () => {
     return (
-        <div>
+        <div className="admin-page">
             <AdminNav />
             <div className="admin-content">
                 <Routes>
+                    <Route path="/" element={<ReservationManagementPage/>} />
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />

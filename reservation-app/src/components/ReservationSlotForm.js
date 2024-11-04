@@ -1,5 +1,7 @@
+// src/components/ReservationSlotForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../styles/ReservationSlotForm.scss';
 
 const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
     const [slotTime, setSlotTime] = useState(slotToEdit ? slotToEdit.slot_time : '');
@@ -10,7 +12,6 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
         event.preventDefault();
         try {
             if (slotToEdit) {
-                // 編集の場合
                 await axios.put(`/api/availability/${slotToEdit.id}`, {
                     slot_time: slotTime,
                     max_groups: maxGroups,
@@ -18,7 +19,6 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
                 });
                 alert('予約枠が更新されました');
             } else {
-                // 新規追加の場合
                 await axios.post('/api/availability', {
                     slot_time: slotTime,
                     max_groups: maxGroups,
@@ -26,15 +26,15 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
                 });
                 alert('予約枠が作成されました');
             }
-            onUpdate(); // 更新をトリガー
+            onUpdate();
         } catch (error) {
             console.error('予約枠の作成/更新に失敗しました:', error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form onSubmit={handleSubmit} className="reservation-slot-form">
+            <div className="form-group">
                 <label>スロット時間:</label>
                 <input 
                     type="time" 
@@ -43,27 +43,27 @@ const ReservationSlotForm = ({ slotToEdit, onUpdate }) => {
                     required 
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>最大グループ数:</label>
                 <input 
                     type="number" 
                     value={maxGroups} 
-                    onChange={(e) => setMaxGroups(e.target.value)} 
+                    onChange={(e) => setMaxGroups(parseInt(e.target.value, 10))} 
                     min="1" 
                     required 
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>一組あたりの最大人数:</label>
                 <input 
                     type="number" 
                     value={maxPeople} 
-                    onChange={(e) => setMaxPeople(e.target.value)} 
+                    onChange={(e) => setMaxPeople(parseInt(e.target.value, 10))} 
                     min="1" 
                     required 
                 />
             </div>
-            <button type="submit">{slotToEdit ? '更新' : '作成'}</button>
+            <button type="submit" className="button">{slotToEdit ? '更新' : '作成'}</button>
         </form>
     );
 };

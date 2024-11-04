@@ -1,3 +1,5 @@
+@import "./colors";
+
 .calendar {
     display: flex;
     flex-direction: column;
@@ -15,7 +17,8 @@
         gap: 4px;
         width: 100%;
 
-        .calendar-day, .calendar-date {
+        .calendar-day,
+        .calendar-date {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -35,24 +38,31 @@
             border: 1px solid #ddd;
             height: 50px;
 
-            &:hover {
-                background-color: #f5f5f5;
-            }
-
             &.empty {
-                cursor: default;
                 background: none;
                 border: none;
-            }
-
-            &.selectable {
-                color: #333;
-            }
-
-            &.not-selectable {
-                color: #A9A9A9;
-                pointer-events: none;
                 cursor: default;
+            }
+        
+            &.status-available {
+                background-color: $primary-color;
+                color: #333;
+                &:hover {
+                    background-color: $primary-darker;
+                }
+            }
+        
+            &.status-unavailable {
+                background-color: $secondary-color;
+                color: #a9a9a9;
+                &:hover {
+                    background-color: $secondary-darker;
+                }
+            }
+        
+            &.status-none {
+                background-color: #f5f5f5;
+                color: #ccc;
             }
 
             .reservation-status {
@@ -63,21 +73,22 @@
                 color: #999;
             }
         }
-    }
 
-    // レスポンシブ対応
-    @media (max-width: 600px) {
-        .calendar-header {
-            font-size: 1.2em;
-        }
 
-        .calendar-date {
-            height: 40px;
-            font-size: 0.8em;
-        }
+        // レスポンシブ対応
+        @media (max-width: 600px) {
+            .calendar-header {
+                font-size: 1.2em;
+            }
 
-        .calendar-grid {
-            gap: 2px;
+            .calendar-date {
+                height: 40px;
+                font-size: 0.8em;
+            }
+
+            .calendar-grid {
+                gap: 2px;
+            }
         }
     }
 }

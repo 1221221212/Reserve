@@ -1,8 +1,13 @@
+@import "./colors";
+
 .slot-selection {
     text-align: center;
 
+    p {
+        font-size: 1.2rem;
+    }
+
     h3 {
-        font-size: 1.2em;
         margin-bottom: 12px;
         color: #333;
     }
@@ -25,14 +30,16 @@
 
         &.selectable {
             color: #333;
+            background-color: $primary-color;
 
             &:hover {
-                background-color: #f0f0f0;
+                background-color: $primary-darker;
             }
         }
 
         &.not-selectable {
             color: #ccc;
+            background-color: $secondary-color;
             cursor: not-allowed;
         }
     }

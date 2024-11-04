@@ -25,7 +25,6 @@ exports.getMonthlyAvailability = async (req, res) => {
             }
         });
 
-        console.log(dailyAvailability);
         res.status(200).json(Object.values(dailyAvailability));
     } catch (error) {
         console.error('月単位の空き状況取得に失敗しました:', error);

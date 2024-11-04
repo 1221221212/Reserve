@@ -69,11 +69,16 @@ const Calendar = ({ onDateSelect }) => {
                 ))}
                 {dates.map((date, index) => {
                     const status = getReservationStatus(date);
-                    const isSelectable = status !== '-';
+                    const isSelectable = status != '-';
+                    const statusClass = status === '〇' ? 'status-available' : status === '✕' ? 'status-unavailable' : 'status-none';
+                    const className = !date
+                        ? 'calendar-date empty'
+                        : `calendar-date ${isSelectable ? 'selectable' : 'not-selectable'} ${statusClass}`;
+
                     return (
                         <div
                             key={index}
-                            className={`calendar-date ${!date ? 'empty' : ''} ${isSelectable ? 'selectable' : 'not-selectable'}`}
+                            className={className}
                             onClick={() => isSelectable && date && onDateSelect(date)} // `-` の日付は選択不可
                         >
                             {date && moment(date).date()}
@@ -81,6 +86,7 @@ const Calendar = ({ onDateSelect }) => {
                         </div>
                     );
                 })}
+
             </div>
         </div>
     );

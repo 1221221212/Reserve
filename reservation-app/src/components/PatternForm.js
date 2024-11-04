@@ -1,5 +1,7 @@
+// src/components/PatternForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../styles/PatternForm.scss';
 
 const PatternForm = ({ onPatternSaved }) => {
     const token = localStorage.getItem('token');
@@ -33,8 +35,8 @@ const PatternForm = ({ onPatternSaved }) => {
 
     return (
         <div className="pattern-form-container">
-            <form onSubmit={handleSubmit}>
-                <div>
+            <form onSubmit={handleSubmit} className="pattern-form">
+                <div className="form-group">
                     <label>パターン名:</label>
                     <input
                         type="text"
@@ -43,7 +45,7 @@ const PatternForm = ({ onPatternSaved }) => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>開始時間:</label>
                     <input
                         type="time"
@@ -52,7 +54,7 @@ const PatternForm = ({ onPatternSaved }) => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>終了時間:</label>
                     <input
                         type="time"
@@ -61,7 +63,7 @@ const PatternForm = ({ onPatternSaved }) => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>最大組数:</label>
                     <input
                         type="number"
@@ -69,7 +71,7 @@ const PatternForm = ({ onPatternSaved }) => {
                         onChange={(e) => setMaxGroups(parseInt(e.target.value, 10))}
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>一組あたりの最大人数:</label>
                     <input
                         type="number"
@@ -79,7 +81,7 @@ const PatternForm = ({ onPatternSaved }) => {
                         required
                     />
                 </div>
-                <button type="submit">パターンを保存</button>
+                <button type="submit" className="button">パターンを保存</button>
             </form>
         </div>
     );

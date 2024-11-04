@@ -1,18 +1,17 @@
-// src/components/PatternAssignment.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/PatternAssignment.scss';
 
 const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
     const [patterns, setPatterns] = useState([]);
     const [selectedPatterns, setSelectedPatterns] = useState([]);
-    const token = localStorage.getItem('token'); // ローカルストレージからトークンを取得
+    const token = localStorage.getItem('token');
 
-    // パターン一覧の取得
     useEffect(() => {
         const fetchPatterns = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/patterns`, {
-                    headers: { Authorization: `Bearer ${token}` } // 認証ヘッダーを追加
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 setPatterns(response.data);
             } catch (error) {
@@ -22,7 +21,6 @@ const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
         fetchPatterns();
     }, [token]);
 
-    // パターンの選択切り替え
     const togglePatternSelection = (pattern) => {
         setSelectedPatterns((prev) =>
             prev.includes(pattern)
@@ -31,37 +29,38 @@ const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
         );
     };
 
-    // パターン選択を親コンポーネントに伝える
     const handleNext = () => {
         onPatternSelect(selectedPatterns);
     };
 
     return (
-        <div>
+        <div className="pattern-assignment">
             <h2>パターンの割り当て</h2>
             <p>以下の日付に割り当てるパターンを選択してください。</p>
-            <ul>
+            <ul className="date-list">
                 {selectedDates.map((date, index) => (
                     <li key={index}>{new Date(date).toLocaleDateString()}</li>
                 ))}
             </ul>
             <h3>利用可能なパターン</h3>
-            <ul>
+            <ul className="pattern-list">
                 {patterns.map((pattern) => (
-                    <li key={pattern.id}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={selectedPatterns.includes(pattern)}
-                                onChange={() => togglePatternSelection(pattern)}
-                            />
-                            {pattern.name} - {pattern.start_time} から {pattern.end_time} 
-                            (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)
-                        </label>
+                    <li
+                        key={pattern.id}
+                        className={`pattern-item ${selectedPatterns.includes(pattern) ? 'selected' : ''}`}
+                        onClick={() => togglePatternSelection(pattern)}
+                    >
+                        {pattern.start_time} から {pattern.end_time}
+                        {pattern.max_groups !== null ? (
+                            <> (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)</>
+                        ) : (
+                            <> (最大 {pattern.max_people} 人)</>
+                        )}
                     </li>
                 ))}
+
             </ul>
-            <button onClick={handleNext} disabled={selectedPatterns.length === 0}>次へ</button>
+            <button onClick={handleNext} disabled={selectedPatterns.length === 0} className="button">次へ</button>
         </div>
     );
 };

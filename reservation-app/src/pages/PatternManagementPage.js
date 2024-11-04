@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { removeSecond } from '../utils/dateUtils';
+import '../styles/PatternManagement.scss';
 
 const PatternManagementPage = () => {
     const [patterns, setPatterns] = useState([]);
@@ -29,17 +30,31 @@ const PatternManagementPage = () => {
     };
 
     return (
-        <div>
+        <div className="admin-page-content">
             <h1>パターン管理</h1>
-            <button onClick={handleCreatePattern}>パターンを作成</button>
-            <ul>
-                {patterns.map((pattern) => (
-                    <li key={pattern.id}>
-                        {pattern.pattern_name} - {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)}
-                        （最大組数: {pattern.max_groups ?? "ー"}, 各組の最大人数: {pattern.max_people}）
-                    </li>
-                ))}
-            </ul>
+            <button className="button" onClick={handleCreatePattern}>パターンを作成</button>
+            <table className="pattern-table">
+                <thead>
+                    <tr>
+                        <th>パターン名</th>
+                        <th>開始時間</th>
+                        <th>終了時間</th>
+                        <th>最大組数</th>
+                        <th>各組の最大人数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {patterns.map((pattern) => (
+                        <tr key={pattern.id}>
+                            <td>{pattern.pattern_name}</td>
+                            <td>{removeSecond(pattern.start_time)}</td>
+                            <td>{removeSecond(pattern.end_time)}</td>
+                            <td>{pattern.max_groups ?? "ー"}</td>
+                            <td>{pattern.max_people}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

@@ -1,0 +1,51 @@
+/* 個別のスタイル */
+.reservation-slot-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+
+    .form-group {
+        margin-bottom: 16px;
+
+        label {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: #888;
+                outline: none;
+            }
+        }
+    }
+
+    .button {
+        padding: 10px;
+        font-size: 1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}

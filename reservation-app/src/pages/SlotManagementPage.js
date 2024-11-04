@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { removeSecond } from '../utils/dateUtils';
+import '../styles/SlotManagement.scss';
 
 const SlotManagementPage = () => {
     const [assignedSlots, setAssignedSlots] = useState([]);
@@ -25,10 +26,10 @@ const SlotManagementPage = () => {
     }, [token, apiUrl]);
 
     return (
-        <div>
+        <div className="slot-management-page">
             <h1>予約枠管理</h1>
-            <button onClick={() => navigate('/admin/slots/create')}>予約枠を作成</button>
-            <table>
+            <button className="button" onClick={() => navigate('/admin/slots/create')}>予約枠を作成</button>
+            <table className="slot-table">
                 <thead>
                     <tr>
                         <th>日付</th>
@@ -48,8 +49,8 @@ const SlotManagementPage = () => {
                             <td>{slot.max_groups || 'なし'}</td>
                             <td>{slot.max_people}</td>
                             <td>
-                                <button>編集</button>
-                                <button>削除</button>
+                                <button className="edit-button">編集</button>
+                                <button className="delete-button">削除</button>
                             </td>
                         </tr>
                     ))}

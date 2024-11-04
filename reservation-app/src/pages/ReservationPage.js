@@ -5,7 +5,7 @@ import Calendar from '../components/Calendar';
 import SlotSelection from '../components/SlotSelection';
 import ReservationForm from '../components/ReservationForm';
 import ReservationConfirmation from '../components/ReservationConfirmation';
-import '../styles/reservationCommon.scss';
+import ProgressIndicator from '../components/ProgressIndicator';
 import '../styles/reservationPage.scss';
 
 const ReservationPage = () => {
@@ -13,6 +13,8 @@ const ReservationPage = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({});
+
+    const steps = ["日付選択", "スロット選択", "情報入力", "確認"];
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);
@@ -40,14 +42,27 @@ const ReservationPage = () => {
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations/create`, requestData);
-            alert('予約が確定しました');
-            setCurrentStep(1);
-            setSelectedDate(null);
-            setSelectedSlot(null);
-            setReservationInfo({});
+
+            // 成功時の処理
+            if (response.data.success === true) {
+                alert('予約が確定しました');
+                setCurrentStep(1);
+                setSelectedDate(null);
+                setSelectedSlot(null);
+                setReservationInfo({});
+            } else {
+                alert(response.data.message || '予約に失敗しました。');
+            }
         } catch (error) {
+            // エラーメッセージを分岐して取得
+            if (error.response && error.response.data && error.response.data.message) {
+                // サーバーからのエラーメッセージがある場合
+                alert(error.response.data.message);
+            } else {
+                // サーバーに接続できない、またはレスポンスが返ってこない場合
+                alert("サーバーエラーにより予約の作成に失敗しました。");
+            }
             console.error("予約の作成に失敗しました:", error);
-            alert("予約の作成に失敗しました");
         }
     };
 
@@ -60,6 +75,7 @@ const ReservationPage = () => {
     return (
         <div className="reservation-page">
             <h1>予約ページ</h1>
+            <ProgressIndicator currentStep={currentStep} steps={steps} />
             {currentStep === 1 && <Calendar onDateSelect={handleDateSelect} />}
             {currentStep === 2 && <SlotSelection selectedDate={selectedDate} onSlotSelect={handleSlotSelect} />}
             {currentStep === 3 && (
