@@ -1,15 +1,8 @@
 @import "./Common.scss";
 
-/* 共通スタイル */
-body, .admin-page, .admin-nav, .admin-content {
-    font-family: Arial, sans-serif;
-    color: #333;
-}
-
 /* サイドバーの基本スタイル */
 .admin-nav {
     width: 250px;
-    background-color: #333;
     color: white;
     display: flex;
     flex-direction: column;
@@ -47,25 +40,8 @@ body, .admin-page, .admin-nav, .admin-content {
 
     h1 {
         font-size: 1.8em;
-        color: #333;
+        color: $text-color;
         margin-bottom: 20px;
-    }
-}
-
-/* ボタンの基本スタイル */
-.button {
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    color: #555;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-        background-color: #e0e0e0;
     }
 }
 
@@ -74,7 +50,7 @@ body, .admin-page, .admin-nav, .admin-content {
     display: none;
     cursor: pointer;
     font-size: 1.5em;
-    color: #333;
+    color: $text-color;
     position: fixed;
     top: 10px;
     left: 10px;
@@ -84,7 +60,7 @@ body, .admin-page, .admin-nav, .admin-content {
         display: block;
         width: 25px;
         height: 3px;
-        background-color: #333;
+        background-color: $text-color;
         margin: 5px 0;
     }
 }

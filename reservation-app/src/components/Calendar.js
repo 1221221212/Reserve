@@ -6,34 +6,42 @@ import '../styles/calendar.scss';
 const Calendar = ({ onDateSelect }) => {
     const [dates, setDates] = useState([]);
     const [reservations, setReservations] = useState([]);
-    const today = moment().tz('Asia/Tokyo');  // JSTで今日の日付を取得
+    const [displayedMonth, setDisplayedMonth] = useState(moment().tz('Asia/Tokyo')); // 表示する月の状態
 
     // カレンダーの初期化処理
     const initializeCalendar = () => {
         const monthDates = [];
-        const year = today.year();
-        const month = today.month();
+        const year = displayedMonth.year();
+        const month = displayedMonth.month();
 
         const firstDay = moment([year, month, 1]).day();
-        const daysInMonth = today.daysInMonth();
+        const daysInMonth = displayedMonth.daysInMonth();
 
         for (let i = 0; i < firstDay; i++) {
             monthDates.push(null); // 空白日を追加
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
-            // JST形式の文字列を保持
             monthDates.push(moment([year, month, day]).tz('Asia/Tokyo').format('YYYY-MM-DD'));
         }
 
         setDates(monthDates);
     };
 
+    // 前月と次月に移動する関数
+    const handlePrevMonth = () => {
+        setDisplayedMonth(displayedMonth.clone().subtract(1, 'months'));
+    };
+
+    const handleNextMonth = () => {
+        setDisplayedMonth(displayedMonth.clone().add(1, 'months'));
+    };
+
     // データ取得とカレンダー初期化
     useEffect(() => {
         initializeCalendar();
-        const year = today.year();
-        const month = today.month() + 1;
+        const year = displayedMonth.year();
+        const month = displayedMonth.month() + 1;
 
         const fetchReservationsForMonth = async () => {
             try {
@@ -47,7 +55,7 @@ const Calendar = ({ onDateSelect }) => {
         };
 
         fetchReservationsForMonth();
-    }, []);
+    }, [displayedMonth]); // displayedMonthが変更されるたびに再取得
 
     // 日付ごとの○×判定
     const getReservationStatus = (date) => {
@@ -61,7 +69,9 @@ const Calendar = ({ onDateSelect }) => {
     return (
         <div className="calendar">
             <div className="calendar-header">
-                {today.format('MMMM YYYY')}
+                <button onClick={handlePrevMonth}>＜</button>
+                <span>{displayedMonth.format('MMMM YYYY')}</span>
+                <button onClick={handleNextMonth}>＞</button>
             </div>
             <div className="calendar-grid">
                 {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
@@ -69,7 +79,7 @@ const Calendar = ({ onDateSelect }) => {
                 ))}
                 {dates.map((date, index) => {
                     const status = getReservationStatus(date);
-                    const isSelectable = status != '-';
+                    const isSelectable = status !== '-';
                     const statusClass = status === '〇' ? 'status-available' : status === '✕' ? 'status-unavailable' : 'status-none';
                     const className = !date
                         ? 'calendar-date empty'
@@ -79,14 +89,13 @@ const Calendar = ({ onDateSelect }) => {
                         <div
                             key={index}
                             className={className}
-                            onClick={() => isSelectable && date && onDateSelect(date)} // `-` の日付は選択不可
+                            onClick={() => isSelectable && date && onDateSelect(date)}
                         >
                             {date && moment(date).date()}
                             <span className="reservation-status">{status}</span>
                         </div>
                     );
                 })}
-
             </div>
         </div>
     );

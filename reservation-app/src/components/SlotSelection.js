@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { removeSecond } from '../utils/dateUtils';
 import '../styles/slotSelection.scss';
 
 const SlotSelection = ({ selectedDate, onSlotSelect }) => {
@@ -66,7 +67,7 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
 
     return (
         <div className="slot-selection">
-            <h2>スロット選択</h2>
+            <p>{selectedDate}</p>
             <ul>
                 {slots.map((slot) => (
                     <li
@@ -76,7 +77,7 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
                         style={{ cursor: slot.availability === '0' ? 'pointer' : 'not-allowed' }}
                     >
                         <div>
-                            {slot.start_time} - {slot.end_time}
+                            {removeSecond(slot.start_time)} - {removeSecond(slot.end_time)}
                         </div>
                         <div>{renderSlotInfo(slot)}</div>
                     </li>

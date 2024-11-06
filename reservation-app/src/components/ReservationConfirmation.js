@@ -2,7 +2,7 @@ import React from 'react';
 import { removeSecond } from '../utils/dateUtils';
 import '../styles/reservationConfirmation.scss';
 
-const ReservationConfirmation = ({ date, slot, info, onConfirm }) => {
+const ReservationConfirmation = ({ date, slot, info, onConfirm, isSubmitting }) => {
     return (
         <div className="reservation-confirmation">
             <h2>予約内容確認</h2>
@@ -30,7 +30,9 @@ const ReservationConfirmation = ({ date, slot, info, onConfirm }) => {
                     </tr>
                 </tbody>
             </table>
-            <button onClick={onConfirm} className="confirm-button">予約を確定</button>
+            <button onClick={onConfirm} className="confirm-button" disabled={isSubmitting}>
+                予約を確定
+            </button>
         </div>
     );
 };

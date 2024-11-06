@@ -53,10 +53,18 @@ const ReservationForm = ({ onSubmit, max_people, max_groups, slotId }) => {
             case 'email':
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = '有効なメールアドレスを入力してください';
                 break;
-            case 'numPeople':
-                if (max_people && value > max_people) error = `人数が多すぎます。最大${max_people}人までです。`;
-                else if (!max_groups && (max_people - currentCount) < value) error = `残りの人数が不足しています。予約可能な人数は最大${max_people - currentCount}人です。`;
-                break;
+                case 'numPeople':
+                    console.log(max_groups);
+                    if (max_groups) {
+                        // 最大組数が設定されている場合は、1組あたりの最大人数のチェックのみ
+                        if (value > max_people) error = `人数が多すぎます。最大${max_people}人までです。`;
+                    } else {
+                        // 最大組数が設定されていない場合は、残りの人数で判定
+                        if (max_people && (max_people - currentCount) < value) {
+                            error = `残りの人数が不足しています。予約可能な人数は最大${max_people - currentCount}人です。`;
+                        }
+                    }
+                    break;
             default:
                 break;
         }

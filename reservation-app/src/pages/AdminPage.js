@@ -7,6 +7,7 @@ import SlotCreationPage from './SlotCreationPage';
 import ReservationManagementPage from './ReservationManagementPage';
 import PatternManagementPage from './PatternManagementPage';
 import PatternCreationPage from './PatternCreationPage';
+import SettingsPage from './SettingsPage';
 
 const AdminPage = () => {
     return (
@@ -14,12 +15,13 @@ const AdminPage = () => {
             <AdminNav />
             <div className="admin-content">
                 <Routes>
-                    <Route path="/" element={<ReservationManagementPage/>} />
+                    <Route path="/" element={<ReservationManagementPage />} />
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
                     <Route path="patterns" element={<PatternManagementPage />} />
                     <Route path="patterns/create" element={<PatternCreationPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
                 </Routes>
             </div>
         </div>

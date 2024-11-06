@@ -1,3 +1,5 @@
+@import "./colors";
+
 .pattern-assignment {
     max-width: 600px;
     margin: 0 auto;
@@ -9,7 +11,7 @@
     h2 {
         font-size: 1.8em;
         margin-bottom: 16px;
-        color: #333;
+        color: $text-color;
     }
 
     p {
@@ -26,7 +28,7 @@
         li {
             padding: 8px;
             font-size: 0.9em;
-            color: #333;
+            color: $text-color;
             background-color: #f1f1f1;
             border-radius: 4px;
             margin-bottom: 4px;
@@ -36,7 +38,7 @@
     h3 {
         font-size: 1.5em;
         margin-bottom: 12px;
-        color: #333;
+        color: $text-color;
     }
 
     .pattern-list {

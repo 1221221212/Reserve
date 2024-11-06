@@ -20,6 +20,7 @@ const AdminNav = () => {
                     <li><Link to="/admin/slots">予約枠管理</Link></li>
                     <li><Link to="/admin/patterns">パターン管理</Link></li>
                     <li><Link to="/admin/reservations">予約管理</Link></li>
+                    <li><Link to="/admin/settings">設定</Link></li> {/* 新しい設定リンク */}
                 </ul>
             </nav>
             {isOpen && <div className="overlay" onClick={toggleMenu}></div>}

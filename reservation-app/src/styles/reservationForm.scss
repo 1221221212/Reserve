@@ -3,10 +3,6 @@
 .reservation-form {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 16px;
-    font-family: Arial, sans-serif;
 
     .form-group {
         margin-bottom: 12px;
@@ -14,22 +10,4 @@
         flex-direction: column;
     }
 
-    .error-message {
-        color: red;
-        font-size: 0.9em;
-        margin-bottom: 12px;
-    }
-
-}
-
-// レスポンシブ対応
-@media (max-width: 600px) {
-    .reservation-form {
-        padding: 12px;
-
-        button {
-            font-size: 0.9em;
-            padding: 8px;
-        }
-    }
 }

@@ -1,4 +1,6 @@
-.date-selection-form {
+@import "./colors";
+
+date-selection-form {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
@@ -14,7 +16,7 @@
             font-size: 0.9em;
             margin-bottom: 4px;
             display: block;
-            color: #333;
+            color: $text-color;
         }
 
         input, select {

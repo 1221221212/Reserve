@@ -41,7 +41,6 @@ export const filterDates = (dates, holidays, option) => {
 };
 
 //秒がいらないとき
-
 export const removeSecond = (timeString) => {
     return moment(timeString, 'HH:mm:ss').format('HH:mm'); // 時間文字列から秒を削除
 };

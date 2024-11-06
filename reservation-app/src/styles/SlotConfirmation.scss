@@ -1,3 +1,5 @@
+@import "./colors";
+
 .slot-confirmation {
     max-width: 600px;
     margin: 0 auto;
@@ -9,14 +11,14 @@
     h2 {
         font-size: 1.8em;
         margin-bottom: 16px;
-        color: #333;
+        color: $text-color;
         text-align: center;
     }
 
     h3 {
         font-size: 1.5em;
         margin-top: 20px;
-        color: #333;
+        color: $text-color;
     }
 
     .date-list, .pattern-list {
@@ -31,7 +33,7 @@
             border-radius: 4px;
             margin-bottom: 8px;
             font-size: 0.9em;
-            color: #333;
+            color: $text-color;
         }
     }
 
