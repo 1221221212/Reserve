@@ -1,19 +1,34 @@
+// authRoutes.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
+const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET || 'your_refresh_secret_key';
 
-// シンプルなログインエンドポイント
+// 初回ログインエンドポイント
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
-
-    // 仮のユーザー認証（後でDBに保存した認証情報を使用）
-    if (username === 'admin' && password === 'password') {  // ユーザー名・パスワードを確認
-        const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
-        return res.json({ token });
+    if (username === 'admin' && password === 'password') {
+        const accessToken = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ username }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+        res.json({ accessToken, refreshToken });
     } else {
         res.status(401).json({ message: '認証に失敗しました。' });
     }
+});
+
+// リフレッシュトークンによるトークン更新エンドポイント
+router.post('/refresh', (req, res) => {
+    const { token: refreshToken } = req.body;
+
+    if (!refreshToken) return res.sendStatus(401);
+
+    jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
+        if (err) return res.sendStatus(403);
+
+        const accessToken = jwt.sign({ username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+        res.json({ accessToken });
+    });
 });
 
 module.exports = router;

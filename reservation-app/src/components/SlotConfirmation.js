@@ -1,6 +1,7 @@
 // src/components/SlotConfirmation.js
 import React from 'react';
 import axios from 'axios';
+import { removeSecond } from '../utils/dateUtils';
 import '../styles/SlotConfirmation.scss';
 
 const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
@@ -38,7 +39,7 @@ const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
             <ul className="pattern-list">
                 {selectedPatterns.map((pattern, index) => (
                     <li key={index}>
-                        {pattern.name} - {pattern.start_time} から {pattern.end_time} 
+                        {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)} 
                         (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)
                     </li>
                 ))}

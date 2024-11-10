@@ -6,10 +6,14 @@ const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.sendStatus(401);  // トークンがない場合は401エラー
+    if (!token) {
+        return res.sendStatus(401);
+    }
 
     jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.sendStatus(403);  // トークンが無効な場合は403エラー
+        if (err) {
+            return res.sendStatus(403);
+        }
         req.user = user;
         next();
     });

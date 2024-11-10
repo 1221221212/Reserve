@@ -1,6 +1,6 @@
 // src/pages/AdminPage.js
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import AdminNav from '../components/AdminNav';
 import SlotManagementPage from './SlotManagementPage';
 import SlotCreationPage from './SlotCreationPage';
@@ -8,8 +8,38 @@ import ReservationManagementPage from './ReservationManagementPage';
 import PatternManagementPage from './PatternManagementPage';
 import PatternCreationPage from './PatternCreationPage';
 import SettingsPage from './SettingsPage';
+import { isTokenExpired, refreshAccessToken } from '../utils/authUtils';
+import "../styles/AdminCommon.scss";
 
 const AdminPage = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkAndRefreshToken = async () => {
+            const token = localStorage.getItem('token');
+            if (!token || isTokenExpired(token, 5 * 60 * 1000)) { // 5分前に期限切れならリフレッシュ
+                const newToken = await refreshAccessToken();
+                if (!newToken) {
+                    localStorage.removeItem('token'); // トークン更新に失敗した場合、削除してリダイレクト
+                    setIsAuthenticated(false);
+                    navigate('/login');
+                } else {
+                    setIsAuthenticated(true);
+                }
+            }
+        };
+
+        const intervalId = setInterval(checkAndRefreshToken, 60 * 1000); // 1分ごとにチェック
+        checkAndRefreshToken(); // 初回実行
+
+        return () => clearInterval(intervalId); // クリーンアップ
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" />;
+    }
+
     return (
         <div className="admin-page">
             <AdminNav />

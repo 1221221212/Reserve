@@ -1,19 +1,7 @@
-@import "./Common.scss";
+@import "./Common";
 
-/* 共通のスタイル */
-.reservation-page, .reservation-form, .reservation-confirmation, .slot-selection, .calendar {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 600px) {
-    body, .reservation-page, .reservation-form, .reservation-confirmation, .slot-selection, .calendar {
-        padding: 5px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
+.reservation-page{
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
 }

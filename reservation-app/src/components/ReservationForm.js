@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/reservationForm.scss';
 
 const ReservationForm = ({ onSubmit, max_people, max_groups, slotId }) => {
     const [customerName, setCustomerName] = useState('');

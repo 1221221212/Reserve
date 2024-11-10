@@ -44,7 +44,7 @@ const SlotCreationPage = () => {
                 />
             )}
             {currentStep > 1 && (
-                <button onClick={() => setCurrentStep(currentStep - 1)}>
+                <button className="back-button" onClick={() => setCurrentStep(currentStep - 1)}>
                     戻る
                 </button>
             )}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { removeSecond } from '../utils/dateUtils';
-import '../styles/reservationConfirmation.scss';
 
 const ReservationConfirmation = ({ date, slot, info, onConfirm, isSubmitting }) => {
     return (

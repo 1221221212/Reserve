@@ -1,43 +1,127 @@
-// Common.scss
-
 @import "./colors";
 
-* {
+/* Reset styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+html {
+    font-size: 100%;
+    /* 基本フォントサイズ: 16px */
+    scroll-behavior: smooth;
 }
 
 body {
-    text-align: center;
     font-family: Arial, sans-serif;
-    line-height: 1.6;
+    /* 主要フォント */
     color: $text-color;
-    padding: 0;
-    margin: 0 auto;
+    /* 基本テキストカラー */
+    line-height: 1.6;
+    margin: 0;
 }
 
+/* Heading styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #222;
+    /* 見出しのテキストカラー */
+    font-weight: 600;
+    /* 見出しの太さ */
+    line-height: 1.25;
+    /* 見出しの行間 */
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+/* Paragraph and text styles */
+p {
+    margin-bottom: 1em;
+    /* 段落の間隔 */
+}
+
+a {
+    color: #007BFF;
+    /* リンクカラー */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Span, strong, and emphasis */
+span {
+    font-weight: normal;
+    color: inherit;
+}
+
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+// コンテナ
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
+// ボタン
 button {
+    margin-bottom: 10px;
     padding: 10px;
     font-size: 1em;
     font-weight: bold;
     color: $text-color;
+    background-color: $primary-color;
     border: none;
     border-radius: 4px;
-    background-color: $primary-color;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
     &.back-button {
-        margin-top: 20px;
-        color: #555;
-        background-color: #f0f0f0;
+        background: none;
 
         &:hover {
             background-color: #e0e0e0;
@@ -53,6 +137,15 @@ button {
     }
 }
 
+/* エラーメッセージのスタイル */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+// 入力フィールドとセレクト
 input,
 select {
     width: 100%;
@@ -61,8 +154,6 @@ select {
     font-size: 1em;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
 
     &:focus {
         border-color: $primary-darker;
@@ -70,20 +161,7 @@ select {
     }
 }
 
-label {
-    font-weight: bold;
-    font-size: 0.9em;
-    margin-bottom: 4px;
-}
-
-/* エラーメッセージのスタイル */
-.error-message {
-    color: red;
-    font-size: 0.9em;
-    margin-bottom: 12px;
-}
-
-/* レスポンシブ対応 */
+// レスポンシブ設定
 @media (max-width: 600px) {
 
     button,

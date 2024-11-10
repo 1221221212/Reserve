@@ -1,70 +1,26 @@
-/* 個別のスタイル */
+// src/styles/SlotManagement.scss
+@import './AdminCommon';
+
 .slot-management-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.slot-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-
-    th, td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        text-align: center;
+    .slot-table {
+        @extend .table;
     }
 
-    th {
-        background-color: #f5f5f5;
-        font-weight: bold;
-    }
+    .edit-button, .delete-button {
+        background-color: #ffc107;
+        border: none;
+        padding: 5px 10px;
+        color: #333;
+        border-radius: 5px;
+        cursor: pointer;
 
-    tr:nth-child(even) {
-        background-color: #fafafa;
-    }
+        &.delete-button {
+            background-color: #dc3545;
+            color: #fff;
+        }
 
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-}
-
-/* ボタンスタイル */
-.button, .edit-button, .delete-button {
-    padding: 8px 12px;
-    font-size: 0.9em;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.button {
-    background-color: #007bff;
-    color: white;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-}
-
-.edit-button {
-    background-color: #28a745;
-    color: white;
-    margin-right: 8px;
-
-    &:hover {
-        background-color: #218838;
-    }
-}
-
-.delete-button {
-    background-color: #dc3545;
-    color: white;
-
-    &:hover {
-        background-color: #c82333;
+        &:hover {
+            filter: brightness(90%);
+        }
     }
 }

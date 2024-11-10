@@ -51,8 +51,6 @@
     &.current::before {
         background-color: white; // 現在のステップ（白抜き）
         border: 8px solid $primary-color;
-        height: 14px;
-        width: 14px;
     }
 }
 
@@ -92,8 +90,6 @@
     
         &.current::before {
             border: 6px solid $primary-color;
-            height: 13.5px;
-            width: 13.5px;
         }
     }
     

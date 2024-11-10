@@ -1,7 +1,6 @@
 // src/components/PatternForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../styles/PatternForm.scss';
 
 const PatternForm = ({ onPatternSaved }) => {
     const token = localStorage.getItem('token');

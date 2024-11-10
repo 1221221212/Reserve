@@ -1,6 +1,7 @@
 // backend/controllers/reservationController.js
 
 const reservationModel = require('../models/reservationModel');
+const DateUtil = require('../utils/dateUtils')
 
 // 新規予約作成
 exports.createReservation = async (req, res) => {
@@ -31,5 +32,26 @@ exports.createReservation = async (req, res) => {
     } catch (error) {
         console.error("予約の作成に失敗しました:", error);
         res.status(500).json({ success: false, message: "予約の作成に失敗しました", error: error.message });
+    }
+};
+
+// 予約情報取得
+exports.getAllReservations = async (req, res) => {
+    try {
+        const reservations = await reservationModel.getAllReservations();
+
+        // 各予約情報の日付を整形
+        const formattedReservations = reservations.map((reservation) => ({
+            ...reservation,
+            created_at: DateUtil.utcToJstDate(reservation.created_at), // 作成日を整形
+            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date), // 予約日を整形
+            start_time: DateUtil.removeSecond(reservation.start_time), // 開始時間を整形
+            end_time: DateUtil.removeSecond(reservation.end_time), // 終了時間を整形
+        }));
+
+        res.status(200).json(formattedReservations);
+    } catch (error) {
+        console.error("予約情報の取得に失敗しました:", error);
+        res.status(500).json({ success: false, message: "予約情報の取得に失敗しました", error: error.message });
     }
 };

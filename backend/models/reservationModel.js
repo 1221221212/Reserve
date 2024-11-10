@@ -75,3 +75,29 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
         connection.release();
     }
 };
+
+// すべての予約情報を取得
+exports.getAllReservations = async () => {
+    try {
+        const [reservations] = await db.query(`
+            SELECT 
+                reservations.id,
+                reservations.customer_name,
+                reservations.phone_number,
+                reservations.email,
+                reservations.group_size,
+                reservations.status,
+                reservations.created_at,
+                assigned_slots.date AS reservation_date,
+                reservation_patterns.start_time,
+                reservation_patterns.end_time
+            FROM reservations
+            JOIN assigned_slots ON reservations.slot_id = assigned_slots.id
+            JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
+        `);
+        return reservations;
+    } catch (error) {
+        console.error("すべての予約情報の取得に失敗しました:", error);
+        throw error;
+    }
+};

@@ -1,6 +1,5 @@
 // src/components/HolidayCheck.js
 import React from 'react';
-import '../styles/HolidayCheck.scss';
 
 const HolidayCheck = ({ holidayOption, setHolidayOption }) => {
     return (

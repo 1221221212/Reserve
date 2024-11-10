@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { removeSecond } from '../utils/dateUtils';
 import '../styles/PatternAssignment.scss';
 
 const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
@@ -50,7 +51,7 @@ const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
                         className={`pattern-item ${selectedPatterns.includes(pattern) ? 'selected' : ''}`}
                         onClick={() => togglePatternSelection(pattern)}
                     >
-                        {pattern.start_time} から {pattern.end_time}
+                        {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)}
                         {pattern.max_groups !== null ? (
                             <> (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)</>
                         ) : (

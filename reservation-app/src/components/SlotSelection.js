@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { removeSecond } from '../utils/dateUtils';
-import '../styles/slotSelection.scss';
 
 const SlotSelection = ({ selectedDate, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);
@@ -37,7 +36,7 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
                         })
                     )
                 );
-        
+
                 // 各スロットの予約人数情報を取得してセット
                 const info = responses.reduce((acc, response, index) => {
                     acc[slotIds[index]] = response.data.count;
@@ -53,8 +52,13 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
     }, [slots]);
 
     const renderSlotInfo = (slot) => {
-        const { id, max_groups, max_people } = slot;
+        const { id, max_groups, max_people, availability } = slot;
         const currentCount = availabilityInfo[id] || 0;
+
+        // availabilityが0でない場合は予約不可と表示
+        if (availability !== '0') {
+            return "予約不可";
+        }
 
         // 最大組数が設定されている場合と設定されていない場合で表示内容を分ける
         if (max_groups) {
@@ -65,9 +69,10 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
         }
     };
 
+
     return (
         <div className="slot-selection">
-            <p>{selectedDate}</p>
+            <p className="selectedDate">{selectedDate}</p>
             <ul>
                 {slots.map((slot) => (
                     <li

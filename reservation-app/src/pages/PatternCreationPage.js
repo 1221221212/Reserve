@@ -1,10 +1,14 @@
 // src/pages/PatternCreationPage.js
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PatternForm from '../components/PatternForm';
 
 const PatternCreationPage = () => {
+    const navigate = useNavigate();
+
     const handlePatternSaved = () => {
-        // 要対応！！必要に応じて他の処理（リダイレクトやリフレッシュなど）
+        // パターン作成後にパターン管理ページに遷移
+        navigate('/admin/patterns');
     };
 
     return (

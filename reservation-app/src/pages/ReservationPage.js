@@ -69,6 +69,11 @@ const ReservationPage = () => {
     return (
         <div className="reservation-page">
             <ProgressIndicator currentStep={currentStep} steps={steps} />
+            {currentStep > 1 && currentStep !== 'complete' && (
+                <button onClick={handleBack} className="back-button">
+                    ＜ 戻る
+                </button>
+            )}
             {currentStep === 1 && <Calendar onDateSelect={handleDateSelect} />}
             {currentStep === 2 && <SlotSelection selectedDate={selectedDate} onSlotSelect={handleSlotSelect} />}
             {currentStep === 3 && (
@@ -94,11 +99,6 @@ const ReservationPage = () => {
                     <p>ご予約ありがとうございます。ご登録いただいた情報に確認のメールをお送りしました。</p>
                     <button onClick={() => setCurrentStep(1)}>ホームへ戻る</button>
                 </div>
-            )}
-            {currentStep > 1 && currentStep !== 'complete' && (
-                <button onClick={handleBack} className="back-button">
-                    戻る
-                </button>
             )}
         </div>
     );
