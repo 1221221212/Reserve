@@ -53,7 +53,6 @@ const ReservationForm = ({ onSubmit, max_people, max_groups, slotId }) => {
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = '有効なメールアドレスを入力してください';
                 break;
                 case 'numPeople':
-                    console.log(max_groups);
                     if (max_groups) {
                         // 最大組数が設定されている場合は、1組あたりの最大人数のチェックのみ
                         if (value > max_people) error = `人数が多すぎます。最大${max_people}人までです。`;

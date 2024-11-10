@@ -55,3 +55,41 @@ exports.getAllReservations = async (req, res) => {
         res.status(500).json({ success: false, message: "予約情報の取得に失敗しました", error: error.message });
     }
 };
+
+// フィルターされた予約情報を取得
+exports.getFilteredReservations = async (req, res) => {
+    try {
+        const { startDate, endDate, reservationId, customerName, phoneNumber, email, status } = req.query;
+
+        let reservations;
+
+        if (reservationId) {
+            // 予約IDでのみフィルタリング
+            reservations = await reservationModel.getReservationById(reservationId);
+        } else {
+            // その他の条件でフィルタリング
+            reservations = await reservationModel.getFilteredReservations({
+                startDate,
+                endDate,
+                customerName,
+                phoneNumber,
+                email,
+                status,
+            });
+        }
+
+        // 各予約情報の日付を整形
+        const formattedReservations = reservations.map((reservation) => ({
+            ...reservation,
+            created_at: DateUtil.utcToJstDate(reservation.created_at),
+            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date),
+            start_time: DateUtil.removeSecond(reservation.start_time),
+            end_time: DateUtil.removeSecond(reservation.end_time),
+        }));
+
+        res.status(200).json(formattedReservations);
+    } catch (error) {
+        console.error("フィルターされた予約情報の取得に失敗しました:", error);
+        res.status(500).json({ message: "予約情報の取得に失敗しました", error: error.message });
+    }
+};

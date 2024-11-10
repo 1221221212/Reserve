@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import ReservationPage from './pages/ReservationPage';
 import AdminPage from './pages/AdminPage';
 import Login from './components/Login';
+import "./styles/Common.scss"
 
 const App = () => {
     const [token, setToken] = useState(null);

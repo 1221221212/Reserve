@@ -6,12 +6,14 @@ import ReservationForm from '../components/ReservationForm';
 import ReservationConfirmation from '../components/ReservationConfirmation';
 import ProgressIndicator from '../components/ProgressIndicator';
 import '../styles/reservationPage.scss';
+import "../styles/reservationCommon.scss"
 
 const ReservationPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({});
+    const [reservationId, setReservationId] = useState(null); // 予約IDを保存する状態変数
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const steps = ["日付選択", "時間選択", "情報入力", "確認", "完了"];
@@ -47,8 +49,9 @@ const ReservationPage = () => {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations/create`, requestData);
 
             if (response.data.success) {
+                setReservationId(response.data.reservation.reservation_number); // 予約IDを保存
                 alert('予約が確定しました');
-                setCurrentStep('complete'); // 完了画面に遷移
+                setCurrentStep('5'); // 完了画面に遷移
             } else {
                 alert(response.data.message || '予約に失敗しました。');
             }
@@ -69,7 +72,7 @@ const ReservationPage = () => {
     return (
         <div className="reservation-page">
             <ProgressIndicator currentStep={currentStep} steps={steps} />
-            {currentStep > 1 && currentStep !== 'complete' && (
+            {currentStep > 1 && currentStep !== '5' && (
                 <button onClick={handleBack} className="back-button">
                     ＜ 戻る
                 </button>
@@ -93,10 +96,13 @@ const ReservationPage = () => {
                     isSubmitting={isSubmitting}
                 />
             )}
-            {currentStep === 'complete' && (
+            {currentStep === '5' && (
                 <div className="reservation-complete">
                     <h2>予約が完了しました</h2>
                     <p>ご予約ありがとうございます。ご登録いただいた情報に確認のメールをお送りしました。</p>
+                    {reservationId && (
+                        <p>予約ID: <strong>{reservationId}</strong></p>
+                    )}
                     <button onClick={() => setCurrentStep(1)}>ホームへ戻る</button>
                 </div>
             )}

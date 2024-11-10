@@ -1,5 +1,37 @@
 // src/styles/SettingsPage.scss
 
 .settings-page {
-    // 設定画面特有のスタイルをここに追加
+    .form-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+
+        label {
+            width: 150px; /* ラベルの幅を設定 */
+            margin-right: 20px; /* ラベルとフォームの間にスペースを追加 */
+            text-align: right;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            max-width: 300px; /* フォームの最大幅 */
+            padding: 8px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        margin-top: 20px;
+    }
 }

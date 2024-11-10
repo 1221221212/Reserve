@@ -23,7 +23,7 @@ const AdminPage = () => {
                 if (!newToken) {
                     localStorage.removeItem('token'); // トークン更新に失敗した場合、削除してリダイレクト
                     setIsAuthenticated(false);
-                    navigate('/login');
+                    navigate('/admin/login');
                 } else {
                     setIsAuthenticated(true);
                 }
@@ -37,7 +37,7 @@ const AdminPage = () => {
     }, [navigate]);
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/admin/login" />;
     }
 
     return (
