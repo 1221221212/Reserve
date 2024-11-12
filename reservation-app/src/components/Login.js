@@ -1,8 +1,8 @@
-// src/components/Login.js
+// Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Login.scss';
+import "../styles/Login.scss"
 
 const Login = ({ setToken }) => {
     const [username, setUsername] = useState('');
@@ -12,17 +12,20 @@ const Login = ({ setToken }) => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(''); // リセットエラー
+        setError(''); // エラーメッセージのリセット
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { username, password });
-            const token = response.data.accessToken; // ここでアクセストークンを取得
-            setToken(token);
+            const response = await axios.post('http://localhost:3000/api/auth/login', { username, password });
+            const token = response.data.token;
+
+            // トークンをローカルストレージに保存して状態を更新
             localStorage.setItem('token', token);
-            
-            // ログイン成功後に管理画面にリダイレクト
+            setToken(token);
+
+            // 管理画面にリダイレクト
             navigate('/admin');
         } catch (error) {
             setError('ログインに失敗しました。');
+            console.error("ログインエラー:", error);
         }
     };
 

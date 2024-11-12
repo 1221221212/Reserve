@@ -1,5 +1,5 @@
 // models/User.js
-const db = require('./db');
+const db = require('./db'); // データベース接続をインポート
 
 class User {
     static async create({ username, password_hash, email, role }) {

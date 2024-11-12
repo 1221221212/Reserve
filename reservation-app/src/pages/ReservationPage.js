@@ -6,7 +6,7 @@ import ReservationForm from '../components/ReservationForm';
 import ReservationConfirmation from '../components/ReservationConfirmation';
 import ProgressIndicator from '../components/ProgressIndicator';
 import '../styles/reservationPage.scss';
-import "../styles/reservationCommon.scss"
+import "../styles/reservationCommon.scss";
 
 const ReservationPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -15,6 +15,7 @@ const ReservationPage = () => {
     const [reservationInfo, setReservationInfo] = useState({});
     const [reservationId, setReservationId] = useState(null); // 予約IDを保存する状態変数
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null); // エラーメッセージ状態変数
 
     const steps = ["日付選択", "時間選択", "情報入力", "確認", "完了"];
 
@@ -50,21 +51,25 @@ const ReservationPage = () => {
 
             if (response.data.success) {
                 setReservationId(response.data.reservation.reservation_number); // 予約IDを保存
-                alert('予約が確定しました');
+                setErrorMessage(null); // エラーメッセージをリセット
                 setCurrentStep('5'); // 完了画面に遷移
             } else {
-                alert(response.data.message || '予約に失敗しました。');
+                // サーバーからのエラーメッセージを設定
+                setErrorMessage(response.data.message || '予約に失敗しました。');
+                setCurrentStep('error'); // エラーステップに遷移
             }
         } catch (error) {
-            alert("サーバーエラーにより予約の作成に失敗しました。");
+            // サーバーエラーのメッセージを設定
+            setErrorMessage(error.response?.data?.message || "サーバーエラーにより予約の作成に失敗しました。");
             console.error("予約の作成に失敗しました:", error);
+            setCurrentStep('error'); // エラーステップに遷移
         } finally {
             setIsSubmitting(false);  // 処理が完了したらボタンを再有効化
         }
     };
 
     const handleBack = () => {
-        if (currentStep > 1) {
+        if (currentStep > 1 && currentStep !== 'error') {
             setCurrentStep(currentStep - 1);
         }
     };
@@ -72,7 +77,7 @@ const ReservationPage = () => {
     return (
         <div className="reservation-page">
             <ProgressIndicator currentStep={currentStep} steps={steps} />
-            {currentStep > 1 && currentStep !== '5' && (
+            {currentStep > 1 && currentStep !== '5' && currentStep !== 'error' && (
                 <button onClick={handleBack} className="back-button">
                     ＜ 戻る
                 </button>
@@ -104,6 +109,13 @@ const ReservationPage = () => {
                         <p>予約ID: <strong>{reservationId}</strong></p>
                     )}
                     <button onClick={() => setCurrentStep(1)}>ホームへ戻る</button>
+                </div>
+            )}
+            {currentStep === 'error' && (
+                <div className="reservation-error">
+                    <h2>予約に失敗しました</h2>
+                    <p>{errorMessage}</p>
+                    <button onClick={() => setCurrentStep(1)}>再試行する</button>
                 </div>
             )}
         </div>

@@ -1,6 +1,6 @@
 const db = require('./db'); // データベース接続
 
-// 予約番号用ランダム3文字の英数字生成関数
+// ランダム3文字の英数字生成関数
 const generateRandomCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -15,6 +15,44 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
+
+        // 現在の予約組数と人数を確認（行ロックをかける）
+        const [currentReservations] = await connection.query(`
+            SELECT COUNT(id) AS current_groups, IFNULL(SUM(group_size), 0) AS current_people
+            FROM reservations
+            WHERE slot_id = ?
+            FOR UPDATE
+        `, [slot_id]);
+
+        const currentGroups = parseInt(currentReservations[0]?.current_groups || 0);
+        const currentPeople = parseInt(currentReservations[0]?.current_people || 0);
+
+        // スロットの最大組数と最大人数を取得
+        const [slotInfo] = await connection.query(`
+            SELECT max_groups, max_people
+            FROM reservation_patterns
+            WHERE id = (SELECT pattern_id FROM assigned_slots WHERE id = ?)
+        `, [slot_id]);
+
+        if (!slotInfo[0]) {
+            console.log("slotInfo[0] is undefined");
+            await connection.rollback();
+            return { success: false, message: "予約枠の情報が取得できませんでした。" };
+        }
+
+        const { max_groups, max_people } = slotInfo[0];
+
+        // 満員チェック
+        if (max_groups && currentGroups >= max_groups) {
+            console.log("最大組数に達しているため予約を拒否");
+            await connection.rollback();
+            return { success: false, message: "この予約枠は満員です (最大組数に達しました)" };
+        }
+        if (!max_groups && max_people && (currentPeople + group_size > max_people)) {
+            console.log("最大人数に達しているため予約を拒否");
+            await connection.rollback();
+            return { success: false, message: "この予約枠は満員です (最大人数に達しました)" };
+        }
 
         // 制限内であれば予約を挿入
         const [result] = await connection.query(`
@@ -32,6 +70,8 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
         `, [reservationNumber, reservationId]);
 
         await connection.commit();
+
+        console.log("予約が正常に作成されました");
 
         return {
             success: true,
@@ -51,34 +91,6 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
         throw error;
     } finally {
         connection.release();
-    }
-};
-
-
-// すべての予約情報を取得
-exports.getAllReservations = async () => {
-    try {
-        const [reservations] = await db.query(`
-            SELECT 
-                reservations.id,
-                reservations.reservation_number,
-                reservations.customer_name,
-                reservations.phone_number,
-                reservations.email,
-                reservations.group_size,
-                reservations.status,
-                reservations.created_at,
-                assigned_slots.date AS reservation_date,
-                reservation_patterns.start_time,
-                reservation_patterns.end_time
-            FROM reservations
-            JOIN assigned_slots ON reservations.slot_id = assigned_slots.id
-            JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
-        `);
-        return reservations;
-    } catch (error) {
-        console.error("すべての予約情報の取得に失敗しました:", error);
-        throw error;
     }
 };
 
