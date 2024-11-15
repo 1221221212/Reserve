@@ -81,7 +81,6 @@ exports.getFilteredReservations = async (req, res) => {
         // 各予約情報の日付を整形
         const formattedReservations = reservations.map((reservation) => ({
             ...reservation,
-            created_at: DateUtil.utcToJstDate(reservation.created_at),
             reservation_date: DateUtil.utcToJstDate(reservation.reservation_date),
             start_time: DateUtil.removeSecond(reservation.start_time),
             end_time: DateUtil.removeSecond(reservation.end_time),
@@ -91,5 +90,30 @@ exports.getFilteredReservations = async (req, res) => {
     } catch (error) {
         console.error("フィルターされた予約情報の取得に失敗しました:", error);
         res.status(500).json({ message: "予約情報の取得に失敗しました", error: error.message });
+    }
+};
+
+exports.getReservationDetail = async (req, res) => {
+    try {
+        const reservationId = req.params.id;
+        const reservation = await reservationModel.getReservationDetail(reservationId);
+
+        if (!reservation) {
+            return res.status(404).json({ message: "予約が見つかりませんでした" });
+        }
+
+        // 日付と時間をフォーマットする
+        const formattedReservation = {
+            ...reservation,
+            created_at: DateUtil.utcToJstDate(reservation.created_at),
+            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date),
+            start_time: DateUtil.removeSecond(reservation.start_time),
+            end_time: DateUtil.removeSecond(reservation.end_time),
+        };
+
+        res.status(200).json(formattedReservation);
+    } catch (error) {
+        console.error("予約詳細の取得に失敗しました:", error);
+        res.status(500).json({ message: "予約の取得に失敗しました", error: error.message });
     }
 };

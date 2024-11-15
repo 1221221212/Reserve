@@ -131,11 +131,7 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
                 reservations.id,
                 reservations.reservation_number,
                 reservations.customer_name,
-                reservations.phone_number,
-                reservations.email,
                 reservations.group_size,
-                reservations.status,
-                reservations.created_at,
                 assigned_slots.date AS reservation_date,
                 reservation_patterns.start_time,
                 reservation_patterns.end_time
@@ -167,6 +163,35 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
         return reservations;
     } catch (error) {
         console.error("条件に基づく予約情報の取得に失敗しました:", error);
+        throw error;
+    }
+};
+
+
+exports.getReservationDetail = async (id) => {
+    try {
+        const [reservations] = await db.query(`
+            SELECT 
+                reservations.id,
+                reservations.reservation_number,
+                reservations.customer_name,
+                reservations.phone_number,
+                reservations.email,
+                reservations.group_size,
+                reservations.status,
+                reservations.created_at,
+                assigned_slots.date AS reservation_date,
+                reservation_patterns.start_time,
+                reservation_patterns.end_time
+            FROM reservations
+            JOIN assigned_slots ON reservations.slot_id = assigned_slots.id
+            JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
+            WHERE reservations.id = ?
+        `, [id]);
+
+        return reservations[0]; // 1件だけ返す
+    } catch (error) {
+        console.error("予約IDでの予約情報の取得に失敗しました:", error);
         throw error;
     }
 };

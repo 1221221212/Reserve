@@ -5,6 +5,7 @@ import AdminNav from '../components/AdminNav';
 import SlotManagementPage from './SlotManagementPage';
 import SlotCreationPage from './SlotCreationPage';
 import ReservationManagementPage from './ReservationManagementPage';
+import ReservationDetailPage from './ReservationDetailPage';
 import PatternManagementPage from './PatternManagementPage';
 import PatternCreationPage from './PatternCreationPage';
 import SettingsPage from './SettingsPage';
@@ -49,6 +50,7 @@ const AdminPage = () => {
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
+                    <Route path="reservations/:id" element={<ReservationDetailPage />} /> 
                     <Route path="patterns" element={<PatternManagementPage />} />
                     <Route path="patterns/create" element={<PatternCreationPage />} />
                     <Route path="settings" element={<SettingsPage />} />

@@ -6,21 +6,4 @@
         @extend .table;
     }
 
-    .edit-button, .delete-button {
-        background-color: #ffc107;
-        border: none;
-        padding: 5px 10px;
-        color: #333;
-        border-radius: 5px;
-        cursor: pointer;
-
-        &.delete-button {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        &:hover {
-            filter: brightness(90%);
-        }
-    }
 }
