@@ -3,13 +3,15 @@ const db = require('./db');
 
 // 設定情報を取得
 exports.getSettings = async () => {
-    const [rows] = await db.query("SELECT settings_data FROM Settings WHERE id = 1");
+    const [rows] = await db.query("SELECT info_settings, reservation_settings FROM Settings WHERE id = 1");
 
     if (rows.length) {
         try {
-            return typeof rows[0].settings_data === 'string'
-                ? JSON.parse(rows[0].settings_data)
-                : rows[0].settings_data;
+            // info_settings と reservation_settings がすでに JSON オブジェクトならそのまま返す
+            const infoSettings = typeof rows[0].info_settings === 'string' ? JSON.parse(rows[0].info_settings) : rows[0].info_settings;
+            const reservationSettings = typeof rows[0].reservation_settings === 'string' ? JSON.parse(rows[0].reservation_settings) : rows[0].reservation_settings;
+
+            return { infoSettings, reservationSettings };
         } catch (error) {
             console.error("設定情報のJSON解析に失敗しました:", error);
             throw error;
@@ -19,10 +21,22 @@ exports.getSettings = async () => {
 };
 
 // 設定情報を保存
-exports.saveSettings = async (settingsData) => {
-    const jsonData = JSON.stringify(settingsData);
-    await db.query(
-        "INSERT INTO Settings (id, settings_data) VALUES (1, ?) ON DUPLICATE KEY UPDATE settings_data = ?",
-        [jsonData, jsonData]
-    );
+exports.saveSettings = async (infoSettings, reservationSettings) => {
+    const infoSettingsJson = JSON.stringify(infoSettings);  // InfoSettingsをJSON文字列化
+    const reservationSettingsJson = JSON.stringify(reservationSettings);  // ReservationSettingsをJSON文字列化
+
+    try {
+        const result = await db.query(
+            `
+            INSERT INTO Settings (id, info_settings, reservation_settings) 
+            VALUES (1, ?, ?)
+            ON DUPLICATE KEY UPDATE info_settings = VALUES(info_settings), reservation_settings = VALUES(reservation_settings)
+            `,
+            [infoSettingsJson, reservationSettingsJson]  // 個別に情報を送信
+        );
+        console.log("Settings saved:", result);
+    } catch (error) {
+        console.error("Error executing query:", error);
+        throw error;
+    }
 };

@@ -6,30 +6,3 @@
         @extend .table;
     }
 }
-
-.reservation-detail {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-.reservation-field {
-    display: flex;
-    margin: 10px 0;
-}
-
-.label {
-    width: 120px;
-    font-weight: bold;
-}
-
-.value {
-    flex: 1;
-    padding-left: 10px;
-}
-
-.edit-button:hover {
-    background-color: #0056b3;
-}

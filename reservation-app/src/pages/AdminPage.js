@@ -1,4 +1,3 @@
-// src/pages/AdminPage.js
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import AdminNav from '../components/AdminNav';
@@ -9,6 +8,8 @@ import ReservationDetailPage from './ReservationDetailPage';
 import PatternManagementPage from './PatternManagementPage';
 import PatternCreationPage from './PatternCreationPage';
 import SettingsPage from './SettingsPage';
+import InfoSettings from '../components/InfoSettings';
+import ReservationSettings from '../components/ReservationSettings';
 import { isTokenExpired, refreshAccessToken } from '../utils/authUtils';
 import "../styles/AdminCommon.scss";
 
@@ -24,21 +25,23 @@ const AdminPage = () => {
                 if (!newToken) {
                     localStorage.removeItem('token'); // トークン更新に失敗した場合、削除してリダイレクト
                     setIsAuthenticated(false);
-                    navigate('/admin/login');
+                    navigate('/login'); // ログインページにリダイレクト
                 } else {
                     setIsAuthenticated(true);
                 }
             }
         };
 
-        const intervalId = setInterval(checkAndRefreshToken, 60 * 1000); // 1分ごとにチェック
         checkAndRefreshToken(); // 初回実行
+
+        // トークンのリフレッシュ確認を定期的に実行
+        const intervalId = setInterval(checkAndRefreshToken, 60 * 1000); // 1分ごとにチェック
 
         return () => clearInterval(intervalId); // クリーンアップ
     }, [navigate]);
 
     if (!isAuthenticated) {
-        return <Navigate to="/admin/login" />;
+        return <Navigate to="/login" />;
     }
 
     return (
@@ -50,10 +53,13 @@ const AdminPage = () => {
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
-                    <Route path="reservations/:id" element={<ReservationDetailPage />} /> 
+                    <Route path="reservations/:id" element={<ReservationDetailPage />} />
                     <Route path="patterns" element={<PatternManagementPage />} />
                     <Route path="patterns/create" element={<PatternCreationPage />} />
-                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="settings" element={<SettingsPage />}>
+                        <Route path="info" element={<InfoSettings />} />
+                        <Route path="reservation" element={<ReservationSettings />} />
+                    </Route>
                 </Routes>
             </div>
         </div>

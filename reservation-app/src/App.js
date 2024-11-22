@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import ReservationPage from './pages/ReservationPage';
@@ -10,10 +9,9 @@ const App = () => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {
-        // トークンの変化を監視
         const savedToken = localStorage.getItem('token');
-        if (savedToken) {
-            setToken(savedToken);
+        if (savedToken && savedToken !== token) {
+            setToken(savedToken); // トークンが変わったときに状態を更新
         }
     }, [token]); // token の変更を依存に追加
 

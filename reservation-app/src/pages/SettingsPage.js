@@ -1,166 +1,177 @@
-// src/pages/SettingsPage.js
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import "../styles/SettingsPage.scss";
+import InfoSettings from '../components/InfoSettings';
+import ReservationSettings from '../components/ReservationSettings';
 
 const SettingsPage = () => {
+    const location = useLocation();
     const [storeName, setStoreName] = useState('');
-    const [storeLogo, setStoreLogo] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
+    const [startMethod, setStartMethod] = useState('interval');
     const [startValue, setStartValue] = useState('');
-    const [startUnit, setStartUnit] = useState('日');
+    const [startUnit, setStartUnit] = useState('day');
+    const [releaseIntervalUnit, setReleaseIntervalUnit] = useState('week');
+    const [weekReleaseTiming, setWeekReleaseTiming] = useState({ weeksBefore: 1, day: 'sunday', startingDay: 'sunday' });
+    const [monthReleaseTiming, setMonthReleaseTiming] = useState({ monthsBefore: 1, date: 1, });
     const [endValue, setEndValue] = useState('');
-    const [endUnit, setEndUnit] = useState('日');
+    const [endUnit, setEndUnit] = useState('day');
+    const [isSameDay, setIsSameDay] = useState(false);
+    const [endHours, setEndHours] = useState('');
+    const [endMinutes, setEndMinutes] = useState('');
 
-    // 設定情報をサーバーから取得し、フィールドにセット
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/settings', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setStoreName(data.storeName || '');
-                    setPhoneNumber(data.phoneNumber || '');
-                    setAddress(data.address || '');
-                    setStartValue(data.reservationSettings.start.value || '');
-                    setStartUnit(data.reservationSettings.start.unit || '日');
-                    setEndValue(data.reservationSettings.end.value || '');
-                    setEndUnit(data.reservationSettings.end.unit || '日');
-                } else {
-                    console.error("設定情報の取得に失敗しました");
-                }
-            } catch (error) {
-                console.error("設定情報の取得に失敗しました:", error);
+    // 設定情報を取得する関数
+    const fetchSettings = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error("Authentication token not found");
+                return;
             }
-        };
 
+            const response = await fetch('/api/settings', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const { infoSettings, reservationSettings } = data;
+
+                // 取得した設定情報をフォームにセット
+                setStoreName(infoSettings.storeName);
+                setPhoneNumber(infoSettings.phoneNumber);
+                setAddress(infoSettings.address);
+
+                if (reservationSettings.start) {
+                    setStartMethod(reservationSettings.start.method);
+                    if (reservationSettings.start.method === 'interval') {
+                        setStartValue(reservationSettings.start.value);
+                        setStartUnit(reservationSettings.start.unit);
+                    } else if (reservationSettings.start.releaseInterval) {
+                        setReleaseIntervalUnit(reservationSettings.start.releaseInterval.unit);
+                        setWeekReleaseTiming(reservationSettings.start.releaseInterval.weekReleaseTiming || {});
+                        setMonthReleaseTiming(reservationSettings.start.releaseInterval.monthReleaseTiming || {});
+                    }
+                }
+
+                if (reservationSettings.end) {
+                    setIsSameDay(reservationSettings.end.isSameDay);
+                    if (reservationSettings.end.isSameDay) {
+                        setEndHours(reservationSettings.end.hoursBefore);
+                        setEndMinutes(reservationSettings.end.minutesBefore);
+                    } else {
+                        setEndValue(reservationSettings.end.value);
+                        setEndUnit(reservationSettings.end.unit);
+                    }
+                }
+            } else {
+                console.error("Failed to fetch settings:", response.status);
+            }
+        } catch (error) {
+            console.error("Error fetching settings:", error);
+        }
+    };
+
+    // コンポーネントがマウントされた時に設定情報を取得
+    useEffect(() => {
         fetchSettings();
     }, []);
 
-    const handleLogoChange = (event) => {
-        setStoreLogo(event.target.files[0]);
-    };
+    // 送信処理用の関数を定義
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+        const reservationSettings = {
+            start: {
+                method: startMethod,
+                ...(startMethod === 'interval'
+                    ? { value: startValue, unit: startUnit }
+                    : { releaseInterval: { unit: releaseIntervalUnit, weekReleaseTiming: releaseIntervalUnit === 'week' ? weekReleaseTiming : undefined, monthReleaseTiming: releaseIntervalUnit === 'month' ? monthReleaseTiming : undefined } }),
+            },
+            end: isSameDay
+                ? { isSameDay, hoursBefore: endHours, minutesBefore: endMinutes }
+                : { isSameDay, value: endValue, unit: endUnit },
+        };
 
-        const settingsData = {
+        const infoSettings = {
             storeName,
             phoneNumber,
             address,
-            startValue,
-            startUnit,
-            endValue,
-            endUnit,
         };
 
         try {
             const token = localStorage.getItem('token');
+            if (!token) {
+                console.error("Authentication token not found");
+                return;
+            }
+
             const response = await fetch('/api/settings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(settingsData),
+                body: JSON.stringify({
+                    infoSettings,  // InfoSettings を送信
+                    reservationSettings,  // ReservationSettings を送信
+                }),
             });
-            const result = await response.json();
+
             if (response.ok) {
-                console.log(result.message);
+                console.log("Settings saved successfully");
             } else {
-                console.error(result.message);
+                console.error("Failed to save settings:", response.status);
             }
         } catch (error) {
-            console.error("設定情報の保存に失敗しました:", error);
+            console.error("Error saving settings:", error);
         }
     };
 
     return (
         <div className="settings-page">
             <h1>設定画面</h1>
-            <form onSubmit={handleSubmit}>
-                {/* 基本情報セクション */}
-                <section className="basic-info-section">
-                    <h2>基本情報</h2>
-                    <div className="form-row">
-                        <label>店舗名:</label>
-                        <input
-                            type="text"
-                            value={storeName}
-                            onChange={(e) => setStoreName(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>店舗ロゴ:</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleLogoChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>電話番号:</label>
-                        <input
-                            type="text"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label>住所:</label>
-                        <textarea
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                        ></textarea>
-                    </div>
-                </section>
-
-                {/* 予約設定セクション */}
-                <section className="reservation-settings-section">
-                    <h2>予約設定</h2>
-                    <div className="form-row">
-                        <label>受付開始:</label>
-                        <input
-                            type="number"
-                            value={startValue}
-                            onChange={(e) => setStartValue(e.target.value)}
-                            placeholder="数値を入力"
-                        />
-                        <select
-                            value={startUnit}
-                            onChange={(e) => setStartUnit(e.target.value)}
-                        >
-                            <option value="日">日</option>
-                            <option value="週">週</option>
-                            <option value="月">月</option>
-                            <option value="年">年</option>
-                        </select>
-                    </div>
-                    <div className="form-row">
-                        <label>受付終了:</label>
-                        <input
-                            type="number"
-                            value={endValue}
-                            onChange={(e) => setEndValue(e.target.value)}
-                            placeholder="数値を入力"
-                        />
-                        <select
-                            value={endUnit}
-                            onChange={(e) => setEndUnit(e.target.value)}
-                        >
-                            <option value="日">日</option>
-                            <option value="週">週</option>
-                            <option value="月">月</option>
-                            <option value="年">年</option>
-                        </select>
-                    </div>
-                </section>
-
-                <button type="submit">保存</button>
-            </form>
+            {location.pathname === '/admin/settings/info' && (
+                <InfoSettings
+                    storeName={storeName}
+                    phoneNumber={phoneNumber}
+                    address={address}
+                    setStoreName={setStoreName}
+                    setPhoneNumber={setPhoneNumber}
+                    setAddress={setAddress}
+                />
+            )}
+            {location.pathname === '/admin/settings/reservation' && (
+                <ReservationSettings
+                    startMethod={startMethod}
+                    setStartMethod={setStartMethod}
+                    startValue={startValue}
+                    setStartValue={setStartValue}
+                    startUnit={startUnit}
+                    setStartUnit={setStartUnit}
+                    releaseIntervalUnit={releaseIntervalUnit}
+                    setReleaseIntervalUnit={setReleaseIntervalUnit}
+                    weekReleaseTiming={weekReleaseTiming}
+                    setWeekReleaseTiming={setWeekReleaseTiming}
+                    monthReleaseTiming={monthReleaseTiming}
+                    setMonthReleaseTiming={setMonthReleaseTiming}
+                    isSameDay={isSameDay}
+                    setIsSameDay={setIsSameDay}
+                    endHours={endHours}
+                    setEndHours={setEndHours}
+                    endMinutes={endMinutes}
+                    setEndMinutes={setEndMinutes}
+                    endValue={endValue}
+                    setEndValue={setEndValue}
+                    endUnit={endUnit}
+                    setEndUnit={setEndUnit}
+                />
+            )}
+            <button onClick={handleSubmit}>保存</button>
         </div>
     );
 };
