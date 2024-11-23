@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { removeSecond } from '../utils/dateUtils';
 
-const SlotSelection = ({ selectedDate, onSlotSelect }) => {
+const SlotSelection = ({ selectedDate, availableSince, availableUntil, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);
     const [availabilityInfo, setAvailabilityInfo] = useState({});
 
@@ -11,7 +11,11 @@ const SlotSelection = ({ selectedDate, onSlotSelect }) => {
         const fetchSlots = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/day`, {
-                    params: { date: selectedDate }
+                    params: {
+                        date: selectedDate,
+                        available_since: availableSince,
+                        available_until: availableUntil,
+                    }
                 });
                 setSlots(response.data);
             } catch (error) {

@@ -28,13 +28,15 @@ exports.saveSettings = async (req, res) => {
 
 exports.getPublicSettings = async (req, res) => {
     try {
+        // 設定情報を取得
         const settings = await settingsModel.getSettings();
         if (!settings) {
             return res.status(404).json({ message: "設定情報が見つかりません" });
         }
 
+        // 必要な情報のみ公開
         const publicSettings = {
-            reservationSettings: settings.reservationSettings,
+            reservationSettings: settings.reservationSettings, // 予約関連設定を公開
         };
 
         res.status(200).json(publicSettings);

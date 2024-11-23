@@ -10,16 +10,16 @@ const SettingsPage = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
     const [startMethod, setStartMethod] = useState('interval');
-    const [startValue, setStartValue] = useState('');
-    const [startUnit, setStartUnit] = useState('day');
+    const [startValue, setStartValue] = useState(1);
+    const [startUnit, setStartUnit] = useState('month');
     const [releaseIntervalUnit, setReleaseIntervalUnit] = useState('week');
     const [weekReleaseTiming, setWeekReleaseTiming] = useState({ weeksBefore: 1, day: 'sunday', startingDay: 'sunday' });
     const [monthReleaseTiming, setMonthReleaseTiming] = useState({ monthsBefore: 1, date: 1, });
-    const [endValue, setEndValue] = useState('');
+    const [endValue, setEndValue] = useState(1);
     const [endUnit, setEndUnit] = useState('day');
     const [isSameDay, setIsSameDay] = useState(false);
-    const [endHours, setEndHours] = useState('');
-    const [endMinutes, setEndMinutes] = useState('');
+    const [endHours, setEndHours] = useState(0);
+    const [endMinutes, setEndMinutes] = useState(0);
 
     // 設定情報を取得する関数
     const fetchSettings = async () => {
@@ -90,7 +90,13 @@ const SettingsPage = () => {
                 method: startMethod,
                 ...(startMethod === 'interval'
                     ? { value: startValue, unit: startUnit }
-                    : { releaseInterval: { unit: releaseIntervalUnit, weekReleaseTiming: releaseIntervalUnit === 'week' ? weekReleaseTiming : undefined, monthReleaseTiming: releaseIntervalUnit === 'month' ? monthReleaseTiming : undefined } }),
+                    : {
+                        releaseInterval: {
+                            unit: releaseIntervalUnit,
+                            ...(releaseIntervalUnit === 'week' && { weekReleaseTiming }),
+                            ...(releaseIntervalUnit === 'month' && { monthReleaseTiming }),
+                        },
+                    }),
             },
             end: isSameDay
                 ? { isSameDay, hoursBefore: endHours, minutesBefore: endMinutes }
@@ -102,6 +108,8 @@ const SettingsPage = () => {
             phoneNumber,
             address,
         };
+
+        console.log("Sending reservationSettings:", reservationSettings);
 
         try {
             const token = localStorage.getItem('token');
@@ -117,20 +125,22 @@ const SettingsPage = () => {
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    infoSettings,  // InfoSettings を送信
-                    reservationSettings,  // ReservationSettings を送信
+                    infoSettings,
+                    reservationSettings,
                 }),
             });
 
             if (response.ok) {
                 console.log("Settings saved successfully");
             } else {
-                console.error("Failed to save settings:", response.status);
+                const errorData = await response.json();
+                console.error("Failed to save settings:", response.status, errorData);
             }
         } catch (error) {
             console.error("Error saving settings:", error);
         }
     };
+
 
     return (
         <div className="settings-page">

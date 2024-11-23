@@ -3,12 +3,11 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import '../styles/calendar.scss';
 
-const Calendar = ({ onDateSelect }) => {
+const Calendar = ({ onDateSelect, availableSince, availableUntil }) => {
     const [dates, setDates] = useState([]);
     const [reservations, setReservations] = useState([]);
-    const [displayedMonth, setDisplayedMonth] = useState(moment().tz('Asia/Tokyo')); // 表示する月の状態
+    const [displayedMonth, setDisplayedMonth] = useState(moment().tz('Asia/Tokyo'));
 
-    // カレンダーの初期化処理
     const initializeCalendar = () => {
         const monthDates = [];
         const year = displayedMonth.year();
@@ -18,7 +17,7 @@ const Calendar = ({ onDateSelect }) => {
         const daysInMonth = displayedMonth.daysInMonth();
 
         for (let i = 0; i < firstDay; i++) {
-            monthDates.push(null); // 空白日を追加
+            monthDates.push(null);
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
@@ -28,7 +27,6 @@ const Calendar = ({ onDateSelect }) => {
         setDates(monthDates);
     };
 
-    // 前月と次月に移動する関数
     const handlePrevMonth = () => {
         setDisplayedMonth(displayedMonth.clone().subtract(1, 'months'));
     };
@@ -37,7 +35,6 @@ const Calendar = ({ onDateSelect }) => {
         setDisplayedMonth(displayedMonth.clone().add(1, 'months'));
     };
 
-    // データ取得とカレンダー初期化
     useEffect(() => {
         initializeCalendar();
         const year = displayedMonth.year();
@@ -46,7 +43,12 @@ const Calendar = ({ onDateSelect }) => {
         const fetchReservationsForMonth = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/month`, {
-                    params: { year, month }
+                    params: {
+                        year,
+                        month,
+                        available_since: availableSince,
+                        available_until: availableUntil,
+                    },
                 });
                 setReservations(response.data);
             } catch (error) {
@@ -55,9 +57,8 @@ const Calendar = ({ onDateSelect }) => {
         };
 
         fetchReservationsForMonth();
-    }, [displayedMonth]); // displayedMonthが変更されるたびに再取得
+    }, [displayedMonth, availableSince, availableUntil]);
 
-    // 日付ごとの○×判定
     const getReservationStatus = (date) => {
         if (!date) return '';
         const reservation = reservations.find(

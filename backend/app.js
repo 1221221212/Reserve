@@ -13,7 +13,7 @@ const authRoutes = require('./routes/authRoutes');
 const patternRoutes = require('./routes/patternRoutes');
 const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
 const holidayRoutes = require('./routes/holidayRoutes');
-const settingsRoutes = require('./routes/settingsRoutes'); // 設定ルート
+const settingsRoutes = require('./routes/settingsRoutes');
 
 app.use('/api/auth', authRoutes); // 認証関連
 

@@ -1,5 +1,3 @@
-/.DS_Store
-node_modules/
 
 # Node.js関連
 node_modules/
@@ -37,4 +35,3 @@ cypress/screenshots/
 *.tmp
 *.bak
 *.swp
-backend/.env

@@ -1,41 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { reservationPeriod } from '../utils/dateUtils';
-import moment from 'moment';
 
-const ReservationSettings = () => {
-    // 初期値の設定
-    const [startMethod, setStartMethod] = useState('interval');
-    const [startValue, setStartValue] = useState(1);
-    const [startUnit, setStartUnit] = useState('month');
-    const [releaseIntervalUnit, setReleaseIntervalUnit] = useState('week');
-
-    const [weekReleaseTiming, setWeekReleaseTiming] = useState({
-        weeksBefore: 1,
-        day: 'sunday',
-        startingDay: 'sunday',
-    });
-
-    const [monthReleaseTiming, setMonthReleaseTiming] = useState({
-        monthsBefore: 1,
-        date: 1,
-    });
-
-    const [isSameDay, setIsSameDay] = useState(false);
-    const [endHours, setEndHours] = useState(0);
-    const [endMinutes, setEndMinutes] = useState(0);
-    const [endValue, setEndValue] = useState(1);
-    const [endUnit, setEndUnit] = useState('day');
-
-    // 新たに追加する状態変数
+const ReservationSettings = ({
+    startMethod,
+    setStartMethod,
+    startValue,
+    setStartValue,
+    startUnit,
+    setStartUnit,
+    releaseIntervalUnit,
+    setReleaseIntervalUnit,
+    weekReleaseTiming,
+    setWeekReleaseTiming,
+    monthReleaseTiming,
+    setMonthReleaseTiming,
+    isSameDay,
+    setIsSameDay,
+    endHours,
+    setEndHours,
+    endMinutes,
+    setEndMinutes,
+    endValue,
+    setEndValue,
+    endUnit,
+    setEndUnit,
+}) => {
     const [availablePeriod, setAvailablePeriod] = useState({
         available_since: null,
         available_until: null,
         next_release_day: null,
     });
-
     const [errorMessage, setErrorMessage] = useState('');
 
-    // useEffectで予約設定を更新
+    // `availablePeriod` の計算
     useEffect(() => {
         const reservationSettings = {
             start: {
@@ -55,16 +52,21 @@ const ReservationSettings = () => {
                 : { isSameDay, value: endValue, unit: endUnit },
         };
 
-        const result = reservationPeriod(reservationSettings);
+        try {
+            const result = reservationPeriod(reservationSettings);
 
-        // 受付期間の妥当性チェック
-        if (result.available_since.isAfter(result.available_until)) {
-            setErrorMessage('予約できる期間がありません');
-        } else {
-            setErrorMessage('');
+            // 受付期間の妥当性チェック
+            if (result.available_since.isAfter(result.available_until)) {
+                setErrorMessage('予約できる期間がありません');
+                setAvailablePeriod({ available_since: null, available_until: null, next_release_day: null });
+            } else {
+                setErrorMessage('');
+                setAvailablePeriod(result);
+            }
+        } catch (error) {
+            setErrorMessage('受付期間の計算に失敗しました');
+            console.error('Error calculating available period:', error);
         }
-
-        setAvailablePeriod(result);
     }, [
         startMethod,
         startValue,
@@ -97,7 +99,7 @@ const ReservationSettings = () => {
                 </div>
             )}
 
-            {/* NextReleaseDay の表示（開始方法が 'batch' の場合のみ） */}
+            {/* 次の開放日表示（必要な場合のみ） */}
             {startMethod === 'batch' && availablePeriod.next_release_day && (
                 <div className="next-release-day">
                     <p>次の受付開始日:</p>
@@ -117,7 +119,12 @@ const ReservationSettings = () => {
             {startMethod === 'interval' && (
                 <div className="form-row">
                     <label>受付開始:</label>
-                    <input type="number" value={startValue} onChange={(e) => setStartValue(e.target.value)} />
+                    <input
+                        type="number"
+                        value={startValue}
+                        min='1'
+                        onChange={(e) => setStartValue(Number(e.target.value))}
+                    />
                     <select value={startUnit} onChange={(e) => setStartUnit(e.target.value)}>
                         <option value="day">日</option>
                         <option value="week">週</option>
@@ -131,7 +138,10 @@ const ReservationSettings = () => {
                 <>
                     <div className="form-row">
                         <label>開放間隔:</label>
-                        <select value={releaseIntervalUnit} onChange={(e) => setReleaseIntervalUnit(e.target.value)}>
+                        <select
+                            value={releaseIntervalUnit}
+                            onChange={(e) => setReleaseIntervalUnit(e.target.value)}
+                        >
                             <option value="week">一週間ごと</option>
                             <option value="month">一ヶ月ごと</option>
                         </select>
@@ -144,10 +154,11 @@ const ReservationSettings = () => {
                                 <input
                                     type="number"
                                     value={weekReleaseTiming.weeksBefore}
+                                    min='1'
                                     onChange={(e) =>
                                         setWeekReleaseTiming({
                                             ...weekReleaseTiming,
-                                            weeksBefore: parseInt(e.target.value, 10),
+                                            weeksBefore: Number(e.target.value),
                                         })
                                     }
                                 />
@@ -194,13 +205,55 @@ const ReservationSettings = () => {
                             </div>
                         </>
                     )}
+
+                    {releaseIntervalUnit === 'month' && (
+                        <>
+                            <div className="form-row">
+                                <label>何ヶ月前から受付を開始しますか:</label>
+                                <input
+                                    type="number"
+                                    value={monthReleaseTiming.monthsBefore}
+                                    min='1'
+                                    onChange={(e) =>
+                                        setMonthReleaseTiming({
+                                            ...monthReleaseTiming,
+                                            monthsBefore: Number(e.target.value),
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="form-row">
+                                <label>受付を開始する日:</label>
+                                <select
+                                    value={monthReleaseTiming.date}
+                                    onChange={(e) =>
+                                        setMonthReleaseTiming({
+                                            ...monthReleaseTiming,
+                                            date: e.target.value === "end" ? "end" : Number(e.target.value),
+                                        })
+                                    }
+                                >
+                                    {Array.from({ length: 28 }, (_, i) => (
+                                        <option key={i + 1} value={i + 1}>
+                                            {i + 1}日
+                                        </option>
+                                    ))}
+                                    <option value="end">月末</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
 
             {/* ENDセクション */}
             <div className="form-row">
                 <label>当日受付:</label>
-                <input type="checkbox" checked={isSameDay} onChange={(e) => setIsSameDay(e.target.checked)} />
+                <input
+                    type="checkbox"
+                    checked={isSameDay}
+                    onChange={(e) => setIsSameDay(e.target.checked)}
+                />
             </div>
 
             {isSameDay ? (
@@ -209,14 +262,14 @@ const ReservationSettings = () => {
                     <input
                         type="number"
                         value={endHours}
-                        onChange={(e) => setEndHours(parseInt(e.target.value, 10))}
+                        onChange={(e) => setEndHours(Number(e.target.value))}
                         min="0"
                     />
                     時間
                     <input
                         type="number"
                         value={endMinutes}
-                        onChange={(e) => setEndMinutes(parseInt(e.target.value, 10))}
+                        onChange={(e) => setEndMinutes(Number(e.target.value))}
                         min="0"
                         max="59"
                     />
@@ -228,7 +281,8 @@ const ReservationSettings = () => {
                     <input
                         type="number"
                         value={endValue}
-                        onChange={(e) => setEndValue(parseInt(e.target.value, 10))}
+                        min='1'
+                        onChange={(e) => setEndValue(Number(e.target.value))}
                     />
                     <select value={endUnit} onChange={(e) => setEndUnit(e.target.value)}>
                         <option value="day">日</option>

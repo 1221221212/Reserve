@@ -1,7 +1,6 @@
 const db = require("./db");
 
-// 月単位での予約枠の空き状況を取得
-exports.getMonthlyAvailability = async (year, month) => {
+exports.getMonthlyAvailability = async (year, month, availableSince, availableUntil) => {
     const query = `
         SELECT assigned_slots.date, 
                assigned_slots.pattern_id,
@@ -15,12 +14,14 @@ exports.getMonthlyAvailability = async (year, month) => {
         FROM assigned_slots
         LEFT JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
         LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
-        WHERE YEAR(assigned_slots.date) = ? AND MONTH(assigned_slots.date) = ?
+        WHERE YEAR(assigned_slots.date) = ? 
+          AND MONTH(assigned_slots.date) = ? 
+          AND assigned_slots.date BETWEEN ? AND ?
         GROUP BY assigned_slots.date, assigned_slots.pattern_id;
     `;
 
     try {
-        const [rows] = await db.query(query, [year, month]);
+        const [rows] = await db.query(query, [year, month, availableSince, availableUntil]);
         return rows;
     } catch (error) {
         console.error("月単位の空き状況取得に失敗しました:", error);
@@ -28,8 +29,7 @@ exports.getMonthlyAvailability = async (year, month) => {
     }
 };
 
-// 日単位での予約枠の空き状況を取得
-exports.getDailyAvailability = async (date) => {
+exports.getDailyAvailability = async (date, availableSince, availableUntil) => {
     const query = `
         SELECT assigned_slots.id, 
                assigned_slots.date, 
@@ -48,12 +48,13 @@ exports.getDailyAvailability = async (date) => {
         FROM assigned_slots
         LEFT JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
         LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
-        WHERE assigned_slots.date = ?
+        WHERE assigned_slots.date = ? 
+          AND assigned_slots.date BETWEEN ? AND ?
         GROUP BY assigned_slots.id, assigned_slots.date, assigned_slots.pattern_id;
     `;
 
     try {
-        const [rows] = await db.query(query, [date]);
+        const [rows] = await db.query(query, [date, availableSince, availableUntil]);
         return rows.map((row) => ({
             ...row,
             slot_time: `${row.start_time.slice(0, 5)} - ${row.end_time.slice(0, 5)}`,

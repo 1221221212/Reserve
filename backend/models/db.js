@@ -1,15 +1,15 @@
-const mysql = require('mysql2/promise'); // mysql2/promise を読み込み
+const mysql = require('mysql2/promise');
+require('dotenv').config(); // dotenvを読み込み
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'reservation_user', // ユーザー名
-    password: 'naonao',       // パスワード
-    database: 'reservation_app_db' // データベース名
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.getConnection()
-.then(() => console.log("データベース接続に成功しました"))
-.catch((error) => console.error("データベース接続に失敗しました:", error));
-
+    .then(() => console.log("データベース接続に成功しました"))
+    .catch((error) => console.error("データベース接続に失敗しました:", error));
 
 module.exports = db;

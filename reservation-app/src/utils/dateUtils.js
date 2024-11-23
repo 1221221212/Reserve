@@ -48,7 +48,6 @@ export const removeSecond = (timeString) => {
 export const reservationPeriod = (reservation_settings) => {
     // 現在の日付を取得
     const today = moment();
-    console.log(reservation_settings);
 
     // 初期化
     let available_since = today.clone();
@@ -118,18 +117,14 @@ export const reservationPeriod = (reservation_settings) => {
             }
 
             if (!isNaN(weeksBefore)) {
-                // 次のリリース日から (weeksBefore - 1) 週間後を計算
                 const baseDate = next_release_day.clone().add(weeksBefore - 1, 'week');
+                const startingDayIndex = moment().day(startingDay.toLowerCase()).day();
+                const daysDifference = (startingDayIndex - baseDate.day() + 7) % 7 || 7;
 
-                // StartingDay を取得し、Moment.jsの形式に変換
-                const startingDayIndex = moment().day(startingDay.toLowerCase()).day(); // 日曜日: 0, 月曜日: 1, ...
-
-                // baseDate から直近の StartingDay を計算
-                const daysDifference = (startingDayIndex - baseDate.day() + 7) % 7; // 差分を計算して次の曜日を求める
                 available_until = baseDate.clone().add(daysDifference, 'day').subtract(1, 'day');
             } else {
                 console.error("Invalid weeksBefore in WeekReleaseTiming:", weeksBefore);
-                available_until = today.clone(); // デフォルト値
+                available_until = today.clone();
             }
 
         } else {

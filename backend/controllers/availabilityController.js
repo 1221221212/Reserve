@@ -1,56 +1,76 @@
+const availabilityModel = require('../models/AvailabilityModel');
 const { utc } = require('moment-timezone');
-const availabilityModel = require('../models/availabilityModel');
 const { utcToJstDate } = require('../utils/dateUtils');
 
-// 月単位の空き状況を取得
 exports.getMonthlyAvailability = async (req, res) => {
     try {
-        const { year, month } = req.query;
+        const { year, month, available_since, available_until } = req.query;
 
-        if (!year || !month) {
-            return res.status(400).json({ message: "年と月が必要です" });
+        if (!year || !month || !available_since || !available_until) {
+            return res.status(400).json({ message: "年、月、開始日、終了日は必須です" });
         }
 
-        const availabilityData = await availabilityModel.getMonthlyAvailability(year, month);
+        const availabilityData = await availabilityModel.getMonthlyAvailability(
+            year,
+            month,
+            available_since,
+            available_until
+        );
+
         const dailyAvailability = {};
 
+        // スロットデータを日付単位にまとめる
         availabilityData.forEach((slot) => {
-            // 取得したUTCの日付をJSTに変換
             const date = utcToJstDate(slot.date);
             if (!dailyAvailability[date]) {
-                dailyAvailability[date] = { date, availability: '1' }; // 初期は「✕」
+                dailyAvailability[date] = {
+                    date,
+                    availability: "1", // 初期値は予約不可
+                    slots: [] // スロットリスト
+                };
             }
-            if (slot.availability === '0') { // availability が '0' の場合は「〇」
-                dailyAvailability[date].availability = '0';
+            // スロットを追加
+            dailyAvailability[date].slots.push({
+                id: slot.id,
+                pattern_id: slot.pattern_id,
+                start_time: slot.start_time,
+                end_time: slot.end_time,
+                availability: slot.availability
+            });
+
+            // 日付の空き状況を更新
+            if (slot.availability === "0") {
+                dailyAvailability[date].availability = "0"; // 少なくとも1つ空きがある
             }
         });
 
         res.status(200).json(Object.values(dailyAvailability));
     } catch (error) {
-        console.error('月単位の空き状況取得に失敗しました:', error);
-        res.status(500).json({ message: '月単位の空き状況取得に失敗しました', error });
+        console.error("月単位の空き状況取得に失敗しました:", error);
+        res.status(500).json({ message: "月単位の空き状況取得に失敗しました" });
     }
 };
 
-// 日単位の空き状況を取得
 exports.getDailyAvailability = async (req, res) => {
-    const { date } = req.query;
-
-    if (!date) {
-        return res.status(400).json({ message: "日付が必要です" });
-    }
-
     try {
-        const availability = await availabilityModel.getDailyAvailability(date);
-        const jstAvailability = availability.map(slot => ({
-            ...slot,
-            date: utcToJstDate(slot.date) // JSTに変換して日付を格納
-        }));
-        
-        res.status(200).json(jstAvailability);
+        const { date, available_since, available_until } = req.query;
+
+        // 入力バリデーション
+        if (!date || !available_since || !available_until) {
+            return res.status(400).json({ message: "日付、開始日、終了日は必須です" });
+        }
+
+        // モデルにデータを渡してアベイラビリティを取得
+        const availabilityData = await availabilityModel.getDailyAvailability(
+            date,
+            available_since,
+            available_until
+        );
+
+        res.status(200).json(availabilityData);
     } catch (error) {
-        console.error('日単位の空き状況取得に失敗しました:', error);
-        res.status(500).json({ message: '日単位の空き状況取得に失敗しました', error });
+        console.error("日単位のアベイラビリティ取得に失敗しました:", error);
+        res.status(500).json({ message: "アベイラビリティ取得に失敗しました" });
     }
 };
 
