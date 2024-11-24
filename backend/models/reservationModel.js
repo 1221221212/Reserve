@@ -11,7 +11,7 @@ const generateRandomCode = () => {
 };
 
 // トランザクションを使用した予約作成
-exports.createReservation = async ({ slot_id, customer_name, phone_number, email, group_size }) => {
+exports.createReservation = async ({ slot_id, customer_name, phone_number, email, group_size, comment }) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
@@ -56,9 +56,9 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
 
         // 制限内であれば予約を挿入
         const [result] = await connection.query(`
-            INSERT INTO reservations (slot_id, customer_name, phone_number, email, group_size)
-            VALUES (?, ?, ?, ?, ?)
-        `, [slot_id, customer_name, phone_number, email, group_size]);
+            INSERT INTO reservations (slot_id, customer_name, phone_number, email, group_size, comment)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [slot_id, customer_name, phone_number, email, group_size, comment]);
 
         const reservationId = result.insertId; // 自動生成された予約ID
         const randomCode = generateRandomCode(); // ランダムな3文字の英数字生成
@@ -83,6 +83,7 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
                 phone_number,
                 email,
                 group_size,
+                comment,
             },
         };
     } catch (error) {
@@ -105,6 +106,7 @@ exports.getReservationById = async (reservationId) => {
                 reservations.phone_number,
                 reservations.email,
                 reservations.group_size,
+                reservations.comment,
                 reservations.status,
                 reservations.created_at,
                 assigned_slots.date AS reservation_date,
@@ -178,6 +180,7 @@ exports.getReservationDetail = async (id) => {
                 reservations.phone_number,
                 reservations.email,
                 reservations.group_size,
+                reservations.comment,
                 reservations.status,
                 reservations.created_at,
                 assigned_slots.date AS reservation_date,

@@ -147,7 +147,8 @@ button {
 
 // 入力フィールドとセレクト
 input,
-select {
+select,
+textarea {
     width: 100%;
     padding: 12px;
     margin-bottom: 16px;
@@ -159,6 +160,10 @@ select {
         border-color: $primary-darker;
         outline: none;
     }
+}
+
+textarea{
+    height: 200px;
 }
 
 // レスポンシブ設定

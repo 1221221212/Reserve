@@ -13,7 +13,7 @@ const ReservationPage = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [reservationInfo, setReservationInfo] = useState({});
-    const [reservationId, setReservationId] = useState(null);
+    const [reservationId, setReservationId] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [settings, setSettings] = useState(null);
@@ -63,9 +63,38 @@ const ReservationPage = () => {
         setCurrentStep(4);
     };
 
-    const handleConfirmReservation = (reservationId) => {
-        setReservationId(reservationId);
-        setCurrentStep(5);
+    const handleConfirmReservation = async () => {
+
+        if (isSubmitting) return;  // 連打防止
+        setIsSubmitting(true);  // ボタンを無効化
+
+        const requestData = {
+            slot_id: selectedSlot.id,
+            customer_name: reservationInfo.customer_name,
+            phone_number: reservationInfo.phone_number,
+            email: reservationInfo.email,
+            group_size: reservationInfo.group_size,
+            comment: reservationInfo.comment,
+        };
+
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations/create`, requestData);
+
+            if (response.data.success) {
+                setReservationId(response.data.reservation.reservation_number); // 予約IDを保存
+                console.log(response.data.reservation.reservation_number);
+                console.log(reservationId);
+                alert('予約が確定しました');
+                setCurrentStep('5'); // 完了画面に遷移
+            } else {
+                alert(response.data.message || '予約に失敗しました。');
+            }
+        } catch (error) {
+            alert("サーバーエラーにより予約の作成に失敗しました。");
+            console.error("予約の作成に失敗しました:", error);
+        } finally {
+            setIsSubmitting(false);  // 処理が完了したらボタンを再有効化
+        }
     };
 
     const handleBack = () => {
@@ -102,9 +131,11 @@ const ReservationPage = () => {
 
             {currentStep === 3 && selectedSlot && (
                 <ReservationForm
-                    selectedDate={selectedDate}
-                    selectedSlot={selectedSlot}
-                    onFormSubmit={handleFormSubmit}
+                    slotId={selectedSlot?.id}
+                    formValues={reservationInfo}
+                    max_people={selectedSlot?.max_people}
+                    max_groups={selectedSlot?.max_groups}
+                    onSubmit={handleFormSubmit}
                 />
             )}
 
@@ -120,11 +151,14 @@ const ReservationPage = () => {
                 />
             )}
 
-            {currentStep === 5 && reservationId && (
+            {currentStep === '5' && (
                 <div className="reservation-complete">
-                    <h2>予約が完了しました！</h2>
-                    <p>予約ID: {reservationId}</p>
-                    <button onClick={() => setCurrentStep(1)}>新しい予約をする</button>
+                    <h2>予約が完了しました</h2>
+                    <p>ご予約ありがとうございます。ご登録いただいた情報に確認のメールをお送りしました。</p>
+                    {reservationId && (
+                        <p>予約ID: <strong>{reservationId}</strong></p>
+                    )}
+                    <button onClick={() => setCurrentStep(1)}>ホームへ戻る</button>
                 </div>
             )}
         </div>

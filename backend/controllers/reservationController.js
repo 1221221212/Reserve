@@ -6,12 +6,14 @@ const DateUtil = require('../utils/dateUtils')
 // 新規予約作成
 exports.createReservation = async (req, res) => {
     try {
-        const { slot_id, customer_name, phone_number, email, group_size } = req.body;
+        const { slot_id, customer_name, phone_number, email, group_size, comment } = req.body;
 
         // 入力バリデーション
         if (!slot_id || !customer_name || !phone_number || !email || !group_size) {
             return res.status(400).json({ success: false, message: "すべてのフィールドを入力してください" });
         }
+
+        console.log(req.body);
 
         // 予約の作成
         const result = await reservationModel.createReservation({
@@ -20,6 +22,7 @@ exports.createReservation = async (req, res) => {
             phone_number,
             email,
             group_size,
+            comment,
         });
 
         // 予約が成功したかどうかを確認

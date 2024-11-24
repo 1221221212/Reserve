@@ -133,11 +133,5 @@ export const reservationPeriod = (reservation_settings) => {
         }
     }
 
-    // デバッグログ
-    console.log("Available since:", available_since.format('YYYY-MM-DD'));
-    console.log("Available until:", available_until.format('YYYY-MM-DD'));
-    console.log("Next release day:", moment.isMoment(next_release_day) ? next_release_day.format('YYYY-MM-DD') : "Invalid next_release_day");
-
-    // 結果を返す
     return { available_since, available_until, next_release_day };
 };
