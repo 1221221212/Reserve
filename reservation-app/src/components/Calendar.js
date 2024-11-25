@@ -41,7 +41,6 @@ const Calendar = ({ onDateSelect, availableSince, availableSinceTime, availableU
         const month = displayedMonth.month() + 1;
 
         const fetchReservationsForMonth = async () => {
-            console.log(availableSinceTime);
             try {
                 const params = {
                     year,

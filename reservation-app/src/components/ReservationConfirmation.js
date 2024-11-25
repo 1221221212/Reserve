@@ -1,5 +1,5 @@
 import React from 'react';
-import { removeSecond } from '../utils/dateUtils';
+import { removeSecond } from '../utils/utils';
 
 const ReservationConfirmation = ({ reservationInfo, selectedDate, selectedSlot, onConfirm, isSubmitting }) => {
     return (

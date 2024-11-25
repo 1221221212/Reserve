@@ -1,6 +1,5 @@
 // src/models/patternModel.js
 const db = require('./db'); // データベース接続
-const { toUTCTimeString, toJSTTimeString } = require('../utils/dateUtils');
 
 // パターンを作成するメソッド
 exports.createPattern = async ({ pattern_name, start_time, end_time, max_groups, max_people }) => {

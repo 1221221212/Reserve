@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export const extractDates = (startDate, endDate, cycle, selectedDays) => {
     const dates = [];
@@ -68,7 +68,6 @@ export const reservationPeriod = (reservation_settings) => {
         // available_since_timeを追加
         available_since_time = cutoffTime;
 
-        console.log("受付開始時刻（available_since_time）:", available_since_time.format('YYYY-MM-DD HH:mm'));
     } else {
         const { value, unit } = reservation_settings.end;
         if (value) {

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { removeSecond } from '../utils/dateUtils';
+import { removeSecond } from '../utils/utils';
 import '../styles/SlotManagement.scss';
 
 const SlotManagementPage = () => {

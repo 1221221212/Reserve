@@ -1,6 +1,5 @@
 const availabilityModel = require('../models/AvailabilityModel');
-const { utc } = require('moment-timezone');
-const { utcToJstDate } = require('../utils/dateUtils');
+const { utcToJstDate } = require('../utils/utils');
 
 exports.getMonthlyAvailability = async (req, res) => {
     try {

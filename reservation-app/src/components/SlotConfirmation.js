@@ -1,7 +1,7 @@
 // src/components/SlotConfirmation.js
 import React from 'react';
 import axios from 'axios';
-import { removeSecond } from '../utils/dateUtils';
+import { removeSecond } from '../utils/utils';
 import '../styles/SlotConfirmation.scss';
 
 const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {

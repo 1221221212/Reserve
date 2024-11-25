@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { reservationPeriod } from '../utils/dateUtils';
+import { reservationPeriod } from '../utils/utils';
 import Calendar from '../components/Calendar';
 import SlotSelection from '../components/SlotSelection';
 import ReservationForm from '../components/ReservationForm';
@@ -12,7 +12,13 @@ const ReservationPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const [reservationInfo, setReservationInfo] = useState({});
+    const [reservationInfo, setReservationInfo] = useState({
+        customer_name: '',
+        phone_number: '',
+        email: '',
+        group_size: 1,
+        comment: '',
+    });
     const [reservationId, setReservationId] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
@@ -68,36 +74,54 @@ const ReservationPage = () => {
     };
 
     const handleConfirmReservation = async () => {
+        if (isSubmitting) return; // 連打防止
+        setIsSubmitting(true); // ボタンを無効化
 
-        if (isSubmitting) return;  // 連打防止
-        setIsSubmitting(true);  // ボタンを無効化
-
-        const requestData = {
+        const availabilityRequestData = {
             slot_id: selectedSlot.id,
-            customer_name: reservationInfo.customer_name,
-            phone_number: reservationInfo.phone_number,
-            email: reservationInfo.email,
-            group_size: reservationInfo.group_size,
-            comment: reservationInfo.comment,
+            reservation_settings: settings?.reservationSettings,
         };
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations/create`, requestData);
+            // CheckAvailability を実行
+            const availabilityResponse = await axios.post(
+                `${process.env.REACT_APP_API_URL}/api/reservations/check-availability`,
+                availabilityRequestData
+            );
 
-            if (response.data.success) {
-                setReservationId(response.data.reservation.reservation_number); // 予約IDを保存
-                console.log(response.data.reservation.reservation_number);
-                console.log(reservationId);
-                alert('予約が確定しました');
-                setCurrentStep('5'); // 完了画面に遷移
+            if (!availabilityResponse.data.success) {
+                alert(availabilityResponse.data.message || "予約不可です。");
+                setIsSubmitting(false);
+                return;
+            }
+
+            // 予約可能な場合のみ CreateReservation を実行
+            const requestData = {
+                slot_id: selectedSlot.id,
+                customer_name: reservationInfo.customer_name,
+                phone_number: reservationInfo.phone_number,
+                email: reservationInfo.email,
+                group_size: reservationInfo.group_size,
+                comment: reservationInfo.comment,
+            };
+
+            const reservationResponse = await axios.post(
+                `${process.env.REACT_APP_API_URL}/api/reservations/create`,
+                requestData
+            );
+
+            if (reservationResponse.data.success) {
+                setReservationId(reservationResponse.data.reservation.reservation_number);
+                alert("予約が確定しました。");
+                setCurrentStep(5); // 完了画面に遷移
             } else {
-                alert(response.data.message || '予約に失敗しました。');
+                alert(reservationResponse.data.message || "予約に失敗しました。");
             }
         } catch (error) {
             alert("サーバーエラーにより予約の作成に失敗しました。");
             console.error("予約の作成に失敗しました:", error);
         } finally {
-            setIsSubmitting(false);  // 処理が完了したらボタンを再有効化
+            setIsSubmitting(false); // 処理が完了したらボタンを再有効化
         }
     };
 
@@ -157,14 +181,11 @@ const ReservationPage = () => {
                 />
             )}
 
-            {currentStep === '5' && (
+            {currentStep === 5 && reservationId && (
                 <div className="reservation-complete">
-                    <h2>予約が完了しました</h2>
-                    <p>ご予約ありがとうございます。ご登録いただいた情報に確認のメールをお送りしました。</p>
-                    {reservationId && (
-                        <p>予約ID: <strong>{reservationId}</strong></p>
-                    )}
-                    <button onClick={() => setCurrentStep(1)}>ホームへ戻る</button>
+                    <h2>予約が完了しました！</h2>
+                    <p>予約ID: {reservationId}</p>
+                    <button onClick={() => setCurrentStep(1)}>新しい予約をする</button>
                 </div>
             )}
         </div>

@@ -1,5 +1,5 @@
 const assignedSlotsModel = require('../models/assignedSlotsModel');
-const { utcToJstDate } = require('../utils/dateUtils');
+const { utcToJstDate } = require('../utils/utils');
 
 // 予約枠の取得
 exports.getAssignedSlots = async (req, res) => {

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import HolidayCheck from './HolidayCheck';
-import { extractDates, filterDates } from '../utils/dateUtils';
+import { extractDates, filterDates } from '../utils/utils';
 
 const DateSelectionForm = ({ onDateSelection }) => {
     const [startDate, setStartDate] = useState('');

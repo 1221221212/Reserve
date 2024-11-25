@@ -5,6 +5,9 @@ const router = express.Router();
 const authenticateToken = require('../middleware/auth');
 const reservationController = require('../controllers/reservationController');
 
+// 予約可否確認のエンドポイント
+router.post('/check-availability', reservationController.checkAvailability);
+
 // 予約作成エンドポイント
 router.post('/create', reservationController.createReservation);
 

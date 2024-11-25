@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { reservationPeriod } from '../utils/dateUtils';
+import { reservationPeriod } from '../utils/utils';
 
 const ReservationSettings = ({
     startMethod,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { removeSecond } from '../utils/dateUtils';
+import { removeSecond } from '../utils/utils';
 import '../styles/PatternAssignment.scss';
 
 const PatternAssignment = ({ selectedDates, onPatternSelect }) => {

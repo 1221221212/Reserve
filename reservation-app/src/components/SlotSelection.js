@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { removeSecond } from '../utils/dateUtils';
+import { removeSecond } from '../utils/utils';
 
 const SlotSelection = ({ selectedDate, availableSince, availableUntil, availableSinceTime, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);

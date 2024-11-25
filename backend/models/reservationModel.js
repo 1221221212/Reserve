@@ -1,5 +1,29 @@
 const db = require('./db'); // データベース接続
 
+exports.getSlotDetails = async (slot_id) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT 
+                assigned_slots.date,
+                assigned_slots.status AS slot_status,
+                reservation_patterns.start_time,
+                reservation_patterns.status AS pattern_status
+            FROM assigned_slots
+            JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
+            WHERE assigned_slots.id = ?
+        `, [slot_id]);
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        return rows[0];
+    } catch (error) {
+        console.error("スロットの取得に失敗しました:", error);
+        throw error;
+    }
+};
+
 // ランダム3文字の英数字生成関数
 const generateRandomCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

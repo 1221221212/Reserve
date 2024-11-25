@@ -1,7 +1,37 @@
 // backend/controllers/reservationController.js
 
 const reservationModel = require('../models/reservationModel');
-const DateUtil = require('../utils/dateUtils')
+const util = require('../utils/utils');
+const reservationService = require('../services/reservationService');
+
+/**
+ * スロットの予約可否を確認
+ * @param {object} req - リクエストオブジェクト
+ * @param {object} res - レスポンスオブジェクト
+ */
+exports.checkAvailability = async (req, res) => {
+    try {
+        const { slot_id, reservation_settings } = req.body;
+
+        // リクエストデータのバリデーション
+        if (!slot_id || !reservation_settings) {
+            return res.status(400).json({ success: false, message: "slot_id と reservation_settings は必須です。" });
+        }
+
+        // サービス層を呼び出して可否を確認
+        const availability = await reservationService.checkSlotAvailability(slot_id, reservation_settings);
+
+        // 結果に応じたレスポンスを返す
+        if (availability.available) {
+            return res.status(200).json({ success: true, message: "予約可能です。" });
+        } else {
+            return res.status(400).json({ success: false, message: availability.message });
+        }
+    } catch (error) {
+        console.error("予約可否確認中にエラーが発生しました:", error);
+        return res.status(500).json({ success: false, message: "予約可否確認中にエラーが発生しました。" });
+    }
+};
 
 // 新規予約作成
 exports.createReservation = async (req, res) => {
@@ -12,8 +42,6 @@ exports.createReservation = async (req, res) => {
         if (!slot_id || !customer_name || !phone_number || !email || !group_size) {
             return res.status(400).json({ success: false, message: "すべてのフィールドを入力してください" });
         }
-
-        console.log(req.body);
 
         // 予約の作成
         const result = await reservationModel.createReservation({
@@ -46,10 +74,10 @@ exports.getAllReservations = async (req, res) => {
         // 各予約情報の日付を整形
         const formattedReservations = reservations.map((reservation) => ({
             ...reservation,
-            created_at: DateUtil.utcToJstDate(reservation.created_at), // 作成日を整形
-            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date), // 予約日を整形
-            start_time: DateUtil.removeSecond(reservation.start_time), // 開始時間を整形
-            end_time: DateUtil.removeSecond(reservation.end_time), // 終了時間を整形
+            created_at: util.utcToJstDate(reservation.created_at), // 作成日を整形
+            reservation_date: util.utcToJstDate(reservation.reservation_date), // 予約日を整形
+            start_time: util.removeSecond(reservation.start_time), // 開始時間を整形
+            end_time: util.removeSecond(reservation.end_time), // 終了時間を整形
         }));
 
         res.status(200).json(formattedReservations);
@@ -84,9 +112,9 @@ exports.getFilteredReservations = async (req, res) => {
         // 各予約情報の日付を整形
         const formattedReservations = reservations.map((reservation) => ({
             ...reservation,
-            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date),
-            start_time: DateUtil.removeSecond(reservation.start_time),
-            end_time: DateUtil.removeSecond(reservation.end_time),
+            reservation_date: util.utcToJstDate(reservation.reservation_date),
+            start_time: util.removeSecond(reservation.start_time),
+            end_time: util.removeSecond(reservation.end_time),
         }));
 
         res.status(200).json(formattedReservations);
@@ -108,10 +136,10 @@ exports.getReservationDetail = async (req, res) => {
         // 日付と時間をフォーマットする
         const formattedReservation = {
             ...reservation,
-            created_at: DateUtil.utcToJstDate(reservation.created_at),
-            reservation_date: DateUtil.utcToJstDate(reservation.reservation_date),
-            start_time: DateUtil.removeSecond(reservation.start_time),
-            end_time: DateUtil.removeSecond(reservation.end_time),
+            created_at: util.utcToJstDate(reservation.created_at),
+            reservation_date: util.utcToJstDate(reservation.reservation_date),
+            start_time: util.removeSecond(reservation.start_time),
+            end_time: util.removeSecond(reservation.end_time),
         };
 
         res.status(200).json(formattedReservation);
