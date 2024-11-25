@@ -3,7 +3,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import '../styles/calendar.scss';
 
-const Calendar = ({ onDateSelect, availableSince, availableUntil }) => {
+const Calendar = ({ onDateSelect, availableSince, availableSinceTime, availableUntil }) => {
     const [dates, setDates] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [displayedMonth, setDisplayedMonth] = useState(moment().tz('Asia/Tokyo'));
@@ -41,20 +41,26 @@ const Calendar = ({ onDateSelect, availableSince, availableUntil }) => {
         const month = displayedMonth.month() + 1;
 
         const fetchReservationsForMonth = async () => {
+            console.log(availableSinceTime);
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/month`, {
-                    params: {
-                        year,
-                        month,
-                        available_since: availableSince,
-                        available_until: availableUntil,
-                    },
-                });
+                const params = {
+                    year,
+                    month,
+                    available_since: availableSince,
+                    available_until: availableUntil,
+                };
+
+                if (availableSinceTime) {
+                    params.available_since_time = availableSinceTime;
+                }
+
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/month`, { params });
                 setReservations(response.data);
             } catch (error) {
                 console.error("予約データの取得に失敗しました:", error);
             }
         };
+
 
         fetchReservationsForMonth();
     }, [displayedMonth, availableSince, availableUntil]);

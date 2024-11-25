@@ -51,12 +51,24 @@ export const reservationPeriod = (reservation_settings) => {
 
     // 初期化
     let available_since = today.clone();
+    let available_since_time = today.clone();
     let available_until = today.clone();
     let next_release_day = today.clone();
 
     // "いつから"の計算
     if (reservation_settings.end.isSameDay) {
-        available_since = today.clone(); // 今日から受付
+        available_since = today.clone(); // 今日の日付
+
+        // 当日の受付開始時刻の計算
+        const now = moment(); // 現在の時刻
+        const cutoffTime = now.clone()
+            .add(reservation_settings.end.hoursBefore, 'hours')
+            .add(reservation_settings.end.minutesBefore, 'minutes');
+
+        // available_since_timeを追加
+        available_since_time = cutoffTime;
+
+        console.log("受付開始時刻（available_since_time）:", available_since_time.format('YYYY-MM-DD HH:mm'));
     } else {
         const { value, unit } = reservation_settings.end;
         if (value) {
@@ -133,5 +145,5 @@ export const reservationPeriod = (reservation_settings) => {
         }
     }
 
-    return { available_since, available_until, next_release_day };
+    return { available_since, available_since_time, available_until, next_release_day };
 };

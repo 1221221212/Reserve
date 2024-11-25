@@ -146,6 +146,7 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
                 <label>コメント:</label>
                 <textarea
                     value={formValues.comment || ''}
+                    maxLength={1000}
                     onChange={(e) => handleChange('comment', e.target.value)}
                 />
             </div>

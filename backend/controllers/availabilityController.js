@@ -4,16 +4,19 @@ const { utcToJstDate } = require('../utils/dateUtils');
 
 exports.getMonthlyAvailability = async (req, res) => {
     try {
-        const { year, month, available_since, available_until } = req.query;
+        const { year, month, available_since, available_since_time, available_until } = req.query;
 
+        // バリデーション
         if (!year || !month || !available_since || !available_until) {
             return res.status(400).json({ message: "年、月、開始日、終了日は必須です" });
         }
 
+        // Model呼び出しにavailable_since_timeを追加
         const availabilityData = await availabilityModel.getMonthlyAvailability(
             year,
             month,
             available_since,
+            available_since_time || null, // 指定がなければnullを渡す
             available_until
         );
 
@@ -53,7 +56,7 @@ exports.getMonthlyAvailability = async (req, res) => {
 
 exports.getDailyAvailability = async (req, res) => {
     try {
-        const { date, available_since, available_until } = req.query;
+        const { date, available_since, available_since_time, available_until } = req.query;
 
         // 入力バリデーション
         if (!date || !available_since || !available_until) {
@@ -64,6 +67,7 @@ exports.getDailyAvailability = async (req, res) => {
         const availabilityData = await availabilityModel.getDailyAvailability(
             date,
             available_since,
+            available_since_time || null, // 指定されていない場合は null
             available_until
         );
 

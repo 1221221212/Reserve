@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { removeSecond } from '../utils/dateUtils';
 
-const SlotSelection = ({ selectedDate, availableSince, availableUntil, onSlotSelect }) => {
+const SlotSelection = ({ selectedDate, availableSince, availableUntil, availableSinceTime, onSlotSelect }) => {
     const [slots, setSlots] = useState([]);
     const [availabilityInfo, setAvailabilityInfo] = useState({});
 
@@ -10,12 +10,21 @@ const SlotSelection = ({ selectedDate, availableSince, availableUntil, onSlotSel
     useEffect(() => {
         const fetchSlots = async () => {
             try {
+                const today = new Date().toISOString().split('T')[0]; // 今日の日付 (YYYY-MM-DD形式)
+
+                const params = {
+                    date: selectedDate,
+                    available_since: availableSince,
+                    available_until: availableUntil,
+                };
+
+                // 選択された日付が今日の場合に `available_since_time` を追加
+                if (selectedDate === today && availableSinceTime) {
+                    params.available_since_time = availableSinceTime;
+                }
+
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/day`, {
-                    params: {
-                        date: selectedDate,
-                        available_since: availableSince,
-                        available_until: availableUntil,
-                    }
+                    params,
                 });
                 setSlots(response.data);
             } catch (error) {
@@ -26,45 +35,14 @@ const SlotSelection = ({ selectedDate, availableSince, availableUntil, onSlotSel
         fetchSlots();
     }, [selectedDate]);
 
-    // 現在の予約人数を取得
-    useEffect(() => {
-        const fetchAvailabilityInfo = async () => {
-            if (slots.length === 0) return;  // スロットがまだ取得されていない場合は実行しない
-
-            try {
-                const slotIds = slots.map(slot => slot.id);  // 各スロットのIDを取得
-                const responses = await Promise.all(
-                    slotIds.map(id =>
-                        axios.get(`${process.env.REACT_APP_API_URL}/api/availability/current-reservation-count`, {
-                            params: { slotId: id }
-                        })
-                    )
-                );
-
-                // 各スロットの予約人数情報を取得してセット
-                const info = responses.reduce((acc, response, index) => {
-                    acc[slotIds[index]] = response.data.count;
-                    return acc;
-                }, {});
-                setAvailabilityInfo(info);
-            } catch (error) {
-                console.error("空き状況の取得に失敗しました:", error);
-            }
-        };
-
-        fetchAvailabilityInfo();
-    }, [slots]);
-
     const renderSlotInfo = (slot) => {
         const { id, max_groups, max_people, availability } = slot;
         const currentCount = availabilityInfo[id] || 0;
 
-        // availabilityが0でない場合は予約不可と表示
         if (availability !== '0') {
             return "予約不可";
         }
 
-        // 最大組数が設定されている場合と設定されていない場合で表示内容を分ける
         if (max_groups) {
             return `最大 ${max_people} 人`;
         } else {
@@ -72,7 +50,6 @@ const SlotSelection = ({ selectedDate, availableSince, availableUntil, onSlotSel
             return `残り ${remainingPeople} 人予約可能`;
         }
     };
-
 
     return (
         <div className="slot-selection">

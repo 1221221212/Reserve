@@ -31,11 +31,15 @@ const ReservationPage = () => {
                 const fetchedSettings = response.data;
                 setSettings(fetchedSettings);
 
-                const { available_since, available_until } = reservationPeriod(fetchedSettings.reservationSettings);
+                const { available_since, available_since_time, available_until } = reservationPeriod(fetchedSettings.reservationSettings);
                 setReservationPeriodInfo({
                     available_since: available_since.format('YYYY-MM-DD'),
+                    available_since_time: fetchedSettings.reservationSettings.end.isSameDay
+                        ? available_since_time?.format('HH:mm')
+                        : null,
                     available_until: available_until.format('YYYY-MM-DD'),
                 });
+
             } else {
                 console.error("設定情報の取得に失敗しました:", response.status);
             }
@@ -116,6 +120,7 @@ const ReservationPage = () => {
                 <Calendar
                     onDateSelect={handleDateSelect}
                     availableSince={reservationPeriodInfo.available_since}
+                    availableSinceTime={reservationPeriodInfo.available_since_time}
                     availableUntil={reservationPeriodInfo.available_until}
                 />
             )}
@@ -124,6 +129,7 @@ const ReservationPage = () => {
                 <SlotSelection
                     selectedDate={selectedDate}
                     availableSince={reservationPeriodInfo.available_since}
+                    availableSinceTime={reservationPeriodInfo.available_since_time}
                     availableUntil={reservationPeriodInfo.available_until}
                     onSlotSelect={handleSlotSelect}
                 />

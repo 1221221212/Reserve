@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import AdminNav from '../components/AdminNav';
 import SlotManagementPage from './SlotManagementPage';
+import CloseManagementPage from './CloseManagementPage';
 import SlotCreationPage from './SlotCreationPage';
 import ReservationManagementPage from './ReservationManagementPage';
 import ReservationDetailPage from './ReservationDetailPage';
@@ -52,6 +53,7 @@ const AdminPage = () => {
                     <Route path="/" element={<ReservationManagementPage />} />
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
+                    <Route path="close" element={<CloseManagementPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
                     <Route path="reservations/:id" element={<ReservationDetailPage />} />
                     <Route path="patterns" element={<PatternManagementPage />} />

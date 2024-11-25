@@ -27,6 +27,7 @@ const ReservationSettings = ({
 }) => {
     const [availablePeriod, setAvailablePeriod] = useState({
         available_since: null,
+        available_since_time: null,
         available_until: null,
         next_release_day: null,
     });

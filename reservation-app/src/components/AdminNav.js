@@ -23,11 +23,14 @@ const AdminNav = () => {
                 <h2>管理メニュー</h2>
                 <ul>
                     <li>
-                        <Link to="/admin/slots" className={getLinkClass('/admin/slots')}>予約枠管理</Link>
+                        <Link to="/admin/slots" className={getLinkClass('/admin/slots')}>受付管理</Link>
+                        <ul>
+                            <li><Link to="/admin/slots" className={getLinkClass('/admin/slots')}>予約枠管理</Link></li>
+                            <li><Link to="/admin/patterns" className={getLinkClass('/admin/patterns')}>パターン管理</Link></li>
+                            <li><Link to="/admin/close" className={getLinkClass('/admin/close')}>休業日管理</Link></li>
+                        </ul>
                     </li>
-                    <li>
-                        <Link to="/admin/patterns" className={getLinkClass('/admin/patterns')}>パターン管理</Link>
-                    </li>
+
                     <li>
                         <Link to="/admin/reservations" className={getLinkClass('/admin/reservations')}>予約管理</Link>
                     </li>
