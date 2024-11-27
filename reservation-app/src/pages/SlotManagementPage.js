@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { removeSecond } from '../utils/utils';
-import '../styles/SlotManagement.scss';
+import '../styles/Slot.scss';
 
 const SlotManagementPage = () => {
     const [assignedSlots, setAssignedSlots] = useState([]);

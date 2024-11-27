@@ -1,4 +1,12 @@
+// src/styles/Pattern.scss
+@import './AdminPage';
 @import "./colors";
+
+.admin-page-content {
+    .pattern-table {
+        @extend .table;
+    }
+}
 
 .pattern-assignment {
 

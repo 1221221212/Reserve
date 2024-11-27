@@ -1,8 +1,0 @@
-// src/styles/PatternManagement.scss
-@import './AdminCommon';
-
-.admin-page-content {
-    .pattern-table {
-        @extend .table;
-    }
-}

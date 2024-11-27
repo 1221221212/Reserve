@@ -2,7 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 import { removeSecond } from '../utils/utils';
-import '../styles/SlotConfirmation.scss';
+import '../styles/Slot.scss';
 
 const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
     const handleConfirm = async () => {

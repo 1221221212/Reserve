@@ -1,4 +1,6 @@
 const moment = require('moment-timezone');
+const { format, addDays, addMonths } = require('date-fns'); // addMonths を追加
+
 
 // UTCのDate文字列をJSTのDateオブジェクトに変換する
 exports.utcToJstDate = (date) => {
@@ -118,4 +120,101 @@ exports.reservationPeriod = (reservation_settings) => {
         console.error("予約期間計算中にエラーが発生しました:", error.message);
         throw new Error("予約期間の計算に失敗しました");
     }
+};
+
+// 定休日を基に期間内の日付を生成
+exports.generateRegularClosedDays = (regularClosedDays, startDate, endDate) => {
+    const result = [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    regularClosedDays.forEach((day) => {
+        if (day.type === 'regular_weekly' && day.day_of_week) {
+            // 毎週の休業日を生成
+            const dayOfWeek = day.day_of_week;
+            let current = new Date(start);
+            while (current <= end) {
+                if (current.toLocaleDateString('en-US', { weekday: 'long' }) === dayOfWeek) {
+                    result.push({ date: format(current, 'yyyy-MM-dd'), type: 'regular_weekly' });
+                }
+                current = addDays(current, 1);
+            }
+        } else if (day.type === 'regular_monthly') {
+            // 毎月の日付生成
+            if (day.day_of_month) {
+                let current = new Date(start);
+                while (current <= end) {
+                    if (current.getDate() === day.day_of_month) {
+                        result.push({ date: format(current, 'yyyy-MM-dd'), type: 'regular_monthly' });
+                    }
+                    current = addDays(current, 1);
+                }
+            }
+            // 毎月第X曜日を生成
+            if (day.type === 'regular_monthly' && day.week_of_month && day.day_of_week) {
+                let current = new Date(start);
+                while (current <= end) {
+                    const month = current.getMonth();
+                    const year = current.getFullYear();
+
+                    // 第X曜日の計算
+                    const firstDay = new Date(year, month, 1);
+                    const dayOffset = (7 + getDayIndex(day.day_of_week) - firstDay.getDay()) % 7;
+                    const targetDate = new Date(year, month, 1 + dayOffset + (day.week_of_month - 1) * 7);
+
+                    if (targetDate >= start && targetDate <= end) {
+                        result.push({
+                            date: format(targetDate, 'yyyy-MM-dd'),
+                            type: 'regular_monthly',
+                        });
+                    }
+
+                    current = addMonths(current, 1);
+                }
+            }
+
+        } else if (day.type === 'regular_yearly') {
+            // 毎年の日付生成
+            if (day.day_of_month && day.month_of_year) {
+                let current = new Date(start);
+                while (current <= end) {
+                    if (current.getMonth() + 1 === day.month_of_year && current.getDate() === day.day_of_month) {
+                        result.push({ date: format(current, 'yyyy-MM-dd'), type: 'regular_yearly' });
+                    }
+                    current = addDays(current, 1);
+                }
+            }
+        }
+    });
+
+    return result;
+};
+
+/**
+ * 曜日をインデックスに変換する関数
+ * @param {string} dayOfWeek - 曜日（例: "Monday"）
+ * @returns {number} - インデックス（0-6）
+ */
+const getDayIndex = (dayOfWeek) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days.indexOf(dayOfWeek);
+};
+
+// 重複を削除する関数
+exports.removeDuplicates = (closedDays) => {
+    const uniqueMap = new Map();
+
+    closedDays.forEach((day) => {
+        const key = day.date;
+        if (!uniqueMap.has(key)) {
+            uniqueMap.set(key, day);
+        } else {
+            // 優先順位を設定（例: 臨時休業日 > 定休日）
+            if (day.type === 'temporary') {
+                uniqueMap.set(key, day);
+            }
+        }
+    });
+
+    return Array.from(uniqueMap.values());
 };

@@ -14,19 +14,20 @@ const patternRoutes = require('./routes/patternRoutes');
 const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
 const holidayRoutes = require('./routes/holidayRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const closedDayRoutes = require('./routes/closedDayRoutes')
 
 app.use('/api/auth', authRoutes); // 認証関連
 
 // 認証不要のエンドポイント
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api/holidays', holidayRoutes);
-app.get('/api/settings/public', require('./controllers/settingsController').getPublicSettings); // 公開エンドポイント
+app.use('/api/closed-days', closedDayRoutes);
 
 // 認証が必要なエンドポイント
 app.use('/api/patterns', authenticateToken, patternRoutes);
 app.use('/api/assigned-slots', authenticateToken, assignedSlotsRoutes);
-app.use('/api/settings', authenticateToken, settingsRoutes);
 
 app.listen(3000, () => {
     console.log('サーバーがポート3000で起動しました');
