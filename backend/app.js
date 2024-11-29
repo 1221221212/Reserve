@@ -15,7 +15,7 @@ const { initializeDB } = require('./models/db');  // db.js から initializeDB �
     }
 })();
 
-app.use(cors({ origin: 'https://reserve-coef.onrender.com' }));
+app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
 
 const availabilityRoutes = require('./routes/availabilityRoutes');
