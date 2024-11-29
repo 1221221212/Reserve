@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
-const { initializeDB } = require('./models/db');
+const { initializeDB } = require('./models/db');  // db.js から initializeDB をインポート
 
 (async () => {
     try {
