@@ -1,5 +1,5 @@
 const mysql = require('mysql2/promise');
-const tunnel = require('tunnel-ssh');
+const tunnel = require('tunnel-ssh');  // 正しくインポート
 require('dotenv').config();  // dotenvを読み込み
 
 // SSH接続の設定
@@ -8,7 +8,7 @@ const sshConfig = {
     privateKey: Buffer.from(process.env.SSH_PRIVATE_KEY, 'utf-8'),  // 環境変数から秘密鍵を取得
     host: 'iw33.xsrv.jp',  // XserverのSSHホスト
     port: 10022,  // SSH接続ポート（デフォルトは10022）
-    dstHost: '127.0.0.1',  // MySQLが動作しているホスト（ローカルで接続）
+    dstHost: '127.0.0.1',  // MySQLが動作しているホスト
     dstPort: 3306,  // MySQLポート（デフォルトは3306）
 };
 
