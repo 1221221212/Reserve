@@ -22,6 +22,7 @@ const createDBPool = (stream) => {
         password: DB_PASSWORD,
         database: DB_NAME,
         stream: stream, // SSHトンネルを通じて接続
+        connectTimeout: 10000, // タイムアウトを10秒に設定
     });
 };
 
@@ -29,6 +30,7 @@ const createDBPool = (stream) => {
 const initializeDB = () => {
     return new Promise((resolve, reject) => {
         sshClient.on('ready', () => {
+            console.log('SSH接続に成功しました');
             sshClient.forwardOut(
                 '127.0.0.1',  // ローカルホスト
                 3307,          // ローカルポート
@@ -36,6 +38,7 @@ const initializeDB = () => {
                 DB_PORT,       // リモートポート
                 (err, stream) => {
                     if (err) {
+                        console.error('SSHトンネルの作成に失敗しました:', err);
                         reject(`SSH forwarding error: ${err}`);
                         return;
                     }
@@ -46,6 +49,11 @@ const initializeDB = () => {
                     resolve(pool); // プールオブジェクトを返す
                 }
             );
+        });
+
+        sshClient.on('error', (err) => {
+            console.error('SSH接続エラー:', err);
+            reject(err);
         });
 
         sshClient.connect({
@@ -70,9 +78,14 @@ const getDBPool = async () => {
 
 // クエリを実行する関数
 const query = async (sql, params = []) => {
-    const pool = await getDBPool(); // DB接続プールを取得
-    const [rows, fields] = await pool.query(sql, params); // クエリを実行
-    return rows; // 結果を返す
+    try {
+        const pool = await getDBPool(); // DB接続プールを取得
+        const [rows, fields] = await pool.query(sql, params); // クエリを実行
+        return rows; // 結果を返す
+    } catch (error) {
+        console.error('クエリ実行中にエラーが発生しました:', error);
+        throw error;
+    }
 };
 
 // `query`関数をエクスポート
