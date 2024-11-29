@@ -1,62 +1,70 @@
 const mysql = require('mysql2/promise');
-const tunnel = require('tunnel-ssh');
+const { Client } = require('ssh2');
+require('dotenv').config(); // dotenvを読み込み
 
+// SSH接続の設定
+const SSH_PRIVATE_KEY = process.env.SSH_PRIVATE_KEY;
+const SSH_USER = process.env.SSH_USER;
+const SSH_HOST = process.env.SSH_HOST;
+const SSH_PORT = process.env.SSH_PORT;
+const DB_HOST = process.env.DB_HOST;
+const DB_PORT = process.env.DB_PORT;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_NAME = process.env.DB_NAME;
 
+const sshClient = new Client();
 
-// SSHトンネル設定
-const sshConfig = {
-    username: process.env.SSH_USER,
-    privateKey: process.env.SSH_KEY, // 環境変数から復元した秘密鍵を使用
-    host: 'iw33.xsrv.jp',
-    port: 10022,
-    dstHost: '127.0.0.1',
-    dstPort: 3306,
-};
+const db = mysql.createPool({
+    host: '127.0.0.1',  // ローカルホストに接続
+    port: 3307,         // ローカルポート（SSHトンネルを通じてMySQLに接続）
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME
+});
 
-// 接続プールを初期化する変数
-let pool;
-
-// SSHトンネルとMySQLプールを初期化
 const initializeDB = async () => {
-    try {
-        // SSHトンネルを確立
-        await new Promise((resolve, reject) => {
-            tunnel(sshConfig, (error, server) => {
-                if (error) {
-                    console.error("SSHトンネルエラー:", error);
-                    return reject(error);
+    return new Promise((resolve, reject) => {
+        sshClient.on('ready', () => {
+            sshClient.forwardOut(
+                '127.0.0.1',  // ローカルホスト
+                3307,          // ローカルポート
+                DB_HOST,       // リモートホスト（Xserver上のMySQL）
+                DB_PORT,       // リモートポート
+                (err, stream) => {
+                    if (err) {
+                        reject(`SSH forwarding error: ${err}`);
+                        return;
+                    }
+
+                    // SSHトンネルを通じてMySQLに接続
+                    mysql.createConnection({
+                        user: DB_USER,
+                        password: DB_PASSWORD,
+                        database: DB_NAME,
+                        stream: stream
+                    }).then((connection) => {
+                        console.log('MySQLに接続されました');
+                        resolve(connection);
+                    }).catch((error) => {
+                        reject(`MySQL connection error: ${error}`);
+                    });
                 }
-                console.log("SSHトンネルが正常に開かれました");
-                resolve(server);
-            });
+            );
         });
 
-        // MySQL接続プールを作成
-        pool = mysql.createPool({
-            host: '127.0.0.1',
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            port: 3306,
+        sshClient.connect({
+            host: SSH_HOST,
+            port: SSH_PORT,
+            username: SSH_USER,
+            privateKey: SSH_PRIVATE_KEY
         });
-
-        console.log("データベース接続に成功しました");
-    } catch (error) {
-        console.error("接続エラー:", error);
-        throw error;
-    }
+    });
 };
 
-// 接続プールを取得する関数
-const getDB = () => {
-    if (!pool) {
-        throw new Error("データベース接続が初期化されていません。initializeDBを実行してください。");
-    }
-    return pool;
-};
+// 初期化処理
+initializeDB()
+    .then(() => console.log("データベース接続に成功しました"))
+    .catch((error) => console.error("データベース接続に失敗しました:", error));
 
-// initializeDBとgetDBをエクスポート
-module.exports = {
-    initializeDB,
-    getDB,
-};
+module.exports = db;
