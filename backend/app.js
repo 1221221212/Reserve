@@ -3,6 +3,17 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
+const { initializeDB } = require('./models/db');
+
+(async () => {
+    try {
+        await initializeDB();
+        console.log('DB初期化が完了しました');
+    } catch (error) {
+        console.error('DB初期化に失敗しました:', error);
+        process.exit(1); // 初期化に失敗した場合、アプリを終了
+    }
+})();
 
 app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
