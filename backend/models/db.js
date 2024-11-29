@@ -1,19 +1,26 @@
 const mysql = require('mysql2/promise');
 const tunnel = require('tunnel-ssh');
 
+
+
+// SSHトンネル設定
 const sshConfig = {
     username: process.env.SSH_USER,
-    privateKey: process.env.SSH_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    privateKey: process.env.SSH_KEY, // 環境変数から復元した秘密鍵を使用
     host: 'iw33.xsrv.jp',
     port: 10022,
     dstHost: '127.0.0.1',
     dstPort: 3306,
 };
 
-const db = async () => {
+// 接続プールを初期化する変数
+let pool;
+
+// SSHトンネルとMySQLプールを初期化
+const initializeDB = async () => {
     try {
         // SSHトンネルを確立
-        const server = await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             tunnel(sshConfig, (error, server) => {
                 if (error) {
                     console.error("SSHトンネルエラー:", error);
@@ -24,8 +31,8 @@ const db = async () => {
             });
         });
 
-        // MySQL接続
-        const connection = await mysql.createPool({
+        // MySQL接続プールを作成
+        pool = mysql.createPool({
             host: '127.0.0.1',
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
@@ -34,11 +41,22 @@ const db = async () => {
         });
 
         console.log("データベース接続に成功しました");
-        return connection;
     } catch (error) {
         console.error("接続エラー:", error);
         throw error;
     }
 };
 
-module.exports = db;
+// 接続プールを取得する関数
+const getDB = () => {
+    if (!pool) {
+        throw new Error("データベース接続が初期化されていません。initializeDBを実行してください。");
+    }
+    return pool;
+};
+
+// initializeDBとgetDBをエクスポート
+module.exports = {
+    initializeDB,
+    getDB,
+};
