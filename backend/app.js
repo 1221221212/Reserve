@@ -3,17 +3,17 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
-const { query } = require('./models/db');  // db.js の query をインポート
+const { query } = require('./models/db');
 
 // DB接続の初期化とサーバーの起動
 const startServer = async () => {
     try {
         // DB接続が正常か確認
-        await query('SELECT 1');  
+        await query('SELECT 1'); 
         console.log('DB初期化が完了しました');
 
         // サーバーの起動
-        const port = process.env.PORT || 3000;  // Renderでは環境変数PORTを使用
+        const port = process.env.PORT || 3000;
         app.listen(port, () => {
             console.log(`サーバーがポート${port}で起動しました`);
         });
