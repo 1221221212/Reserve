@@ -3,7 +3,7 @@ const tunnel = require('tunnel-ssh');
 
 const sshConfig = {
     username: process.env.SSH_USER,
-    privateKey: require('fs').readFileSync(process.env.SSH_KEY_PATH, 'utf-8'),
+    privateKey: process.env.SSH_PRIVATE_KEY.replace(/\\n/g, '\n'),
     host: 'iw33.xsrv.jp',
     port: 10022,
     dstHost: '127.0.0.1',
