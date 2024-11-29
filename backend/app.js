@@ -3,27 +3,32 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
-const { query } = require('./models/db');
+const { query } = require('./models/db');  // db.js の query をインポート
 
-// DB接続の初期化とサーバーの起動
+// サーバーの起動
 const startServer = async () => {
     try {
-        // DB接続が正常か確認
-        await query('SELECT 1'); 
-        console.log('DB初期化が完了しました');
-
-        // サーバーの起動
-        const port = process.env.PORT || 3000;
-        app.listen(port, () => {
+        // サーバーの起動（先にポートをバインド）
+        const port = process.env.PORT || 3000;  // Renderでは環境変数PORTを使用
+        app.listen(port, async () => {
             console.log(`サーバーがポート${port}で起動しました`);
+
+            try {
+                // DB接続が正常か確認
+                await query('SELECT 1');  
+                console.log('DB初期化が完了しました');
+            } catch (error) {
+                console.error('DB初期化に失敗しました:', error);
+                process.exit(1); // DB接続に失敗した場合、アプリを終了
+            }
         });
     } catch (error) {
-        console.error('DB初期化に失敗しました:', error);
-        process.exit(1); // 初期化に失敗した場合、アプリを終了
+        console.error('サーバーの起動に失敗しました:', error);
+        process.exit(1); // サーバー起動に失敗した場合、アプリを終了
     }
 };
 
-// 最初にDB接続を確立してからサーバーを起動
+// 最初にサーバーを起動してからDB接続を確立
 startServer();
 
 app.use(cors({ origin: 'http://localhost:3001' }));
