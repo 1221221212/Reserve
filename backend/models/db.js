@@ -23,6 +23,7 @@ const db = mysql.createPool({
     database: DB_NAME
 });
 
+// DB接続を初期化する関数
 const initializeDB = async () => {
     return new Promise((resolve, reject) => {
         sshClient.on('ready', () => {
@@ -62,9 +63,5 @@ const initializeDB = async () => {
     });
 };
 
-// 初期化処理
-initializeDB()
-    .then(() => console.log("データベース接続に成功しました"))
-    .catch((error) => console.error("データベース接続に失敗しました:", error));
-
-module.exports = db;
+// `initializeDB` 関数をエクスポート
+module.exports = { initializeDB, db };
