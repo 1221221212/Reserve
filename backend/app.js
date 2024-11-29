@@ -13,8 +13,9 @@ const startServer = async () => {
         console.log('DB初期化が完了しました');
 
         // サーバーの起動
-        app.listen(3000, () => {
-            console.log('サーバーがポート3000で起動しました');
+        const port = process.env.PORT || 3000;  // Renderでは環境変数PORTを使用
+        app.listen(port, () => {
+            console.log(`サーバーがポート${port}で起動しました`);
         });
     } catch (error) {
         console.error('DB初期化に失敗しました:', error);
