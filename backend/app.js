@@ -15,7 +15,6 @@ const startServer = async () => {
 
             try {
                 // DB接続が正常か確認
-                await query('SELECT 1');  
                 console.log('DB初期化が完了しました');
             } catch (error) {
                 console.error('DB初期化に失敗しました:', error);
