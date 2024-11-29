@@ -3,17 +3,6 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
-const { initializeDB } = require('./models/db');  // db.js から initializeDB をインポート
-
-(async () => {
-    try {
-        await initializeDB();  // DB接続の初期化
-        console.log('DB初期化が完了しました');
-    } catch (error) {
-        console.error('DB初期化に失敗しました:', error);
-        process.exit(1); // 初期化に失敗した場合、アプリを終了
-    }
-})();
 
 app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
@@ -27,7 +16,8 @@ const holidayRoutes = require('./routes/holidayRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const closedDayRoutes = require('./routes/closedDayRoutes');
 
-app.use('/api/auth', authRoutes); // 認証関連
+// 認証関連
+app.use('/api/auth', authRoutes); 
 
 // 認証不要のエンドポイント
 app.use('/api/availability', availabilityRoutes);
