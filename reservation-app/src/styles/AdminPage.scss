@@ -1,0 +1,126 @@
+.admin-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+}
+
+.admin-nav {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    position: fixed; // デスクトップでも固定
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+            margin: 10px 0;
+
+            a {
+                color: #fff;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    // モバイルメニューが非表示の場合
+    transform: translateX(-100%);
+
+    // メニューが開いている時
+    &.open {
+        transform: translateX(0);
+    }
+}
+
+// ハンバーガーメニュー
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #333;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+// モバイルオーバーレイ
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 500;
+}
+
+// デスクトップ表示
+@media (min-width: 768px) {
+    .admin-nav {
+        transform: translateX(0); // メニューを表示
+    }
+
+    .hamburger-menu {
+        display: none;
+    }
+
+    .overlay {
+        display: none;
+    }
+
+    .admin-content {
+        padding-left: 250px;
+    }
+}
+
+// モバイル表示
+@media (max-width: 767px) {
+    .hamburger-menu {
+        display: block;
+    }
+
+    .admin-nav {
+        z-index: 600;
+    }
+
+    .admin-content {
+        padding-left: 0;
+        padding: 20px;
+    }
+}

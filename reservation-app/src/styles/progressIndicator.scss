@@ -1,0 +1,99 @@
+@import "./colors";
+
+.c-stepper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.c-stepper__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    &::before {
+        background-color: #ccc;
+        --size: 30px;
+        content: "";
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        margin: 0 auto 8px;
+    }
+
+    &.completed {
+        &::before {
+            background-color: $primary-color;
+        }
+        .check{
+            position: relative;
+        }
+        .check::before{
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            border-left: 2px solid $text-color;
+            border-bottom: 2px solid $text-color;
+            transform: rotate(-45deg);
+            top: -29px;
+            right: 0;
+            left: 0;
+            margin: 0 auto;
+            z-index: 999;
+        }
+    }
+
+    &.current::before {
+        background-color: white; // 現在のステップ（白抜き）
+        border: 8px solid $primary-color;
+    }
+}
+
+.c-stepper__item:not(:last-child) {
+    &::after {
+        content: "";
+        position: relative;
+        top: 15px;
+        left: 50%;
+        height: 2px;
+        background-color: #e0e0e0;
+        order: -1;
+    }
+
+    &.completed::after {
+        background-color: $primary-color;
+    }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+
+    .c-stepper__item {
+        &::before {
+            --size: 25px;
+        }
+    
+        &.completed {
+            .check::before{
+                width: 10px;
+                height: 5px;
+                border-left: 1px solid $text-color;
+                border-bottom: 1px solid $text-color;
+                top: -25px;
+            }
+        }
+    
+        &.current::before {
+            border: 6px solid $primary-color;
+        }
+    }
+    
+    .c-stepper__title{
+        font-size: 0.7rem;
+    }
+}

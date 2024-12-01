@@ -1,0 +1,79 @@
+@import "./colors";
+
+.reservation-page{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+.slot-selection {
+    text-align: center;
+
+    & .selectedDate{
+        font-size: 1.2rem;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    li {
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+
+        &.selectable {
+            background-color: $primary-color;
+
+            &:hover {
+                background-color: $primary-darker;
+            }
+        }
+
+        &.not-selectable {
+            background-color: $secondary-color;
+        }
+    }
+}
+
+.reservation-confirmation {
+    text-align: center;
+
+    table {
+        width: 100%;
+        margin-top: 16px;
+        border-collapse: collapse;
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            color: #555;
+        }
+
+        th {
+            font-weight: bold;
+            width: 30%;
+            white-space: nowrap;
+            text-align: right;
+            padding-right: 16px;
+        }
+
+        td {
+            width: 70%;
+            text-align: left;
+        }
+    }
+
+}
+
+// レスポンシブ対応
+@media (max-width: 600px) {
+    .reservation-confirmation{
+        padding: 0;
+    }
+
+    table th, table td {
+        font-size: 0.9em;
+    }
+}

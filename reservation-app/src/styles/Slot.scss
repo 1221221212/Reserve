@@ -1,0 +1,47 @@
+// src/styles/SlotManagement.scss
+@import './AdminPage.scss';
+@import "./colors";
+
+.slot-confirmation {
+
+    .date-list, .pattern-list {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 20px 0;
+
+        li {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: $text-color;
+        }
+    }
+
+}
+
+.slot-management-page {
+    .slot-table {
+        @extend .table;
+    }
+
+    .edit-button, .delete-button {
+        background-color: #ffc107;
+        border: none;
+        padding: 5px 10px;
+        color: #333;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &.delete-button {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        &:hover {
+            filter: brightness(90%);
+        }
+    }
+}

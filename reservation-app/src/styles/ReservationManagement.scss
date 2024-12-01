@@ -1,0 +1,8 @@
+// src/styles/PatternManagement.scss
+@import './AdminPage.scss';
+
+.admin-page-content {
+    .reservation-table {
+        @extend .table;
+    }
+}
