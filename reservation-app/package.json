@@ -2,10 +2,35 @@
   "name": "reservation-app",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
+=======
+  "proxy": "http://localhost:3000",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "install": "^0.13.0",
+    "moment-timezone": "^0.5.46",
+    "npm": "^10.9.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.33.0",
+    "eslint-plugin-react": "^7.32.0",
+    "prettier": "^2.8.1"
+  },
+>>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+<<<<<<< HEAD
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -23,6 +48,17 @@
   "devDependencies": {
     "cross-spawn": "^7.0.6",
     "react-refresh": "^0.11.0"
+=======
+    "eject": "react-scripts eject",
+    "lint": "eslint src/** --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+>>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
   },
   "browserslist": {
     "production": [

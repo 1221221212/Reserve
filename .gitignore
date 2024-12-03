@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### macOS ###
 # General
 .DS_Store
@@ -34,10 +35,29 @@ Temporary Items
 ### Node ###
 # Logs
 logs
+=======
+/.DS_Store
+node_modules/
+
+# Node.js関連
+node_modules/
+
+# React関連
+build/
+dist/
+
+# 環境変数ファイル
+*.env
+*.env.local
+*.env.*.local
+
+# ログファイル
+>>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
 lerna-debug.log*
 .pnpm-debug.log*
 
@@ -202,3 +222,25 @@ sketch
 # Ignore all local history of files
 .history
 .ionide
+=======
+pnpm-debug.log*
+
+# エディタ関連
+.vscode/
+.idea/
+*.iml
+
+# MacOS関連
+.DS_Store
+
+# テスト関連
+coverage/
+cypress/videos/
+cypress/screenshots/
+
+# その他
+*.tmp
+*.bak
+*.swp
+backend/.env
+>>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
