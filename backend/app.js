@@ -4,7 +4,7 @@ const app = express();
 require('dotenv').config();
 const authenticateToken = require('./middleware/auth');
 
-app.use(cors({ origin: 'http://localhost:3001' }));
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
 const availabilityRoutes = require('./routes/availabilityRoutes');
@@ -29,6 +29,11 @@ app.use('/api/closed-days', closedDayRoutes);
 app.use('/api/patterns', authenticateToken, patternRoutes);
 app.use('/api/assigned-slots', authenticateToken, assignedSlotsRoutes);
 
-app.listen(3000, () => {
-    console.log('サーバーがポート3000で起動しました');
+require('dotenv').config(); // 環境変数を読み込む
+
+// 環境変数からポートを取得（デフォルトは 3001）
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+    console.log(`サーバーがポート ${PORT} で起動しました`);
 });

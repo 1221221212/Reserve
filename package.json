@@ -3,19 +3,19 @@
     "version": "1.0.0",
     "private": true,
     "workspaces": [
-        "backend",
-        "reservation-app/"
+      "backend",
+      "reservation-app/"
     ],
     "scripts": {
-        "install:all": "npm install",
-        "start:backend": "npm run dev --workspace backend",
-        "start:frontend": "npm run start --workspace reservation-app",
-        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+      "install:all": "yarn install",
+      "start:backend": "yarn workspace backend dev",
+      "start:frontend": "yarn workspace reservation-app start",
+      "start": "concurrently \"yarn start:backend\" \"yarn start:frontend\""
     },
     "devDependencies": {
-        "concurrently": "^7.6.0",
-        "eslint": "^8.33.0",
-        "jest": "^29.7.0",
-        "prettier": "^2.8.1"
+      "concurrently": "^7.6.0",
+      "eslint": "^8.33.0",
+      "jest": "^29.7.0",
+      "prettier": "^2.8.1"
     }
-}
+  }
