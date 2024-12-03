@@ -1,7 +1,6 @@
 {
   "name": "backend",
   "version": "1.0.0",
-<<<<<<< HEAD
   "private": true,
   "scripts": {
     "dev": "nodemon app.js",
@@ -11,34 +10,12 @@
     "axios": "^1.7.8",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
-=======
-  "main": "app.js",
-  "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.7.7",
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "date-fns": "^4.1.0",
->>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.46",
-<<<<<<< HEAD
     "mysql2": "^3.11.5",
     "uuid": "^11.0.2"
-=======
-    "mysql2": "^3.11.3",
-    "tunnel-ssh": "^5.1.2"
->>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
   },
   "devDependencies": {
     "nodemon": "^3.0.0"

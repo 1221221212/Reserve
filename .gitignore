@@ -244,3 +244,4 @@ cypress/screenshots/
 *.swp
 backend/.env
 >>>>>>> dd656250cfad71a318be03c7240d73bca59dd641
+backend/iw33.key
