@@ -2,6 +2,7 @@
     "name": "reserve",
     "version": "1.0.0",
     "private": true,
+    "packageManager": "yarn@1.22.22",
     "workspaces": [
       "backend",
       "reservation-app/"
