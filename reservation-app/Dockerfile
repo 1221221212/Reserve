@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN corepack enable
 
-COPY ../../package.json ../../yarn.lock ./
+COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile --non-interactive
 
