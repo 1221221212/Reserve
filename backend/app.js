@@ -16,18 +16,18 @@ const holidayRoutes = require('./routes/holidayRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const closedDayRoutes = require('./routes/closedDayRoutes')
 
-app.use('/api/auth', authRoutes); // 認証関連
+app.use('/auth', authRoutes); // 認証関連
 
 // 認証不要のエンドポイント
-app.use('/api/availability', availabilityRoutes);
-app.use('/api/reservations', reservationRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api/holidays', holidayRoutes);
-app.use('/api/closed-days', closedDayRoutes);
+app.use('/availability', availabilityRoutes);
+app.use('/reservations', reservationRoutes);
+app.use('/settings', settingsRoutes);
+app.use('/holidays', holidayRoutes);
+app.use('/closed-days', closedDayRoutes);
 
 // 認証が必要なエンドポイント
-app.use('/api/patterns', authenticateToken, patternRoutes);
-app.use('/api/assigned-slots', authenticateToken, assignedSlotsRoutes);
+app.use('/patterns', authenticateToken, patternRoutes);
+app.use('/assigned-slots', authenticateToken, assignedSlotsRoutes);
 
 require('dotenv').config(); // 環境変数を読み込む
 

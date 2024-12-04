@@ -14,7 +14,7 @@ const PatternForm = ({ onPatternSaved }) => {
         event.preventDefault();
         try {
             const apiUrl = process.env.REACT_APP_API_URL;
-            await axios.post(`${apiUrl}/api/patterns`, {
+            await axios.post(`${apiUrl}/patterns`, {
                 pattern_name: patternName,
                 start_time: startTime,
                 end_time: endTime,

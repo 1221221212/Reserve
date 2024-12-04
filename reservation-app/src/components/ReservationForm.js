@@ -22,7 +22,7 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
     useEffect(() => {
         const fetchCurrentReservationCount = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/current-reservation-count`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/availability/current-reservation-count`, {
                     params: { slotId },
                 });
                 setCurrentCount(response.data.count.current_people); // 現在の予約人数を設定

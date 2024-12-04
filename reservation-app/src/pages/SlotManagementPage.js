@@ -14,7 +14,7 @@ const SlotManagementPage = () => {
     useEffect(() => {
         const fetchAssignedSlots = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/assigned-slots`, {
+                const response = await axios.get(`${apiUrl}/assigned-slots`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setAssignedSlots(response.data);

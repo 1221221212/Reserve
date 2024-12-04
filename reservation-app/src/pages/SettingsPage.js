@@ -30,7 +30,7 @@ const SettingsPage = () => {
                 return;
             }
 
-            const response = await fetch('/api/settings', {
+            const response = await fetch('/settings', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -118,7 +118,7 @@ const SettingsPage = () => {
                 return;
             }
 
-            const response = await fetch('/api/settings', {
+            const response = await fetch('/settings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

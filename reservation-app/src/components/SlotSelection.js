@@ -23,7 +23,7 @@ const SlotSelection = ({ selectedDate, availableSince, availableUntil, available
                     params.available_since_time = availableSinceTime;
                 }
 
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/day`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/availability/day`, {
                     params,
                 });
                 setSlots(response.data);

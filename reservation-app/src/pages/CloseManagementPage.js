@@ -13,7 +13,7 @@ const CloseManagementPage = () => {
     useEffect(() => {
         const fetchClosedDays = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/closed-days`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/closed-days`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

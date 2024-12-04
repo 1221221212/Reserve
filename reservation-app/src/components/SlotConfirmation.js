@@ -9,7 +9,7 @@ const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/assigned-slots`, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/assigned-slots`, {
                 dates: selectedDates,
                 patterns: selectedPatterns,
             }, {

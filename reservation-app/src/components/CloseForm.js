@@ -70,7 +70,7 @@ const CloseForm = ({ onClosedDaySaved }) => {
         }
 
         try {
-            await axios.post(`${apiUrl}/api/closed-days`, payload, {
+            await axios.post(`${apiUrl}/closed-days`, payload, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert('休業日が作成されました');

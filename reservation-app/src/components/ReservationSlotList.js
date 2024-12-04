@@ -7,7 +7,7 @@ const ReservationSlotList = () => {
     useEffect(() => {
         const fetchSlots = async () => {
             try {
-                const response = await axios.get('/api/availability');
+                const response = await axios.get('/availability');
                 setSlots(response.data);
             } catch (error) {
                 console.error('予約枠の取得に失敗しました:', error);
@@ -19,7 +19,7 @@ const ReservationSlotList = () => {
 
     const handleDelete = async (slotId) => {
         try {
-            await axios.delete(`/api/availability/${slotId}`);
+            await axios.delete(`/availability/${slotId}`);
             setSlots(slots.filter(slot => slot.id !== slotId)); // 削除後にリストを更新
             alert('予約枠が削除されました');
         } catch (error) {

@@ -21,7 +21,7 @@ export const refreshAccessToken = async () => {
     if (!refreshToken) return null;
 
     try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/refresh`, { token: refreshToken });
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh`, { token: refreshToken });
         const newAccessToken = response.data.accessToken;
         localStorage.setItem('token', newAccessToken);
         return newAccessToken;

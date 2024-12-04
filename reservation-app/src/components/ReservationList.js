@@ -7,7 +7,7 @@ const ReservationList = ({ token }) => {
     useEffect(() => {
         const fetchReservations = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reservations`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reservations`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setReservations(response.data);
@@ -20,7 +20,7 @@ const ReservationList = ({ token }) => {
 
     const handleCancel = async (id) => {
         try {
-            await axios.delete(`${process.env.REACT_APP_API_URL}/api/reservations/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/reservations/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setReservations(reservations.filter((reservation) => reservation.id !== id));

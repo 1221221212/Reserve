@@ -32,7 +32,7 @@ const ReservationPage = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/public`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/settings/public`);
             if (response.status === 200) {
                 const fetchedSettings = response.data;
                 setSettings(fetchedSettings);
@@ -85,7 +85,7 @@ const ReservationPage = () => {
         try {
             // CheckAvailability を実行
             const availabilityResponse = await axios.post(
-                `${process.env.REACT_APP_API_URL}/api/reservations/check-availability`,
+                `${process.env.REACT_APP_API_URL}/reservations/check-availability`,
                 availabilityRequestData
             );
 
@@ -106,7 +106,7 @@ const ReservationPage = () => {
             };
 
             const reservationResponse = await axios.post(
-                `${process.env.REACT_APP_API_URL}/api/reservations/create`,
+                `${process.env.REACT_APP_API_URL}/reservations/create`,
                 requestData
             );
 

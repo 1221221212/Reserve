@@ -53,7 +53,7 @@ const Calendar = ({ onDateSelect, availableSince, availableSinceTime, availableU
                     params.available_since_time = availableSinceTime;
                 }
 
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/availability/month`, { params });
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/availability/month`, { params });
                 setReservations(response.data);
             } catch (error) {
                 console.error("予約データの取得に失敗しました:", error);

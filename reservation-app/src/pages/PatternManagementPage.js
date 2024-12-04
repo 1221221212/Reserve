@@ -13,7 +13,7 @@ const PatternManagementPage = () => {
     useEffect(() => {
         const fetchPatterns = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/patterns`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/patterns`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPatterns(response.data);

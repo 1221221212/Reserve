@@ -18,7 +18,7 @@ const DateSelectionForm = ({ onDateSelection }) => {
     const fetchHolidays = async (startDate, endDate) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/holidays`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/holidays`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { startDate, endDate }
             });
