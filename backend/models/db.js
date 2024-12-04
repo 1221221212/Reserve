@@ -3,9 +3,9 @@ require('dotenv').config(); // dotenvを読み込み
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
-    user: process.env.DB_USER,
+    user: process.env.DB_USERNAME, // 修正
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_DATABASE // 修正
 });
 
 db.getConnection()
