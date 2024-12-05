@@ -1,6 +1,6 @@
-FROM node:18
+FROM node:20-alpine
 
-WORKDIR /backend-app
+WORKDIR /app
 
 RUN corepack enable
 
@@ -8,6 +8,6 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile --non-interactive
 
-COPY . .
+COPY backend/ ./
 
 CMD ["yarn", "start"]
