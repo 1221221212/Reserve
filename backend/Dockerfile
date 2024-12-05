@@ -8,6 +8,6 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile --non-interactive
 
-COPY backend/ ./
+COPY . .
 
 CMD ["yarn", "start"]
