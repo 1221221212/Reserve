@@ -24,6 +24,11 @@ app.use('/reservations', reservationRoutes);
 app.use('/settings', settingsRoutes);
 app.use('/holidays', holidayRoutes);
 app.use('/closed-days', closedDayRoutes);
+// Test endpoint
+app.get('/test', (req, res) => {
+    res.json({ message: 'Test endpoint is working!' });
+});
+
 
 // 認証が必要なエンドポイント
 app.use('/patterns', authenticateToken, patternRoutes);
