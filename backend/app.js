@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
 require('dotenv').config();
+
+const app = express();
 const authenticateToken = require('./middleware/auth');
 
+// CORS設定
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
+// ルートのインポート
 const availabilityRoutes = require('./routes/availabilityRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -14,31 +17,33 @@ const patternRoutes = require('./routes/patternRoutes');
 const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
 const holidayRoutes = require('./routes/holidayRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
-const closedDayRoutes = require('./routes/closedDayRoutes')
+const closedDayRoutes = require('./routes/closedDayRoutes');
 
-app.use('/auth', authRoutes); // 認証関連
+// APIルーターの設定
+const apiRouter = express.Router();
 
 // 認証不要のエンドポイント
-app.use('/availability', availabilityRoutes);
-app.use('/reservations', reservationRoutes);
-app.use('/settings', settingsRoutes);
-app.use('/holidays', holidayRoutes);
-app.use('/closed-days', closedDayRoutes);
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/availability', availabilityRoutes);
+apiRouter.use('/reservations', reservationRoutes);
+apiRouter.use('/settings', settingsRoutes);
+apiRouter.use('/holidays', holidayRoutes);
+apiRouter.use('/closed-days', closedDayRoutes);
+
 // Test endpoint
-app.get('/test', (req, res) => {
+apiRouter.get('/test', (req, res) => {
     res.json({ message: 'Test endpoint is working!' });
 });
 
-
 // 認証が必要なエンドポイント
-app.use('/patterns', authenticateToken, patternRoutes);
-app.use('/assigned-slots', authenticateToken, assignedSlotsRoutes);
+apiRouter.use('/patterns', authenticateToken, patternRoutes);
+apiRouter.use('/assigned-slots', authenticateToken, assignedSlotsRoutes);
 
-require('dotenv').config(); // 環境変数を読み込む
+// 全てのエンドポイントに /api プレフィックスを追加
+app.use('/api', apiRouter);
 
-// 環境変数からポートを取得（デフォルトは 3001）
+// サーバーの起動
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => {
     console.log(`サーバーがポート ${PORT} で起動しました`);
 });
