@@ -90,7 +90,7 @@ exports.getAllReservations = async (req, res) => {
 // フィルターされた予約情報を取得
 exports.getFilteredReservations = async (req, res) => {
     try {
-        const { startDate, endDate, reservationId, customerName, phoneNumber, email, status } = req.query;
+        const { startDate, endDate, reservationId, customerName, phoneNumber, email, status, hasComment } = req.query;
 
         let reservations;
 
@@ -106,6 +106,7 @@ exports.getFilteredReservations = async (req, res) => {
                 phoneNumber,
                 email,
                 status,
+                hasComment,
             });
         }
 

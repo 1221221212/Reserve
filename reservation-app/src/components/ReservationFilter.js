@@ -12,13 +12,14 @@ const ReservationFilter = ({ onApplyFilter }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState('');
+    const [hasComment, setHasComment] = useState('');
 
     const toggleFilterVisibility = () => {
         setIsFilterVisible(!isFilterVisible);
     };
 
     const handleApplyFilter = () => {
-        onApplyFilter({ startDate, endDate, reservationId, customerName, phoneNumber, email, status });
+        onApplyFilter({ startDate, endDate, reservationId, customerName, phoneNumber, email, status, hasComment });
         toggleFilterVisibility();
     };
 
@@ -91,15 +92,27 @@ const ReservationFilter = ({ onApplyFilter }) => {
                     </div>
                     <div className="filter-row">
                         <label>ステータス:</label>
-                        <select 
-                            value={status} 
-                            onChange={(e) => setStatus(e.target.value)} 
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
                             disabled={isOtherFiltersDisabled}
                         >
                             <option value="">全て</option>
                             <option value="confirmed">確定</option>
                             <option value="pending">保留</option>
                             <option value="canceled">キャンセル</option>
+                        </select>
+                    </div>
+                    <div className="filter-row">
+                        <label>コメントの有無:</label>
+                        <select
+                            value={hasComment}
+                            onChange={(e) => setHasComment(e.target.value)}
+                            disabled={isOtherFiltersDisabled}
+                        >
+                            <option value="">全て</option>
+                            <option value="true">あり</option>
+                            <option value="false">なし</option>
                         </select>
                     </div>
                     <div className="filter-apply">

@@ -19,7 +19,7 @@ const ReservationDetailPage = () => {
                     return;
                 }
 
-                const response = await axios.get(`/reservations/${id}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reservations/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

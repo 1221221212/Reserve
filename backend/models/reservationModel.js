@@ -78,11 +78,13 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
             return { success: false, message: "この予約枠は満員です (最大人数に達しました)" };
         }
 
+        const commentValue = comment?.trim() === '' ? null : comment;
+
         // 制限内であれば予約を挿入
         const [result] = await connection.query(`
             INSERT INTO reservations (slot_id, customer_name, phone_number, email, group_size, comment)
             VALUES (?, ?, ?, ?, ?, ?)
-        `, [slot_id, customer_name, phone_number, email, group_size, comment]);
+        `, [slot_id, customer_name, phone_number, email, group_size, commentValue]);
 
         const reservationId = result.insertId; // 自動生成された予約ID
         const randomCode = generateRandomCode(); // ランダムな3文字の英数字生成
@@ -150,7 +152,7 @@ exports.getReservationById = async (reservationId) => {
 };
 
 // 条件に基づいたフィルター付き予約情報を取得
-exports.getFilteredReservations = async ({ startDate, endDate, customerName, phoneNumber, email, status }) => {
+exports.getFilteredReservations = async ({ startDate, endDate, customerName, phoneNumber, email, status, hasComment }) => {
     try {
         let query = `
             SELECT 
@@ -184,6 +186,11 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
             query += ` AND reservations.status = ?`;
             params.push(status);
         }
+        if (hasComment === 'true') {
+            query += ` AND reservations.comment IS NOT NULL`;
+        } else if (hasComment === 'false') {
+            query += ` AND reservations.comment IS NULL`;
+        }
 
         const [reservations] = await db.query(query, params);
         return reservations;
@@ -192,7 +199,6 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
         throw error;
     }
 };
-
 
 exports.getReservationDetail = async (id) => {
     try {
