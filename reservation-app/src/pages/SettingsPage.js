@@ -30,7 +30,7 @@ const SettingsPage = () => {
                 return;
             }
 
-            const response = await fetch('/settings', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/settings`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -118,7 +118,7 @@ const SettingsPage = () => {
                 return;
             }
 
-            const response = await fetch('/settings', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/settings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -33,6 +33,33 @@ const ReservationDetailPage = () => {
         fetchReservation();
     }, [id, navigate]);
 
+    const handleCancelReservation = async () => {
+        if (!window.confirm('本当にこの予約をキャンセルしますか？')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('トークンが見つかりません。再度ログインしてください。');
+                navigate('/admin/login');
+                return;
+            }
+
+            await axios.patch(`${process.env.REACT_APP_API_URL}/reservations/${id}/cancel`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            alert('予約をキャンセルしました。');
+            navigate('/admin/reservations'); // 一覧ページへリダイレクト
+        } catch (error) {
+            console.error('予約のキャンセルに失敗しました:', error);
+            alert('予約のキャンセルに失敗しました。もう一度お試しください。');
+        }
+    };
+
     if (!reservation) return <div>Loading...</div>;
 
     return (
@@ -66,7 +93,9 @@ const ReservationDetailPage = () => {
                 <span className="label">予約作成日:</span>
                 <span className="value">{reservation.created_at}</span>
             </div>
-            <button className="edit-button">予約を編集</button>
+            <button className="cancel-button" onClick={handleCancelReservation}>
+                予約をキャンセル
+            </button>
         </div>
     );
 };

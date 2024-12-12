@@ -149,3 +149,21 @@ exports.getReservationDetail = async (req, res) => {
         res.status(500).json({ message: "予約の取得に失敗しました", error: error.message });
     }
 };
+
+exports.cancelReservation = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // モデルを呼び出して予約をキャンセル
+        const result = await reservationModel.cancelReservationById(id);
+
+        if (result.success) {
+            return res.status(200).json({ success: true, message: "予約をキャンセルしました。" });
+        } else {
+            return res.status(404).json({ success: false, message: "予約が見つかりませんでした。" });
+        }
+    } catch (error) {
+        console.error("予約キャンセル中にエラーが発生しました:", error);
+        return res.status(500).json({ success: false, message: "予約キャンセル中にエラーが発生しました。" });
+    }
+};

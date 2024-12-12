@@ -20,4 +20,7 @@ router.get('/filtered', authenticateToken, reservationController.getFilteredRese
 // 予約IDで予約情報を取得するエンドポイント
 router.get('/:id', authenticateToken, reservationController.getReservationDetail);
 
+// 管理者による予約キャンセルエンドポイント
+router.patch('/:id/cancel', authenticateToken, reservationController.cancelReservation);
+
 module.exports = router;

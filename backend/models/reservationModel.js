@@ -228,3 +228,23 @@ exports.getReservationDetail = async (id) => {
         throw error;
     }
 };
+
+exports.cancelReservationById = async (id) => {
+    try {
+        const [result] = await db.query(`
+            UPDATE reservations
+            SET status = 'cancelled_by_admin'
+            WHERE id = ?
+        `, [id]);
+
+        if (result.affectedRows === 0) {
+            // 該当するレコードがない場合
+            return { success: false };
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("予約キャンセル中にエラーが発生しました:", error);
+        throw error;
+    }
+};
