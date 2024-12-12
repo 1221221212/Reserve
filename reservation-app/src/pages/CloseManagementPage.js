@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/close.scss';
 
 const CloseManagementPage = () => {
     const [regularClosedDays, setRegularClosedDays] = useState([]);
@@ -89,12 +88,6 @@ const CloseManagementPage = () => {
                 <button className="button" onClick={handleCreateClosedDay}>
                     休業日を設定
                 </button>
-                <nav>
-                    <ul className="table-navigation">
-                        <li><a href="#regular-closed-days">定休日一覧</a></li>
-                        <li><a href="#temporary-closed-days">臨時休業日一覧</a></li>
-                    </ul>
-                </nav>
             </div>
 
             {/* 定休日一覧 */}

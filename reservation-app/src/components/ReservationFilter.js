@@ -29,6 +29,7 @@ const ReservationFilter = ({ onApplyFilter }) => {
         <div className="reservation-filter">
             <div onClick={toggleFilterVisibility} className="filter-icon">
                 <FaFilter size={20} />
+                <span>フィルター</span>
             </div>
 
             {isFilterVisible && (

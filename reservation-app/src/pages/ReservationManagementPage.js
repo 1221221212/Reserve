@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ReservationFilter from '../components/ReservationFilter';
-import '../styles/ReservationManagement.scss';
 
 const ReservationManagementPage = () => {
     const [reservations, setReservations] = useState([]);

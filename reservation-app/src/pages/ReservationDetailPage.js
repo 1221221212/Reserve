@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/ReservationManagement.scss';
 
 const ReservationDetailPage = () => {
     const { id } = useParams(); // URLから予約IDを取得

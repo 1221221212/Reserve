@@ -10,12 +10,13 @@
     width: 100%;
 }
 
-.table {
+.table, .reservation-table, .closed-day-table{
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 
-    th, td {
+    th,
+    td {
         padding: 10px;
         text-align: left;
         border-bottom: 1px solid #ddd;
@@ -38,22 +39,56 @@
     left: 0;
     transition: transform 0.3s ease;
 
-    ul {
+    & button{
+        background: none;
+        color: #fff;
+        border-radius: 0;
+    }
+    
+    & li{
         list-style: none;
-        padding: 0;
+    }
 
-        li {
-            margin: 10px 0;
+    /* 親要素のデフォルトスタイル */
+    .parent-item {
+        padding: 10px 15px;
+        border: none;
+        text-align: left;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
 
-            a {
-                color: #fff;
-                text-decoration: none;
-
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
+        &.active {
+        background-color: darkorange;
+        color: black;
+        font-weight: bold;
         }
+    }
+
+    .child-menu{
+        margin-left: 25px;
+
+        & li a{
+                    color: #fff;
+        display: block;
+        text-decoration: none;
+        padding: 8px 15px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &.active{
+                    background-color: darkorange;
+        color: black;
+        font-weight: bold;
+        padding-left: 25px;
+        }
+        }
+    }
+
+    /* ホバー効果 */
+    .parent-item:hover,
+    .child-menu li a:hover {
+        background-color: gray;
+        color: white;
     }
 
     // モバイルメニューが非表示の場合

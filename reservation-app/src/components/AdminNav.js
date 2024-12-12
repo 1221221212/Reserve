@@ -1,17 +1,63 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const AdminNav = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const location = useLocation(); // 現在のパスを取得
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false); // メニューの開閉状態を管理
+    const [selectedParent, setSelectedParent] = useState('');
+
+    // メニューの親子構造
+    const menuItems = [
+        {
+            parent: '受付管理',
+            path: '/admin/slots',
+            defaultChild: '/admin/slots',
+            children: [
+                { name: '予約枠管理', path: '/admin/slots' },
+                { name: 'パターン管理', path: '/admin/patterns' },
+                { name: '休業日管理', path: '/admin/close' },
+            ],
+        },
+        {
+            parent: '予約管理',
+            path: '/admin/reservations',
+            defaultChild: '/admin/reservations',
+            children: [],
+        },
+        {
+            parent: '設定',
+            path: '/admin/settings',
+            defaultChild: '/admin/settings/info',
+            children: [
+                { name: '基本情報設定', path: '/admin/settings/info' },
+                { name: '予約設定', path: '/admin/settings/reservation' },
+            ],
+        },
+    ];
+
+    useEffect(() => {
+        const currentParent = menuItems.find((menu) =>
+            menu.children.some((child) => location.pathname.startsWith(child.path)) || 
+            location.pathname === menu.defaultChild
+        );
+        if (currentParent) {
+            setSelectedParent(currentParent.parent);
+        }
+    }, [location.pathname, menuItems]);
 
     const toggleMenu = () => {
-        setIsOpen(!isOpen);
+        setIsOpen(!isOpen); // メニューを開閉
     };
 
-    // メニューアイテムに選択されているクラスを追加
+    const handleParentSelect = (menu) => {
+        setSelectedParent(menu.parent);
+        setIsOpen(false); // メニューを閉じる
+        navigate(menu.defaultChild);
+    };
+
     const getLinkClass = (path) => {
-        return location.pathname === path ? 'active' : '';
+        return location.pathname.startsWith(path) ? 'active' : '';
     };
 
     return (
@@ -22,25 +68,27 @@ const AdminNav = () => {
             <nav className={`admin-nav ${isOpen ? 'open' : ''}`}>
                 <h2>管理メニュー</h2>
                 <ul>
-                    <li>
-                        <Link to="/admin/slots" className={getLinkClass('/admin/slots')}>受付管理</Link>
-                        <ul>
-                            <li><Link to="/admin/slots" className={getLinkClass('/admin/slots')}>予約枠管理</Link></li>
-                            <li><Link to="/admin/patterns" className={getLinkClass('/admin/patterns')}>パターン管理</Link></li>
-                            <li><Link to="/admin/close" className={getLinkClass('/admin/close')}>休業日管理</Link></li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <Link to="/admin/reservations" className={getLinkClass('/admin/reservations')}>予約管理</Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/settings/info" className={getLinkClass('/admin/settings')}>設定</Link>
-                        <ul>
-                            <li><Link to="/admin/settings/info" className={getLinkClass('/admin/settings/info')}>基本情報設定</Link></li>
-                            <li><Link to="/admin/settings/reservation" className={getLinkClass('/admin/settings/reservation')}>予約設定</Link></li>
-                        </ul>
-                    </li>
+                    {menuItems.map((menu) => (
+                        <li key={menu.parent}>
+                            <button
+                                className={`parent-item ${selectedParent === menu.parent ? 'active' : ''}`}
+                                onClick={() => handleParentSelect(menu)}
+                            >
+                                {menu.parent}
+                            </button>
+                            {selectedParent === menu.parent && menu.children.length > 0 && (
+                                <ul className="child-menu">
+                                    {menu.children.map((child) => (
+                                        <li key={child.path}>
+                                            <Link to={child.path} className={getLinkClass(child.path)}>
+                                                {child.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </li>
+                    ))}
                 </ul>
             </nav>
             {isOpen && <div className="overlay" onClick={toggleMenu}></div>}
