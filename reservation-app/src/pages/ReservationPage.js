@@ -16,7 +16,7 @@ const ReservationPage = () => {
         customer_name: '',
         phone_number: '',
         email: '',
-        group_size: 1,
+        group_size: '',
         comment: '',
     });
     const [reservationId, setReservationId] = useState("");
@@ -165,8 +165,11 @@ const ReservationPage = () => {
                     formValues={reservationInfo}
                     max_people={selectedSlot?.max_people}
                     max_groups={selectedSlot?.max_groups}
+                    current_people={selectedSlot?.current_people}
+                    reservation_count={selectedSlot?.reservation_count}
                     onSubmit={handleFormSubmit}
                 />
+
             )}
 
             {currentStep === 4 && reservationInfo && (
@@ -185,7 +188,7 @@ const ReservationPage = () => {
                 <div className="reservation-complete">
                     <h2>予約が完了しました！</h2>
                     <p>予約ID: {reservationId}</p>
-                    <button onClick={() => setCurrentStep(1)}>新しい予約をする</button>
+                    <button onClick={() => window.location.reload()}>新しい予約をする</button>
                 </div>
             )}
         </div>

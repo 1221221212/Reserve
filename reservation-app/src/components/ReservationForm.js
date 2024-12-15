@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups }) => {
+const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups, current_people, reservation_count }) => {
     const [currentCount, setCurrentCount] = useState(0); // 現在の予約人数
     const [errorMessage, setErrorMessage] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true); // ボタンの有効化状態
@@ -11,30 +11,6 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
         email: '',
         group_size: '',
     });
-
-    useEffect(() => {
-        if (!formValues.group_size) {
-            formValues.group_size = 1; // 初期値を明示的に設定
-        }
-    }, []);
-
-    // 現在の予約人数を取得する
-    useEffect(() => {
-        const fetchCurrentReservationCount = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/availability/current-reservation-count`, {
-                    params: { slotId },
-                });
-                setCurrentCount(response.data.count.current_people); // 現在の予約人数を設定
-            } catch (error) {
-                console.error("現在の予約人数の取得に失敗しました:", error);
-            }
-        };
-
-        if (slotId) {
-            fetchCurrentReservationCount(); // slotIdが設定された場合に取得
-        }
-    }, [slotId]);
 
     // ボタンの有効化チェック
     useEffect(() => {
@@ -51,6 +27,7 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
     const validateField = (field, value) => {
         let error = '';
 
+
         switch (field) {
             case 'customer_name':
                 if (!value.trim()) error = '名前を入力してください。';
@@ -65,11 +42,17 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
                 if (value <= 0) {
                     error = '人数は1以上である必要があります。';
                 } else if (max_groups) {
-                    // 最大組数が設定されている場合
-                    if (value > max_people) error = `人数が多すぎます。最大${max_people}人までです。`;
-                } else if (max_people && value > max_people - currentCount) {
-                    // 最大人数が設定されている場合
-                    error = `残りの人数が不足しています。予約可能な人数は最大${max_people - currentCount}人です。`;
+                    const remainingGroups = max_groups - reservation_count;
+                    if (remainingGroups <= 0) {
+                        error = '予約可能なグループ数がありません。';
+                    } else if (value > max_people) {
+                        error = `人数が多すぎます。最大${max_people}人までです。`;
+                    }
+                } else if (max_people && current_people !== undefined) {
+                    const remainingPeople = max_people - current_people;
+                    if (value > remainingPeople) {
+                        error = `残りの人数が不足しています。予約可能な人数は最大${remainingPeople}人です。`;
+                    }
                 }
                 break;
             default:
@@ -91,7 +74,7 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
         e.preventDefault();
         if (!isButtonDisabled) {
             setErrorMessage(''); // エラーをクリア
-            onSubmit({...formValues}); // 親コンポーネントにデータを送信
+            onSubmit({ ...formValues }); // 親コンポーネントにデータを送信
         }
     };
 
@@ -134,10 +117,9 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
                 <label>人数:</label>
                 <input
                     type="number"
-                    value={formValues.group_size || 1}
+                    value={formValues.group_size}
                     onChange={(e) => handleChange('group_size', parseInt(e.target.value, 10))}
                     onBlur={() => validateField('group_size', formValues.group_size)}
-                    min="1"
                     required
                 />
                 {validationErrors.group_size && <p className="error-message">{validationErrors.group_size}</p>}
@@ -151,7 +133,7 @@ const ReservationForm = ({ slotId, formValues, onSubmit, max_people, max_groups 
                 />
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <p>現在の予約人数: {currentCount}</p>
+            <p>現在の予約人数: {current_people}</p>
             <button type="submit" disabled={isButtonDisabled}>
                 予約を確認
             </button>

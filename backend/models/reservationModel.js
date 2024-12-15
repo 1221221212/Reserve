@@ -1,4 +1,5 @@
-const db = require('./db'); // データベース接続
+const db = require('./db'); 
+const moment = require('moment');
 
 exports.getSlotDetails = async (slot_id) => {
     try {
@@ -7,6 +8,9 @@ exports.getSlotDetails = async (slot_id) => {
                 assigned_slots.date,
                 assigned_slots.status AS slot_status,
                 reservation_patterns.start_time,
+                reservation_patterns.end_time,
+                reservation_patterns.max_groups,
+                reservation_patterns.max_people,
                 reservation_patterns.status AS pattern_status
             FROM assigned_slots
             JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
@@ -51,20 +55,16 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
         const currentGroups = parseInt(currentReservations[0]?.current_groups || 0);
         const currentPeople = parseInt(currentReservations[0]?.current_people || 0);
 
-        // スロットの最大組数と最大人数を取得
-        const [slotInfo] = await connection.query(`
-            SELECT max_groups, max_people
-            FROM reservation_patterns
-            WHERE id = (SELECT pattern_id FROM assigned_slots WHERE id = ?)
-        `, [slot_id]);
-
-        if (!slotInfo[0]) {
-            console.log("slotInfo[0] is undefined");
+        // スロットの詳細情報を取得
+        const slotDetails = await this.getSlotDetails(slot_id);
+        if (!slotDetails) {
+            console.log("スロット詳細情報が見つかりません");
             await connection.rollback();
-            return { success: false, message: "予約枠の情報が取得できませんでした。" };
+            return { success: false, message: "スロットの詳細情報が取得できませんでした。" };
         }
 
-        const { max_groups, max_people } = slotInfo[0];
+        const max_groups = slotDetails.max_groups;
+        const max_people = slotDetails.max_people;
 
         // 満員チェック
         if (max_groups && currentGroups >= max_groups) {
@@ -95,6 +95,9 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
             UPDATE reservations SET reservation_number = ? WHERE id = ?
         `, [reservationNumber, reservationId]);
 
+        const formattedDate = moment(slotDetails.date).format('YYYY-MM-DD');
+        const formattedStartTime = moment(slotDetails.start_time, 'HH:mm:ss').format('HH:mm');
+        const formattedEndTime = moment(slotDetails.end_time, 'HH:mm:ss').format('HH:mm');
         await connection.commit();
 
         console.log("予約が正常に作成されました");
@@ -110,6 +113,9 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
                 email,
                 group_size,
                 comment,
+                date: formattedDate,
+                start_time: formattedStartTime,
+                end_time: formattedEndTime,
             },
         };
     } catch (error) {

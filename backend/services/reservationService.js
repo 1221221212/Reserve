@@ -9,7 +9,6 @@ const { reservationPeriod } = require('../utils/utils');
  * @returns {object} - { available: boolean, message: string }
  */
 exports.checkSlotAvailability = async (slot_id, reservation_settings) => {
-
     try {
         // スロット詳細の取得
         const slotDetails = await reservationModel.getSlotDetails(slot_id);
@@ -27,6 +26,17 @@ exports.checkSlotAvailability = async (slot_id, reservation_settings) => {
         // 予約可能期間を計算
         const { available_since, available_since_time, available_until } = reservationPeriod(reservation_settings);
 
+        // 予約可能期間情報をフォーマット
+        const reservationPeriodInfo = {
+            available_since: available_since.format('YYYY-MM-DD'),
+            available_since_time: reservation_settings.end.isSameDay
+                ? available_since_time?.format('HH:mm')
+                : null,
+            available_until: available_until.format('YYYY-MM-DD'),
+        };
+
+        console.log("予約可能期間:", reservationPeriodInfo);
+
         // 今日の日付の開始時刻を取得
         const currentDate = moment().startOf('day');
 
@@ -43,7 +53,6 @@ exports.checkSlotAvailability = async (slot_id, reservation_settings) => {
 
         // 本日の場合
         if (slotDate.isSame(currentDate, 'day')) {
-
             if (reservation_settings.end.isSameDay) {
                 // available_since_time を Moment オブジェクトに変換
                 const availableSinceMoment = moment(available_since_time, 'HH:mm');
@@ -60,7 +69,11 @@ exports.checkSlotAvailability = async (slot_id, reservation_settings) => {
         }
 
         // 未来の日付の場合
-        if (slotDate.isBetween(available_since, available_until, null, '[]')) {
+        if (
+            slotDate.isSame(available_since, 'day') || 
+            slotDate.isSame(available_until, 'day') ||
+            slotDate.isBetween(available_since, available_until, null, '()')
+        ) {
             return { available: true };
         } else {
             return { available: false, message: "予約可能期間外です。" };

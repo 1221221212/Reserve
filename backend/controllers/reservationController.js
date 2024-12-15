@@ -3,6 +3,7 @@
 const reservationModel = require('../models/reservationModel');
 const util = require('../utils/utils');
 const reservationService = require('../services/reservationService');
+const { sendReservationConfirmation } = require('../services/emailSevice');
 
 /**
  * スロットの予約可否を確認
@@ -53,9 +54,29 @@ exports.createReservation = async (req, res) => {
             comment,
         });
 
-        // 予約が成功したかどうかを確認
+        // 予約が成功した場合
         if (result.success) {
-            return res.status(201).json({ success: true, message: "予約が作成されました", reservation: result.reservation });
+            // メール送信
+            try {
+                await sendReservationConfirmation(email, {
+                    reservation_number: result.reservation.reservation_number,
+                    customer_name,
+                    date: result.reservation.date,
+                    start_time: result.reservation.start_time,
+                    end_time: result.reservation.end_time,
+                    group_size,
+                });
+                console.log("予約確認メールが送信されました");
+            } catch (emailError) {
+                console.error("メール送信中にエラーが発生しました:", emailError.message);
+                // メール送信に失敗しても予約は成功したので、エラーにはしない
+            }
+
+            return res.status(201).json({
+                success: true,
+                message: "予約が作成されました",
+                reservation: result.reservation,
+            });
         } else {
             // 予約が満員でブロックされた場合
             return res.status(400).json({ success: false, message: result.message });
@@ -65,6 +86,7 @@ exports.createReservation = async (req, res) => {
         res.status(500).json({ success: false, message: "予約の作成に失敗しました", error: error.message });
     }
 };
+
 
 // 予約情報取得
 exports.getAllReservations = async (req, res) => {

@@ -36,17 +36,17 @@ const SlotSelection = ({ selectedDate, availableSince, availableUntil, available
     }, [selectedDate]);
 
     const renderSlotInfo = (slot) => {
-        const { id, max_groups, max_people, availability } = slot;
-        const currentCount = availabilityInfo[id] || 0;
+        const { id, max_groups, max_people, availability, reservation_count, current_people } = slot;
 
         if (availability !== '0') {
             return "予約不可";
         }
 
         if (max_groups) {
-            return `最大 ${max_people} 人`;
+            const remainingGroups = max_groups - reservation_count;
+            return `残り${remainingGroups}組予約可能`;
         } else {
-            const remainingPeople = max_people - currentCount;
+            const remainingPeople = max_people - current_people;
             return `残り ${remainingPeople} 人予約可能`;
         }
     };

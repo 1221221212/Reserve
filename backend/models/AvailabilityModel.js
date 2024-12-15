@@ -19,11 +19,10 @@ exports.getMonthlyAvailability = async (year, month, availableSince, availableSi
         WHERE YEAR(assigned_slots.date) = ? 
           AND MONTH(assigned_slots.date) = ? 
           AND assigned_slots.date BETWEEN ? AND ?
-          ${
-              availableSinceTime
-                  ? `AND (assigned_slots.date != ? OR reservation_patterns.start_time >= ?)`
-                  : ""
-          }
+          ${availableSinceTime
+            ? `AND (assigned_slots.date != ? OR reservation_patterns.start_time >= ?)`
+            : ""
+        }
         GROUP BY assigned_slots.date, assigned_slots.pattern_id;
     `;
 
@@ -46,35 +45,40 @@ exports.getMonthlyAvailability = async (year, month, availableSince, availableSi
 
 exports.getDailyAvailability = async (date, availableSince, availableSinceTime, availableUntil) => {
     const query = `
-        SELECT assigned_slots.id, 
-               assigned_slots.date, 
-               assigned_slots.pattern_id, 
-               reservation_patterns.start_time, 
-               reservation_patterns.end_time, 
-               reservation_patterns.max_people,
-               reservation_patterns.max_groups,
-               (CASE
-                   WHEN reservation_patterns.max_groups IS NULL AND IFNULL(SUM(reservations.group_size), 0) < reservation_patterns.max_people
-                   THEN '0'
-                   WHEN reservation_patterns.max_groups IS NOT NULL AND COUNT(reservations.id) < reservation_patterns.max_groups
-                   THEN '0'
-                   ELSE '1'
-               END) AS availability
+        SELECT 
+            assigned_slots.id, 
+            assigned_slots.date, 
+            assigned_slots.pattern_id, 
+            reservation_patterns.start_time, 
+            reservation_patterns.end_time, 
+            reservation_patterns.max_people,
+            reservation_patterns.max_groups,
+            COUNT(reservations.id) AS reservation_count, -- 予約の組数
+            IFNULL(SUM(reservations.group_size), 0) AS current_people, -- 現在の予約人数
+            (CASE
+                WHEN reservation_patterns.max_groups IS NULL AND IFNULL(SUM(reservations.group_size), 0) < reservation_patterns.max_people
+                THEN '0'
+                WHEN reservation_patterns.max_groups IS NOT NULL AND COUNT(reservations.id) < reservation_patterns.max_groups
+                THEN '0'
+                ELSE '1'
+            END) AS availability
         FROM assigned_slots
         LEFT JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
         LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
         WHERE assigned_slots.date = ? 
-          AND assigned_slots.date BETWEEN ? AND ?
-          ${
-              availableSinceTime
-                  ? `AND reservation_patterns.start_time >= ?`
-                  : ""
-          }
-        GROUP BY assigned_slots.id, assigned_slots.date, assigned_slots.pattern_id
+        AND assigned_slots.date BETWEEN ? AND ?
+        ${availableSinceTime
+            ? `AND reservation_patterns.start_time >= ?`
+            : ""
+        }
+        GROUP BY 
+            assigned_slots.id, 
+            assigned_slots.date, 
+            assigned_slots.pattern_id
         ORDER BY 
-          reservation_patterns.start_time ASC,
-          reservation_patterns.end_time ASC,
-          assigned_slots.id ASC;
+            reservation_patterns.start_time ASC,
+            reservation_patterns.end_time ASC,
+            assigned_slots.id ASC;
     `;
 
     const queryParams = [date, availableSince, availableUntil];
