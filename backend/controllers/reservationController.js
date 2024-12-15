@@ -4,6 +4,7 @@ const reservationModel = require('../models/reservationModel');
 const util = require('../utils/utils');
 const reservationService = require('../services/reservationService');
 const { sendReservationConfirmation } = require('../services/emailSevice');
+const { notifyReservationCreated } = require('../services/LINEService');
 
 /**
  * スロットの予約可否を確認
@@ -70,6 +71,19 @@ exports.createReservation = async (req, res) => {
             } catch (emailError) {
                 console.error("メール送信中にエラーが発生しました:", emailError.message);
                 // メール送信に失敗しても予約は成功したので、エラーにはしない
+            }
+
+            try{
+                await notifyReservationCreated({
+                    id: result.reservation.reservation_number,
+                    customer_name,
+                    date: result.reservation.date,
+                    start_time: result.reservation.start_time,
+                    end_time: result.reservation.end_time,
+                })
+            } catch (emailError) {
+                console.error("LINE通知送信中にエラーが発生しました:", emailError.message);
+                // LINE送信に失敗しても予約は成功したので、エラーにはしない
             }
 
             return res.status(201).json({
