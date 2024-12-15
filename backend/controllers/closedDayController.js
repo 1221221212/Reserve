@@ -1,4 +1,5 @@
 const {
+    checkConflicts,
     create,
     getAll,
     getTemporaryInRange,
@@ -17,10 +18,82 @@ exports.createClosedDay = async (req, res) => {
             return res.status(400).json({ error: 'Type is required' });
         }
 
-        // モデルにそのまま渡す
+        // 競合チェック済みか確認
+        if (!payload.conflictResolved) {
+            return res.status(400).json({
+                error: 'Conflict check not completed. Please resolve conflicts before creating a closed day.',
+            });
+        }
+
+        // 休業日を作成
         const insertId = await create(payload);
 
-        res.status(201).json({ message: 'Closed day created successfully', id: insertId });
+        res.status(201).json({
+            message: 'Closed day created successfully',
+            id: insertId,
+        });
+    } catch (error) {
+        console.error('Failed to create closed day:', error);
+        res.status(500).json({ error: 'Failed to create closed day' });
+    }
+};
+
+// 競合チェック
+exports.checkConflicts = async (req, res) => {
+    try {
+        const payload = req.body;
+
+        // 必須フィールドチェック
+        if (!payload.type) {
+            return res.status(400).json({ error: 'Type is required for conflict check' });
+        }
+
+        // 競合をチェック
+        const conflicts = await checkConflicts(payload);
+
+        // オブジェクトが空でないかチェック
+        if (Object.keys(conflicts).length > 0) {
+            return res.status(200).json({
+                message: 'Conflicts found',
+                conflicts: conflicts,
+            });
+        }
+
+        // 競合がない場合
+        res.status(200).json({
+            message: 'No conflicts found',
+            conflicts: [],
+        });
+    } catch (error) {
+        console.error('Failed to check conflicts:', error);
+        return res.status(500).json({ error: 'Failed to check conflicts' });
+    }
+};
+
+// 休業日を作成
+exports.createClosedDay = async (req, res) => {
+    try {
+        const payload = req.body;
+
+        // 必須フィールドチェック
+        if (!payload.type) {
+            return res.status(400).json({ error: 'Type is required' });
+        }
+
+        // 競合チェック済みか確認
+        if (!payload.conflictResolved) {
+            return res.status(400).json({
+                error: 'Conflict check not completed. Please resolve conflicts before creating a closed day.',
+            });
+        }
+
+        // 休業日を作成
+        const insertId = await create(payload);
+
+        res.status(201).json({
+            message: 'Closed day created successfully',
+            id: insertId,
+        });
     } catch (error) {
         console.error('Failed to create closed day:', error);
         res.status(500).json({ error: 'Failed to create closed day' });
@@ -78,7 +151,7 @@ exports.checkClosedDay = async (req, res) => {
 
         const temporaryClosedDay = await getTemporaryByDate(date);
         if (temporaryClosedDay) {
-            return res.status(200).json({ is_closed: true, type: 'temporary'});
+            return res.status(200).json({ is_closed: true, type: 'temporary' });
         }
 
         const regularClosedDays = await getRegular();

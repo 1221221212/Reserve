@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+    checkConflicts,
     createClosedDay,
     getAllClosedDays,
     getClosedDaysInRange,
@@ -19,5 +20,8 @@ router.get('/range', getClosedDaysInRange);
 
 // 特定の日付の休業日判定
 router.get('/check', checkClosedDay);
+
+// 競合チェック
+router.post('/check-conflicts', authenticateToken, checkConflicts);
 
 module.exports = router;
