@@ -39,3 +39,28 @@ exports.createAssignedSlot = async (req, res) => {
         res.status(500).json({ message: '予約枠の作成に失敗しました', error });
     }
 };
+
+// 予約枠のステータスを更新
+exports.updateAssignedSlotsStatus = async (req, res) => {
+    const { slotIds, status } = req.body;
+
+    // Validation
+    if (!slotIds || !Array.isArray(slotIds) || slotIds.length === 0 || !['active', 'suspend', 'close', 'inactive'].includes(status)) {
+        return res.status(400).json({ message: '無効なslotIdsまたはstatusです' });
+    }
+
+    try {
+        const result = await assignedSlotsModel.updateSlotsStatus(slotIds, status);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: '指定されたスロットが見つかりません' });
+        }
+
+        res.status(200).json({
+            message: `スロットのステータスが更新されました (${result.affectedRows} 件)`
+        });
+    } catch (error) {
+        console.error('スロットステータスの更新エラー:', error);
+        res.status(500).json({ message: 'スロットステータスの更新に失敗しました', error });
+    }
+};

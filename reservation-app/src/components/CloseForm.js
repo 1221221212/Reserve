@@ -13,9 +13,6 @@ const CloseForm = ({ onClosedDaySaved }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
 
-    const token = localStorage.getItem('token');
-    const apiUrl = process.env.REACT_APP_API_URL;
-
     // フォームのバリデーション関数
     const validateForm = () => {
         if (type === 'regular_weekly') {
@@ -43,46 +40,34 @@ const CloseForm = ({ onClosedDaySaved }) => {
         setIsFormValid(validateForm());
     }, [type, monthlyOption, dayOfWeek, weekOfMonth, dayOfMonth, monthOfYear, temporaryDate]);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         if (!isFormValid) {
             alert('フォームを正しく入力してください');
             return;
         }
-
-        setIsSubmitting(true);
-
-        let payload = { type };
-
+    
+        const payload = { type };
+    
         if (type === 'regular_monthly') {
             if (monthlyOption === 'day') {
-                payload = { ...payload, day_of_month: dayOfMonth };
+                payload.day_of_month = dayOfMonth;
             } else if (monthlyOption === 'week') {
-                payload = { ...payload, week_of_month: weekOfMonth, day_of_week: dayOfWeek };
+                payload.week_of_month = weekOfMonth;
+                payload.day_of_week = dayOfWeek;
             }
         } else if (type === 'regular_weekly') {
-            payload = { ...payload, day_of_week: dayOfWeek };
+            payload.day_of_week = dayOfWeek;
         } else if (type === 'regular_yearly') {
-            payload = { ...payload, month_of_year: monthOfYear, day_of_month: dayOfMonth };
+            payload.month_of_year = monthOfYear;
+            payload.day_of_month = dayOfMonth;
         } else if (type === 'temporary') {
-            payload = { ...payload, date: temporaryDate, reason };
+            payload.date = temporaryDate;
+            payload.reason = reason;
         }
-
-        try {
-            await axios.post(`${apiUrl}/closed-days`, payload, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            alert('休業日が作成されました');
-            if (onClosedDaySaved) {
-                onClosedDaySaved();
-            }
-        } catch (error) {
-            console.error('休業日の作成に失敗しました:', error);
-            alert('休業日の作成に失敗しました');
-        } finally {
-            setIsSubmitting(false);
-        }
+    
+        onClosedDaySaved(payload); // 親コンポーネントにデータを渡す
     };
 
     return (

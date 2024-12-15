@@ -40,3 +40,19 @@ exports.createAssignedSlot = async (slotData) => {
         throw error;
     }
 };
+
+exports.updateSlotsStatus = async (slotIds, status) => {
+    try {
+        // `status` が許容される値か確認
+        if (!['active', 'suspend', 'close', 'inactive'].includes(status)) {
+            throw new Error(`Invalid status value: ${status}`);
+        }
+
+        const query = `UPDATE assigned_slots SET status = ? WHERE id IN (${slotIds.map(() => '?').join(',')})`;
+        const [result] = await db.query(query, [status, ...slotIds]);
+        return result;
+    } catch (error) {
+        console.error('複数スロットステータスの更新エラー:', error);
+        throw error;
+    }
+};

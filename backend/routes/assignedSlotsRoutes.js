@@ -7,5 +7,7 @@ const assignedSlotsController = require('../controllers/assignedSlotsController'
 
 router.get('/', authenticateToken, assignedSlotsController.getAssignedSlots);
 router.post('/', authenticateToken, assignedSlotsController.createAssignedSlot);
+router.put('/status', authenticateToken, assignedSlotsController.updateAssignedSlotsStatus);
+
 
 module.exports = router;
