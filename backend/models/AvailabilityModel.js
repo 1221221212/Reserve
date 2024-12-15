@@ -53,8 +53,8 @@ exports.getDailyAvailability = async (date, availableSince, availableSinceTime, 
             reservation_patterns.end_time, 
             reservation_patterns.max_people,
             reservation_patterns.max_groups,
-            COUNT(reservations.id) AS reservation_count, -- 予約の組数
-            IFNULL(SUM(reservations.group_size), 0) AS current_people, -- 現在の予約人数
+            COUNT(reservations.id) AS reservation_count,
+            IFNULL(SUM(reservations.group_size), 0) AS current_people,
             (CASE
                 WHEN reservation_patterns.max_groups IS NULL AND IFNULL(SUM(reservations.group_size), 0) < reservation_patterns.max_people
                 THEN '0'

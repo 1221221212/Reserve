@@ -85,6 +85,10 @@ const ReservationDetailPage = () => {
                 <span className="value">{reservation.reservation_number}</span>
             </div>
             <div className="reservation-field">
+                <span className="label">コメント:</span>
+                <span className="value">{reservation.comment || 'なし'}</span>
+            </div>
+            <div className="reservation-field">
                 <span className="label">ステータス:</span>
                 <span className="value">{reservation.status}</span>
             </div>
