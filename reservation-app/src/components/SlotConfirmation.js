@@ -40,7 +40,11 @@ const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
                 {selectedPatterns.map((pattern, index) => (
                     <li key={index}>
                         {removeSecond(pattern.start_time)} から {removeSecond(pattern.end_time)} 
-                        (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)
+                        {pattern.max_groups !== null ? (
+                            <> (最大 {pattern.max_groups} 組, 各組 {pattern.max_people} 人)</>
+                        ) : (
+                            <> (最大 {pattern.max_people} 人)</>
+                        )}
                     </li>
                 ))}
             </ul>

@@ -26,17 +26,63 @@ exports.getAllAssignedSlots = async () => {
     }
 };
 
-// 予約枠を作成
-exports.createAssignedSlot = async (slotData) => {
-    const { date, patternId } = slotData;
+// 重複チェック
+exports.checkDuplicates = async (organizedSlots) => {
     try {
-        const [result] = await db.query(
-            'INSERT INTO assigned_slots (date, pattern_id) VALUES (?, ?)',
-            [date, patternId]
-        );
-        return result;
+        const dates = Object.keys(organizedSlots); // 日付リスト
+        const patternIds = Array.from(
+            new Set(dates.flatMap(date => organizedSlots[date]))
+        ); // Pattern IDリスト（ユニーク）
+
+        // SQLクエリで既存データを取得
+        const query = `
+            SELECT DATE_FORMAT(date, '%Y-%m-%d') as date, pattern_id
+            FROM assigned_slots
+            WHERE date IN (${dates.map(() => '?').join(',')})
+              AND pattern_id IN (${patternIds.map(() => '?').join(',')})
+              AND status = 'active'
+        `;
+        const values = [...dates, ...patternIds];
+        const [rows] = await db.query(query, values);
+
+        // 既存データを Set に変換 (日付を YYYY-MM-DD に統一)
+        const existingSlots = new Set(rows.map(row => `${row.date}-${row.pattern_id}`));
+
+        // 新規に挿入するデータを抽出
+        const newSlots = [];
+        for (const [date, patternIds] of Object.entries(organizedSlots)) {
+            for (const patternId of patternIds) {
+                const key = `${date}-${patternId}`;
+                if (!existingSlots.has(key)) {
+                    newSlots.push({ date, patternId });
+                }
+            }
+        }
+
+        return newSlots; // 新規スロットのみ返す
     } catch (error) {
-        console.error('予約枠の作成エラー:', error);
+        console.error('重複チェックエラー:', error);
+        throw error;
+    }
+};
+
+// 予約枠を一括挿入
+exports.createAssignedSlots = async (slots) => {
+    try {
+        if (slots.length === 0) return;
+
+        // 挿入用の値を準備
+        const values = slots.map(slot => [slot.date, slot.patternId, 'active']);
+
+        const query = `
+            INSERT INTO assigned_slots (date, pattern_id, status)
+            VALUES ?
+        `;
+        await db.query(query, [values]);
+
+        console.log(`${slots.length}件の予約枠を挿入しました`);
+    } catch (error) {
+        console.error('予約枠の一括挿入エラー:', error);
         throw error;
     }
 };

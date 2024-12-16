@@ -19,24 +19,42 @@ exports.getAssignedSlots = async (req, res) => {
     }
 };
 
+const organizeSlots = (dates, patterns) => {
+    const organizedData = {};
+    for (const date of dates) {
+        organizedData[date] = patterns.map(pattern => pattern.id);
+    }
+    return organizedData;
+};
 
 // 予約枠の作成
 exports.createAssignedSlot = async (req, res) => {
     const { dates, patterns } = req.body;
+
     try {
-        for (let date of dates) {
-            const formattedDate = new Date(date).toISOString().split('T')[0];
-            for (let pattern of patterns) {
-                await assignedSlotsModel.createAssignedSlot({
-                    date: formattedDate,
-                    patternId: pattern.id
-                });
-            }
+        // 整形処理
+        const organizedSlots = organizeSlots(dates, patterns);
+        console.log('整形済みのスロット:', organizedSlots);
+
+        // 重複チェック
+        const newSlots = await assignedSlotsModel.checkDuplicates(organizedSlots);
+
+        console.log(newSlots);
+
+        // 新規スロットがあれば挿入処理
+        if (newSlots.length > 0) {
+            await assignedSlotsModel.createAssignedSlots(newSlots);
+            res.status(201).json({
+                message: `${newSlots.length}件の予約枠が作成されました`,
+            });
+        } else {
+            res.status(200).json({
+                message: '全ての予約枠が既に存在しています',
+            });
         }
-        res.status(201).json({ message: '予約枠が作成されました' });
     } catch (error) {
-        console.error('予約枠の作成エラー:', error);
-        res.status(500).json({ message: '予約枠の作成に失敗しました', error });
+        console.error('スロット作成エラー:', error);
+        res.status(500).json({ message: 'スロット作成に失敗しました', error });
     }
 };
 
