@@ -22,7 +22,7 @@ export const extractDates = (startDate, endDate, cycle, selectedDays) => {
 };
 
 // 祝日リストに基づいたフィルタリング関数
-export const filterDates = (dates, holidays, option) => {
+export const filterHolidays = (dates, holidays, option) => {
     const holidayDates = holidays.map(h => moment(h.date).format('YYYY-MM-DD'));
 
     return dates.filter(date => {
@@ -38,6 +38,21 @@ export const filterDates = (dates, holidays, option) => {
 
         return true;
     });
+};
+
+/**
+ * 指定された日付リストから休業日を除外する
+ * @param {string[]} dates - フィルタリング対象の日付リスト（ISO8601フォーマットやYYYY-MM-DD形式）
+ * @param {string[]} closedDates - 除外する休業日リスト（YYYY-MM-DD形式）
+ * @returns {string[]} - 休業日を除外した日付リスト
+ */
+export const filterClosedDays = (dates, closedDates) => {
+    // 日付フォーマットを統一する（YYYY-MM-DD形式）
+    const normalizedDates = dates.map(date => new Date(date).toISOString().split('T')[0]);
+    const normalizedClosedDates = closedDates.map(date => new Date(date).toISOString().split('T')[0]);
+
+    // 休業日リストに含まれない日付を返す
+    return normalizedDates.filter(date => !normalizedClosedDates.includes(date));
 };
 
 //秒がいらないとき

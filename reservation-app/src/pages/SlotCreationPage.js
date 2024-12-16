@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
 import DateSelectionForm from '../components/DateSelectionForm';
 import PatternAssignment from '../components/PatternAssignment';
 import SlotConfirmation from '../components/SlotConfirmation';
@@ -6,10 +7,13 @@ import SlotConfirmation from '../components/SlotConfirmation';
 const SlotCreationPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedDates, setSelectedDates] = useState([]);
+    const [closedDates, setClosedDates] = useState([]);
     const [selectedPatterns, setSelectedPatterns] = useState([]);
+    const navigate = useNavigate();
 
-    const handleDateSelection = ({ filteredDates }) => {
+    const handleDateSelection = ({ filteredDates, closedDates }) => {
         setSelectedDates(filteredDates);
+        setClosedDates(closedDates);
         setCurrentStep(2);
     };
 
@@ -19,9 +23,9 @@ const SlotCreationPage = () => {
     };
 
     const handleConfirmation = () => {
-        setCurrentStep(1);
         setSelectedDates([]);
         setSelectedPatterns([]);
+        navigate('/admin/slots');
     };
 
     return (
@@ -33,6 +37,7 @@ const SlotCreationPage = () => {
             {currentStep === 2 && (
                 <PatternAssignment
                     selectedDates={selectedDates}
+                    closedDates={closedDates}
                     onPatternSelect={handlePatternSelection}
                 />
             )}

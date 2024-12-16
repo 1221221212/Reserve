@@ -24,7 +24,6 @@ exports.getMonthlyAvailability = async (year, month, availableSince, availableSi
             : ""
         }
         AND assigned_slots.status = 'active'
-        AND reservation_pattern.stutus = 'active'
         GROUP BY assigned_slots.date, assigned_slots.pattern_id;
     `;
 
@@ -70,7 +69,6 @@ exports.getDailyAvailability = async (date, availableSince, availableSinceTime, 
         WHERE assigned_slots.date = ? 
         AND assigned_slots.date BETWEEN ? AND ?
         AND assigned_slots.status = 'active'
-        AND reservation_pattern.stutus = 'active'
         ${availableSinceTime
             ? `AND reservation_patterns.start_time >= ?`
             : ""

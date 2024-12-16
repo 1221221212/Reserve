@@ -4,7 +4,9 @@ const {
     getAll,
     getTemporaryInRange,
     getRegular,
-    getTemporaryByDate
+    getTemporaryByDate,
+    checkDuplicate,
+    deleteDuplicates
 } = require('../models/closedDayModel');
 const { generateRegularClosedDays, removeDuplicates } = require('../utils/utils');
 
@@ -18,14 +20,16 @@ exports.createClosedDay = async (req, res) => {
             return res.status(400).json({ error: 'Type is required' });
         }
 
-        // 競合チェック済みか確認
-        if (!payload.conflictResolved) {
-            return res.status(400).json({
-                error: 'Conflict check not completed. Please resolve conflicts before creating a closed day.',
-            });
+        // 重複チェック
+        const duplicates = await checkDuplicate(payload);
+
+        if (duplicates.length > 0) {
+            // 重複するレコードを削除
+            const duplicateIds = duplicates.map((dup) => dup.id);
+            await deleteDuplicates(duplicateIds);
         }
 
-        // 休業日を作成
+        // 新しいレコードを作成
         const insertId = await create(payload);
 
         res.status(201).json({
@@ -70,36 +74,6 @@ exports.checkConflicts = async (req, res) => {
     }
 };
 
-// 休業日を作成
-exports.createClosedDay = async (req, res) => {
-    try {
-        const payload = req.body;
-
-        // 必須フィールドチェック
-        if (!payload.type) {
-            return res.status(400).json({ error: 'Type is required' });
-        }
-
-        // 競合チェック済みか確認
-        if (!payload.conflictResolved) {
-            return res.status(400).json({
-                error: 'Conflict check not completed. Please resolve conflicts before creating a closed day.',
-            });
-        }
-
-        // 休業日を作成
-        const insertId = await create(payload);
-
-        res.status(201).json({
-            message: 'Closed day created successfully',
-            id: insertId,
-        });
-    } catch (error) {
-        console.error('Failed to create closed day:', error);
-        res.status(500).json({ error: 'Failed to create closed day' });
-    }
-};
-
 // すべての休業日を取得
 exports.getAllClosedDays = async (req, res) => {
     try {
@@ -132,6 +106,9 @@ exports.getClosedDaysInRange = async (req, res) => {
 
         // 4. 重複削除
         const uniqueClosedDays = removeDuplicates(allClosedDays);
+
+        // 5. 日付順で並び替え
+        uniqueClosedDays.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         res.status(200).json(uniqueClosedDays);
     } catch (error) {

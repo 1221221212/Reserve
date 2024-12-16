@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import HolidayCheck from './HolidayCheck';
-import { extractDates, filterDates } from '../utils/utils';
+import { extractDates, filterClosedDays, filterHolidays } from '../utils/utils';
 
 const DateSelectionForm = ({ onDateSelection }) => {
     const [startDate, setStartDate] = useState('');
@@ -30,14 +30,46 @@ const DateSelectionForm = ({ onDateSelection }) => {
         }
     };
 
+    const fetchClosedDays = async (startDate, endDate) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/closed-days/range`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { start_date: startDate, end_date: endDate } // パラメータ名をサーバーに合わせる
+            });
+            return response.data;
+        } catch (error) {
+            console.error('休業日データの取得に失敗しました:', error);
+            alert("休業日データの取得に失敗しました");
+            return [];
+        }
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const extractedDates = extractDates(new Date(startDate), new Date(endDate), cycle, cycle === 'monthly' ? selectedDatesInMonth : selectedDays);
-        
+    
+        // ユーザーが選択した日付リストを生成
+        const extractedDates = extractDates(
+            new Date(startDate),
+            new Date(endDate),
+            cycle,
+            cycle === 'monthly' ? selectedDatesInMonth : selectedDays
+        );
+    
+        // 祝日と休業日データを取得
         const fetchedHolidays = await fetchHolidays(startDate, endDate);
-        const filteredDates = filterDates(extractedDates, fetchedHolidays, holidayOption);
-        
-        onDateSelection({ filteredDates });
+        const fetchedClosedDays = await fetchClosedDays(startDate, endDate);
+        const closedDates = fetchedClosedDays.map(day => day.date); // 休業日を日付リストに変換
+
+        const removeClosedDates = filterClosedDays( extractedDates, closedDates);
+        const filteredDates = filterHolidays(removeClosedDates, fetchedHolidays, holidayOption);
+    
+        console.log('Filtered Dates:', filteredDates); // デバッグ
+        console.log('Closed Days:', closedDates); // デバッグ
+        console.log(fetchedHolidays);
+    
+        // 親コンポーネントにデータを渡す
+        onDateSelection({ filteredDates, closedDates });
     };
 
     const toggleDay = (day) => {

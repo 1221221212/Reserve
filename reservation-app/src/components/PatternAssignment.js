@@ -3,7 +3,7 @@ import axios from 'axios';
 import { removeSecond } from '../utils/utils';
 import '../styles/Pattern.scss';
 
-const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
+const PatternAssignment = ({ selectedDates, closedDates, onPatternSelect }) => {
     const [patterns, setPatterns] = useState([]);
     const [selectedPatterns, setSelectedPatterns] = useState([]);
     const token = localStorage.getItem('token');
@@ -37,6 +37,13 @@ const PatternAssignment = ({ selectedDates, onPatternSelect }) => {
     return (
         <div className="pattern-assignment">
             <h2>パターンの割り当て</h2>
+            <p>以下の日付は休業日のため予約枠が作成されません！</p>
+            <ul className="date-list close">
+                {closedDates.map((date, index) => (
+                    <li key={index}>{new Date(date).toLocaleDateString()}</li>
+                ))}
+            </ul>
+
             <p>以下の日付に割り当てるパターンを選択してください。</p>
             <ul className="date-list">
                 {selectedDates.map((date, index) => (

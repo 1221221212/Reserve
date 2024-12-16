@@ -51,7 +51,7 @@ const AdminPage = () => {
             <AdminNav />
             <div className="admin-content">
                 <Routes>
-                    <Route path="/" element={<ReservationManagementPage />} />
+                    <Route path="/" element={<Navigate to="/admin/reservations" />} />
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="close" element={<CloseManagementPage />} />

@@ -122,3 +122,45 @@ exports.getTemporaryByDate = async (date) => {
     const [rows] = await db.execute(query, [date]);
     return rows[0];
 };
+
+// 重複するレコードを確認
+exports.checkDuplicate = async (data) => {
+    let query = `
+        SELECT id
+        FROM closed_days
+        WHERE type = ?
+    `;
+
+    const values = [data.type];
+
+    if (data.type === 'regular_weekly') {
+        query += ` AND day_of_week = ?`;
+        values.push(data.day_of_week);
+    } else if (data.type === 'regular_monthly') {
+        if (data.day_of_month) {
+            query += ` AND day_of_month = ?`;
+            values.push(data.day_of_month);
+        } else if (data.week_of_month && data.day_of_week) {
+            query += ` AND week_of_month = ? AND day_of_week = ?`;
+            values.push(data.week_of_month, data.day_of_week);
+        }
+    } else if (data.type === 'regular_yearly') {
+        query += ` AND month_of_year = ? AND day_of_month = ?`;
+        values.push(data.month_of_year, data.day_of_month);
+    } else if (data.type === 'temporary') {
+        query += ` AND date = ?`;
+        values.push(data.date);
+    }
+
+    const [rows] = await db.execute(query, values);
+    return rows;
+};
+
+// 重複レコードを削除
+exports.deleteDuplicates = async (ids) => {
+    if (ids.length === 0) return;
+
+    const placeholders = ids.map(() => '?').join(', ');
+    const query = `DELETE FROM closed_days WHERE id IN (${placeholders})`;
+    await db.execute(query, ids);
+};
