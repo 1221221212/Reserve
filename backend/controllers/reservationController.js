@@ -75,7 +75,8 @@ exports.createReservation = async (req, res) => {
 
             try{
                 await notifyReservationCreated({
-                    id: result.reservation.reservation_number,
+                    reservation_number: result.reservation.reservation_number,
+                    id: result.reservation.id,
                     customer_name,
                     date: result.reservation.date,
                     start_time: result.reservation.start_time,
