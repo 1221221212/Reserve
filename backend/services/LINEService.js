@@ -41,13 +41,17 @@ const sendMessage = async (to, message) => {
  * @param {Object} reservation - 予約データ
  */
 const notifyReservationCreated = async (reservation) => {
+    const detailsUrl = `${process.env.PAGE_URL}/admin/reservations/${reservation.id}`; // 動的にURLを生成
     const message = `🔔 新しい予約が作成されました！\n
     予約ID: ${reservation.id}\n
     お客様: ${reservation.customer_name}\n
-    日時: ${reservation.date} ${reservation.start_time}-${reservation.end_time}`;
+    日時: ${reservation.date} ${reservation.start_time}-${reservation.end_time}\n
+    詳細: ${detailsUrl}`; // URLをメッセージに含める
+    
     const recipientId = Group_ID; // 送信先 ID を設定
-    await sendMessage(recipientId, message);
+    await sendMessage(recipientId, message); // メッセージを送信
 };
+
 
 /**
  * 予約キャンセル時の通知を送信する

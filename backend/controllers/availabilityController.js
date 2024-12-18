@@ -10,12 +10,11 @@ exports.getMonthlyAvailability = async (req, res) => {
             return res.status(400).json({ message: "年、月、開始日、終了日は必須です" });
         }
 
-        // Model呼び出しにavailable_since_timeを追加
         const availabilityData = await availabilityModel.getMonthlyAvailability(
             year,
             month,
             available_since,
-            available_since_time || null, // 指定がなければnullを渡す
+            available_since_time || null,
             available_until
         );
 
