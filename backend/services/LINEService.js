@@ -41,11 +41,7 @@ const sendMessage = async (to, message) => {
  * @param {Object} reservation - 予約データ
  */
 const notifyReservationCreated = async (reservation) => {
-<<<<<<< HEAD
     const detailsUrl = `${process.env.PAGE_URL}/admin/reservations/${reservation.id}`; // 動的にURLを生成
-=======
-    const detailsUrl = `http://162.43.15.136/admin/reservations/${reservation.id}`; // 動的にURLを生成
->>>>>>> af8182e7574881079a9158dec5025613e9efbbab
     const message = `🔔 新しい予約が作成されました！\n
     予約ID: ${reservation.id}\n
     お客様: ${reservation.customer_name}\n
