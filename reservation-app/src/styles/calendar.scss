@@ -1,6 +1,6 @@
 @import "./colors";
 
-.calendar {
+.calendar, .admin-calendar {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -75,7 +75,7 @@
                 color: #ccc;
             }
 
-            .reservation-status {
+            .reservation-status, .reservation-count {
                 position: absolute;
                 bottom: 4px;
                 right: 4px;
@@ -102,3 +102,4 @@
         }
     }
 }
+

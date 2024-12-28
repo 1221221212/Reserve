@@ -23,4 +23,7 @@ router.get('/:id', authenticateToken, reservationController.getReservationDetail
 // 管理者による予約キャンセルエンドポイント
 router.patch('/:id/cancel', authenticateToken, reservationController.cancelReservation);
 
+router.get('/month', authenticateToken, reservationController.getMonthlyReservationCounts);
+router.get('/day', authenticateToken, reservationController.getDailyReservationCounts);
+
 module.exports = router;

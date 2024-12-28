@@ -102,7 +102,6 @@ exports.createReservation = async (req, res) => {
     }
 };
 
-
 // 予約情報取得
 exports.getAllReservations = async (req, res) => {
     try {
@@ -127,7 +126,7 @@ exports.getAllReservations = async (req, res) => {
 // フィルターされた予約情報を取得
 exports.getFilteredReservations = async (req, res) => {
     try {
-        const { startDate, endDate, reservationId, customerName, phoneNumber, email, status, hasComment } = req.query;
+        const { startDate, endDate, reservationId, customerName, phoneNumber, email, status, hasComment, slot_id } = req.query;
 
         let reservations;
 
@@ -144,6 +143,7 @@ exports.getFilteredReservations = async (req, res) => {
                 email,
                 status,
                 hasComment,
+                slot_id,
             });
         }
 
@@ -202,5 +202,37 @@ exports.cancelReservation = async (req, res) => {
     } catch (error) {
         console.error("予約キャンセル中にエラーが発生しました:", error);
         return res.status(500).json({ success: false, message: "予約キャンセル中にエラーが発生しました。" });
+    }
+};
+
+exports.getMonthlyReservationCounts = async (req, res) => {
+    const { year, month } = req.query;
+
+    if (!year || !month) {
+        return res.status(400).json({ message: 'year と month は必須です' });
+    }
+
+    try {
+        const reservations = await reservationModel.getMonthlyReservationCounts(year, month);
+        res.status(200).json(reservations);
+    } catch (error) {
+        console.error("月ごとの予約件数取得エラー:", error);
+        res.status(500).json({ message: "月ごとの予約件数取得に失敗しました", error: error.message });
+    }
+};
+
+exports.getDailyReservationCounts = async (req, res) => {
+    const { date } = req.query;
+
+    if (!date) {
+        return res.status(400).json({ message: 'date は必須です' });
+    }
+
+    try {
+        const reservations = await reservationModel.getDailyReservationCounts(date);
+        res.status(200).json({ date, slots: reservations });
+    } catch (error) {
+        console.error("日ごとの予約枠ごとの予約件数取得エラー:", error);
+        res.status(500).json({ message: "日ごとの予約枠ごとの予約件数取得に失敗しました", error: error.message });
     }
 };

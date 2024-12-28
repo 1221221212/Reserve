@@ -102,3 +102,49 @@ exports.updateSlotsStatus = async (slotIds, status) => {
         throw error;
     }
 };
+
+exports.getMonthlySlots = async (year, month) => {
+    const query = `
+        SELECT 
+            assigned_slots.date,
+            reservation_patterns.id AS pattern_id,
+            COUNT(reservations.id) AS reservation_count
+        FROM assigned_slots
+        LEFT JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
+        LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
+        WHERE YEAR(assigned_slots.date) = ? AND MONTH(assigned_slots.date) = ?
+        GROUP BY assigned_slots.date, reservation_patterns.id
+        ORDER BY assigned_slots.date;
+    `;
+
+    const [rows] = await db.query(query, [year, month]);
+    return rows;
+};
+
+exports.getDailySlots = async (date) => {
+    try {
+        const query = `
+            SELECT 
+                assigned_slots.id,
+                reservation_patterns.start_time,
+                reservation_patterns.end_time,
+                assigned_slots.status,
+                COUNT(reservations.id) AS reservation_count
+            FROM assigned_slots
+            INNER JOIN reservation_patterns 
+                ON assigned_slots.pattern_id = reservation_patterns.id
+            LEFT JOIN reservations 
+                ON assigned_slots.id = reservations.slot_id
+            WHERE assigned_slots.date = ?
+            GROUP BY assigned_slots.id, reservation_patterns.start_time, reservation_patterns.end_time, assigned_slots.status
+            ORDER BY reservation_patterns.start_time;
+        `;
+
+        const [rows] = await db.query(query, [date]);
+        return rows;
+    } catch (error) {
+        console.error('日付ごとのスロット情報取得エラー:', error);
+        throw error;
+    }
+};
+

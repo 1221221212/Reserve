@@ -158,7 +158,7 @@ exports.getReservationById = async (reservationId) => {
 };
 
 // 条件に基づいたフィルター付き予約情報を取得
-exports.getFilteredReservations = async ({ startDate, endDate, customerName, phoneNumber, email, status, hasComment }) => {
+exports.getFilteredReservations = async ({ startDate, endDate, customerName, phoneNumber, email, status, hasComment, slot_id }) => {
     try {
         let query = `
             SELECT 
@@ -196,6 +196,11 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
             query += ` AND reservations.comment IS NOT NULL`;
         } else if (hasComment === 'false') {
             query += ` AND reservations.comment IS NULL`;
+        }
+
+        if (slot_id) {
+            query += ` AND reservations.slot_id = ?`;
+            params.push(Number(slot_id));
         }
 
         const [reservations] = await db.query(query, params);
@@ -251,6 +256,46 @@ exports.cancelReservationById = async (id) => {
         return { success: true };
     } catch (error) {
         console.error("予約キャンセル中にエラーが発生しました:", error);
+        throw error;
+    }
+};
+
+exports.getMonthlyReservationCounts = async (year, month) => {
+    try {
+        const query = `
+            SELECT 
+                assigned_slots.date,
+                COUNT(reservations.id) AS reservation_count
+            FROM assigned_slots
+            LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
+            WHERE YEAR(assigned_slots.date) = ? AND MONTH(assigned_slots.date) = ?
+            GROUP BY assigned_slots.date
+            ORDER BY assigned_slots.date;
+        `;
+        const [rows] = await db.query(query, [year, month]);
+        return rows;
+    } catch (error) {
+        console.error("月ごとの予約件数取得エラー:", error);
+        throw error;
+    }
+};
+
+exports.getDailyReservationCounts = async (date) => {
+    try {
+        const query = `
+            SELECT 
+                assigned_slots.id AS slot_id,
+                COUNT(reservations.id) AS reservation_count
+            FROM assigned_slots
+            LEFT JOIN reservations ON assigned_slots.id = reservations.slot_id
+            WHERE assigned_slots.date = ?
+            GROUP BY assigned_slots.id
+            ORDER BY assigned_slots.id;
+        `;
+        const [rows] = await db.query(query, [date]);
+        return rows;
+    } catch (error) {
+        console.error("日ごとの予約枠ごとの予約件数取得エラー:", error);
         throw error;
     }
 };

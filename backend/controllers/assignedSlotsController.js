@@ -82,3 +82,47 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
         res.status(500).json({ message: 'スロットステータスの更新に失敗しました', error });
     }
 };
+
+exports.getSlotsByMonth = async (req, res) => {
+    const { year, month } = req.query;
+
+    if (!year || !month) {
+        return res.status(400).json({ message: 'year と month は必須です' });
+    }
+
+    try {
+        const slots = await assignedSlotsModel.getMonthlySlots(year, month);
+        const result = {};
+
+        slots.forEach(slot => {
+            const date = slot.date;
+            if (!result[date]) {
+                result[date] = { date, has_slots: false, slot_count: 0, reservation_count: 0 };
+            }
+            result[date].has_slots = true;
+            result[date].slot_count++;
+            result[date].reservation_count += slot.reservation_count;
+        });
+
+        res.status(200).json(Object.values(result));
+    } catch (error) {
+        console.error('月単位の予約枠データ取得エラー:', error);
+        res.status(500).json({ message: '月単位の予約枠データ取得に失敗しました', error });
+    }
+};
+
+exports.getSlotsByDay = async (req, res) => {
+    const { date } = req.query;
+
+    if (!date) {
+        return res.status(400).json({ error: "date is required" });
+    }
+
+    try {
+        const slots = await assignedSlotsModel.getDailySlots(date);
+        res.status(200).json(slots);
+    } catch (error) {
+        console.error("Failed to fetch slot details:", error);
+        res.status(500).json({ error: "Failed to fetch slot details" });
+    }
+};

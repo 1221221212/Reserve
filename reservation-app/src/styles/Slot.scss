@@ -45,3 +45,34 @@
         }
     }
 }
+
+.slot-selection, .admin-slot-selection {
+    text-align: center;
+
+    & .selectedDate{
+        font-size: 1.2rem;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    li {
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+
+        &.selectable {
+            background-color: $primary-color;
+
+            &:hover {
+                background-color: $primary-darker;
+            }
+        }
+
+        &.not-selectable {
+            background-color: $secondary-color;
+        }
+    }
+}
