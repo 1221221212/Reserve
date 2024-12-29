@@ -63,14 +63,14 @@ const AdminPage = () => {
             <div className={`overlay ${isOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
             <div className="admin-content">
                 <Routes>
-                    <Route path="/" element={<Navigate to="/admin/reservations" />} />
+                    <Route path="/" element={<Navigate to="/admin/calendar" />} />
                     <Route path="calendar" element={<AdminCalendarPage />} />
                     <Route path="slots" element={<SlotManagementPage />} />
                     <Route path="slots/patterns" element={<PatternManagementPage />} />
                     <Route path="slots/patterns/create" element={<PatternCreationPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
                     <Route path="slots/close" element={<CloseManagementPage />} />
-                    <Route path="slotsclose/settings" element={<CloseSettingPage />} />
+                    <Route path="slots/close/settings" element={<CloseSettingPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
                     <Route path="reservations/:id" element={<ReservationDetailPage />} />
                     <Route path="settings" element={<SettingsPage />}>

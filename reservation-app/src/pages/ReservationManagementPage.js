@@ -39,7 +39,6 @@ const ReservationManagementPage = () => {
 
     return (
         <div className="admin-page-content">
-            <p>予約者管理</p>
             <ReservationFilter onApplyFilter={handleApplyFilter} />
             <table className="reservation-table">
                 <thead>

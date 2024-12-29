@@ -26,12 +26,11 @@ const PatternManagementPage = () => {
     }, [token]);
 
     const handleCreatePattern = () => {
-        navigate('/admin/patterns/create');
+        navigate('/admin/slots/patterns/create');
     };
 
     return (
         <div className="admin-page-content">
-            <p>パターン管理</p>
             <button className="button" onClick={handleCreatePattern}>パターンを作成</button>
             <table className="pattern-table">
                 <thead>

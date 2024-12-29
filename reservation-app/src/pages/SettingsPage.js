@@ -144,7 +144,6 @@ const SettingsPage = () => {
 
     return (
         <div className="settings-page">
-            <p>設定画面</p>
             {location.pathname === '/admin/settings/info' && (
                 <InfoSettings
                     storeName={storeName}

@@ -30,7 +30,7 @@ const CloseManagementPage = () => {
     }, [token]);
 
     const handleCreateClosedDay = () => {
-        navigate('/admin/close/settings');
+        navigate('/admin/slots/close/settings');
     };
 
     const translateDayOfWeek = (dayOfWeek) => {

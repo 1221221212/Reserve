@@ -36,7 +36,7 @@ const SlotManagementPage = () => {
                         <th>終了時間</th>
                         <th>組数</th>
                         <th>最大人数</th>
-                        <th>操作</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,8 +48,7 @@ const SlotManagementPage = () => {
                             <td>{slot.max_groups || 'なし'}</td>
                             <td>{slot.max_people}</td>
                             <td>
-                                <button className="edit-button">編集</button>
-                                <button className="delete-button">削除</button>
+                                <button className="delete-button">受付停止</button>
                             </td>
                         </tr>
                     ))}

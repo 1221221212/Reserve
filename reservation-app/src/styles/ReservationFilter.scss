@@ -1,8 +1,14 @@
 // src/styles/ReservationFilter.scss
 .reservation-filter {
     .filter-icon {
+        display: flex;
+        align-items: center;
         cursor: pointer;
         padding: 10px;
+
+        span{
+            padding-left: 15px;
+        }
     }
 
     .filter-options {
@@ -47,6 +53,7 @@
             span {
                 padding: 0 5px;
                 font-size: 1rem;
+                margin-bottom: 16px
             }
         }
     }
@@ -58,16 +65,11 @@
         .apply-filter-button {
             padding: 10px 20px;
             font-size: 1rem;
-            color: #fff;
-            background-color: #007bff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
 
-            &:hover {
-                background-color: #0056b3;
-            }
         }
     }
 
@@ -97,6 +99,7 @@
                 input[type="date"] {
                     width: 100%;
                 }
+
             }
         }
 

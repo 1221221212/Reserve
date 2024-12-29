@@ -84,7 +84,6 @@ const ReservationSettings = ({
 
     return (
         <section className="reservation-settings-section">
-            <p>予約設定</p>
 
             {/* エラーメッセージの表示 */}
             {errorMessage && <div className="error-message">{errorMessage}</div>}

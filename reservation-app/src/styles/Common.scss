@@ -63,7 +63,7 @@ h6 {
 
 /* Paragraph and text styles */
 p {
-    margin-bottom: 1em;
+    margin-bottom: .5em;
     /* 段落の間隔 */
 }
 
@@ -163,6 +163,10 @@ textarea {
 
 textarea{
     height: 200px;
+}
+
+section{
+    margin-bottom: 30px;
 }
 
 // レスポンシブ設定

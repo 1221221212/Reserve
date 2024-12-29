@@ -3,7 +3,6 @@ import React from 'react';
 const InfoSettings = ({ storeName, phoneNumber, address, setStoreName, setPhoneNumber, setAddress }) => {
     return (
         <section className="basic-info-section">
-            <p>基本情報</p>
             <div className="form-row">
                 <label>店舗名:</label>
                 <input
