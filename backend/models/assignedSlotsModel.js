@@ -1,6 +1,6 @@
 const db = require('./db');
 
-// 全ての予約枠を取得 (JOINでパターン情報を含める)
+// 全てのアクティブな予約枠を取得 (JOINでパターン情報を含める)
 exports.getAllAssignedSlots = async () => {
     try {
         const query = `
@@ -15,6 +15,7 @@ exports.getAllAssignedSlots = async () => {
             FROM assigned_slots
             LEFT JOIN reservation_patterns 
             ON assigned_slots.pattern_id = reservation_patterns.id
+            WHERE assigned_slots.status = 'active'
             ORDER BY assigned_slots.date, reservation_patterns.start_time;
         `;
         
@@ -103,6 +104,21 @@ exports.updateSlotsStatus = async (slotIds, status) => {
     }
 };
 
+exports.getSlotIdsByPattern = async (patternId) => {
+    try {
+        const query = `
+            SELECT id
+            FROM assigned_slots
+            WHERE pattern_id = ?
+        `;
+        const [rows] = await db.query(query, [patternId]);
+        return rows.map(row => row.id); // スロットIDのリストを返す
+    } catch (error) {
+        console.error('スロットIDの取得エラー:', error);
+        throw error;
+    }
+};
+
 exports.getMonthlySlots = async (year, month) => {
     const query = `
         SELECT 
@@ -147,4 +163,3 @@ exports.getDailySlots = async (date) => {
         throw error;
     }
 };
-

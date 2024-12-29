@@ -10,4 +10,7 @@ router.post('/', authenticateToken, patternController.createPattern);
 // 予約パターンの取得エンドポイント
 router.get('/', authenticateToken, patternController.getPatterns);
 
+//パターンの削除時のエンドポイント
+router.patch('/:id/close', authenticateToken, patternController.closePattern);
+
 module.exports = router;

@@ -29,6 +29,25 @@ const PatternManagementPage = () => {
         navigate('/admin/slots/patterns/create');
     };
 
+    const handleClosePattern = async (id) => {
+        if (!window.confirm('このパターンを受付停止にしますか？')) {
+            return;
+        }
+    
+        try {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            await axios.patch(`${apiUrl}/patterns/${id}/close`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            alert('パターンが受付停止になりました');
+            // ページをリフレッシュ
+            window.location.reload();
+        } catch (error) {
+            console.error('パターンの受付停止に失敗しました:', error);
+            alert('パターンの受付停止に失敗しました');
+        }
+    };
+
     return (
         <div className="admin-page-content">
             <button className="button" onClick={handleCreatePattern}>パターンを作成</button>
@@ -39,7 +58,8 @@ const PatternManagementPage = () => {
                         <th>開始時間</th>
                         <th>終了時間</th>
                         <th>最大組数</th>
-                        <th>各組の最大人数</th>
+                        <th>最大人数</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +70,11 @@ const PatternManagementPage = () => {
                             <td>{removeSecond(pattern.end_time)}</td>
                             <td>{pattern.max_groups ?? "ー"}</td>
                             <td>{pattern.max_people}</td>
+                            <td>
+                                <button className="delete-button" onClick={() => handleClosePattern(pattern.id)}>
+                                    受付停止
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

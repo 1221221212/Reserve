@@ -28,7 +28,12 @@ const PatternForm = ({ onPatternSaved }) => {
             alert('パターンが保存されました');
             onPatternSaved();
         } catch (error) {
-            console.error('パターンの保存に失敗しました:', error);
+            if (error.response && error.response.status === 400) {
+                alert(error.response.data.message); // 重複エラーのメッセージを表示
+            } else {
+                console.error('パターンの保存に失敗しました:', error);
+                alert('パターンの保存に失敗しました');
+            }
         }
     };
 

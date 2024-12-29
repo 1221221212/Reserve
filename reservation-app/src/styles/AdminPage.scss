@@ -101,6 +101,21 @@
     }
 }
 
+.delete-button {
+    background-color: #dc3545;
+    border: none;
+    padding: 5px 10px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 0;
+
+    &:hover {
+        background-color: #dc3545;
+        filter: brightness(90%);
+    }
+}
+
 // ハンバーガーメニュー
 .hamburger-menu {
     display: none;

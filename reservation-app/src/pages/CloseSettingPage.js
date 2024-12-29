@@ -77,7 +77,7 @@ const CloseSettingsPage = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert('休業日が作成されました');
-            navigate('/admin/close');
+            navigate('/admin/slots/close');
         } catch (error) {
             console.error('Failed to create closed day:', error);
             alert('休業日の作成に失敗しました');

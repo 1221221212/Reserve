@@ -83,6 +83,17 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
     }
 };
 
+exports.getSlotIdsByPattern = async (patternId) => {
+    try {
+        // モデル経由でスロットIDを取得
+        const slotIds = await assignedSlotsModel.getSlotIdsByPattern(patternId);
+        return slotIds;
+    } catch (error) {
+        console.error('パターンに紐づくスロットIDの取得エラー:', error);
+        throw new Error('スロットIDの取得に失敗しました');
+    }
+};
+
 exports.getSlotsByMonth = async (req, res) => {
     const { year, month } = req.query;
 

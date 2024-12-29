@@ -8,7 +8,7 @@ const PatternCreationPage = () => {
 
     const handlePatternSaved = () => {
         // パターン作成後にパターン管理ページに遷移
-        navigate('/admin/patterns');
+        navigate('/admin/slots/patterns');
     };
 
     return (
