@@ -19,7 +19,6 @@ const AdminCalendarPage = () => {
     return (
         <div className="admin-calendar-page">
             <section className="calendar-section">
-                <p>カレンダー</p>
                 <AdminCalendar onDateSelect={handleDateSelect} selectedDate={selectedDate} />
             </section>
 

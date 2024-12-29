@@ -81,7 +81,6 @@ const CloseManagementPage = () => {
 
     return (
         <div className="admin-page-content">
-            <p>休業日管理</p>
 
             {/* ボタンと目次 */}
             <div className="button-and-nav">

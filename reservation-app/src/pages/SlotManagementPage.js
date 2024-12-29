@@ -27,7 +27,6 @@ const SlotManagementPage = () => {
 
     return (
         <div className="slot-management-page">
-            <p>予約枠管理</p>
             <button className="button" onClick={() => navigate('/admin/slots/create')}>予約枠を作成</button>
             <table className="slot-table">
                 <thead>

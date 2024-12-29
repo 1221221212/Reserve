@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import AdminNav from '../components/AdminNav';
 import AdminCalendarPage from './AdminCalendarPage'
 import SlotManagementPage from './SlotManagementPage';
@@ -20,6 +21,7 @@ import "../styles/AdminPage.scss";
 const AdminPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
+    const [activeMenu, setActiveMenu] = useState({ activeParent: null, activeChild: null });
     const navigate = useNavigate();
 
     const toggleMenu = () => {
@@ -56,20 +58,21 @@ const AdminPage = () => {
     return (
         <div className="admin-page">
             <AdminHeader isOpen={isOpen} toggleMenu={toggleMenu} />
+            <Breadcrumb activeMenu={activeMenu} /> {/* パンくずメニューに状態を渡す */}
+            <AdminNav isOpen={isOpen} toggleMenu={toggleMenu} setActiveMenu={setActiveMenu} />
             <div className={`overlay ${isOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
-            <AdminNav isOpen={isOpen} toggleMenu={toggleMenu} />
             <div className="admin-content">
                 <Routes>
                     <Route path="/" element={<Navigate to="/admin/reservations" />} />
                     <Route path="calendar" element={<AdminCalendarPage />} />
                     <Route path="slots" element={<SlotManagementPage />} />
+                    <Route path="slots/patterns" element={<PatternManagementPage />} />
+                    <Route path="slots/patterns/create" element={<PatternCreationPage />} />
                     <Route path="slots/create" element={<SlotCreationPage />} />
-                    <Route path="close" element={<CloseManagementPage />} />
-                    <Route path="close/settings" element={<CloseSettingPage />} />
+                    <Route path="slots/close" element={<CloseManagementPage />} />
+                    <Route path="slotsclose/settings" element={<CloseSettingPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
                     <Route path="reservations/:id" element={<ReservationDetailPage />} />
-                    <Route path="patterns" element={<PatternManagementPage />} />
-                    <Route path="patterns/create" element={<PatternCreationPage />} />
                     <Route path="settings" element={<SettingsPage />}>
                         <Route path="info" element={<InfoSettings />} />
                         <Route path="reservation" element={<ReservationSettings />} />
