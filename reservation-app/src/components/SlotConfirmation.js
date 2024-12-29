@@ -28,14 +28,14 @@ const SlotConfirmation = ({ selectedDates, selectedPatterns, onConfirm }) => {
 
     return (
         <div className="slot-confirmation">
-            <h2>確認画面</h2>
-            <h3>選択された日付:</h3>
+            <p>確認画面</p>
+            <p>選択された日付:</p>
             <ul className="date-list">
                 {selectedDates.map((date, index) => (
                     <li key={index}>{new Date(date).toLocaleDateString()}</li>
                 ))}
             </ul>
-            <h3>割り当てられるパターン:</h3>
+            <p>割り当てられるパターン:</p>
             <ul className="pattern-list">
                 {selectedPatterns.map((pattern, index) => (
                     <li key={index}>

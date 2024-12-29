@@ -31,7 +31,7 @@ const PatternManagementPage = () => {
 
     return (
         <div className="admin-page-content">
-            <h1>パターン管理</h1>
+            <p>パターン管理</p>
             <button className="button" onClick={handleCreatePattern}>パターンを作成</button>
             <table className="pattern-table">
                 <thead>

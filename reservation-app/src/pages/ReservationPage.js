@@ -187,7 +187,7 @@ const ReservationPage = () => {
 
             {currentStep === 5 && reservationId && (
                 <div className="reservation-complete">
-                    <h2>予約が完了しました！</h2>
+                    <p>予約が完了しました！</p>
                     <p>確定メールを送付していますので、ご確認の上、当日まで保管をお願いいたします。</p>
                     <p>予約ID: {reservationId}</p>
                     <p>予約日時: {selectedDate} {removeSecond(selectedSlot.start_time)} -  {removeSecond(selectedSlot.end_time)}</p>

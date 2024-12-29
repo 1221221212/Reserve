@@ -30,7 +30,7 @@ const SlotCreationPage = () => {
 
     return (
         <div>
-            <h1>予約枠作成</h1>
+            <p>予約枠作成</p>
             {currentStep === 1 && (
                 <DateSelectionForm onDateSelection={handleDateSelection} />
             )}

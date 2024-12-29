@@ -151,7 +151,7 @@ const sendReservationCancellation = async (to, reservationDetails) => {
     const subject = '【予約キャンセル】キャンセル内容の確認';
     const text = `以下の予約がキャンセルされました。\n\n${JSON.stringify(reservationDetails, null, 2)}`;
     const html = `
-        <h3>キャンセル内容の確認</h3>
+        <p>キャンセル内容の確認</p>
         <ul>
             <li>予約番号: ${reservationDetails.reservation_number}</li>
             <li>日時: ${reservationDetails.date} ${reservationDetails.time}</li>

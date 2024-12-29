@@ -63,7 +63,7 @@ const ReservationDetailPage = () => {
 
     return (
         <div className="reservation-detail">
-            <h2>予約詳細</h2>
+            <p>予約詳細</p>
             <div className="reservation-field">
                 <span className="label">予約者名:</span>
                 <span className="value">{reservation.customer_name}</span>

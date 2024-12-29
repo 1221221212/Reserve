@@ -29,7 +29,7 @@ const ReservationSlotList = () => {
 
     return (
         <div>
-            <h2>予約枠一覧</h2>
+            <p>予約枠一覧</p>
             <ul>
                 {slots.map(slot => (
                     <li key={slot.id}>

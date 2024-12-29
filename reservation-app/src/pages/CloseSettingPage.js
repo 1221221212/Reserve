@@ -92,7 +92,7 @@ const CloseSettingsPage = () => {
 
     return (
         <div className="close-settings-page">
-            <h1>休業日設定</h1>
+            <p>休業日設定</p>
 
             {isConfirming ? (
                 <ConfirmCloseConflict

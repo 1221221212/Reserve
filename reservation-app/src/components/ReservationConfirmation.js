@@ -4,7 +4,7 @@ import { removeSecond } from '../utils/utils';
 const ReservationConfirmation = ({ reservationInfo, selectedDate, selectedSlot, onConfirm, isSubmitting }) => {
     return (
         <div className="reservation-confirmation">
-            <h2>予約内容確認</h2>
+            <p>予約内容確認</p>
             <table>
                 <tbody>
                     <tr>

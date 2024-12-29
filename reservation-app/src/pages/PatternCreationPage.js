@@ -13,7 +13,7 @@ const PatternCreationPage = () => {
 
     return (
         <div>
-            <h1>新しいパターンを作成</h1>
+            <p>新しいパターンを作成</p>
             <PatternForm onPatternSaved={handlePatternSaved} />
         </div>
     );

@@ -81,7 +81,7 @@ const CloseManagementPage = () => {
 
     return (
         <div className="admin-page-content">
-            <h1>休業日管理</h1>
+            <p>休業日管理</p>
 
             {/* ボタンと目次 */}
             <div className="button-and-nav">
@@ -92,7 +92,7 @@ const CloseManagementPage = () => {
 
             {/* 定休日一覧 */}
             <section id="regular-closed-days">
-                <h2>定休日一覧</h2>
+                <p>定休日一覧</p>
                 <table className="closed-day-table">
                     <thead>
                         <tr>
@@ -121,7 +121,7 @@ const CloseManagementPage = () => {
 
             {/* 臨時休業日一覧 */}
             <section id="temporary-closed-days">
-                <h2>臨時休業日一覧</h2>
+                <p>臨時休業日一覧</p>
                 <table className="closed-day-table">
                     <thead>
                         <tr>

@@ -19,12 +19,12 @@ const AdminCalendarPage = () => {
     return (
         <div className="admin-calendar-page">
             <section className="calendar-section">
-                <h2>カレンダー</h2>
+                <p>カレンダー</p>
                 <AdminCalendar onDateSelect={handleDateSelect} selectedDate={selectedDate} />
             </section>
 
             <section className="slot-selection-section">
-                <h2>予約枠</h2>
+                <p>予約枠</p>
                 {selectedDate ? (
                     <AdminSlotSelection 
                         selectedDate={selectedDate} 
@@ -37,7 +37,7 @@ const AdminCalendarPage = () => {
             </section>
 
             <section className="reservation-list-section">
-                <h2>予約一覧</h2>
+                <p>予約一覧</p>
                 {selectedDate ? (
                     <AdminReservationList 
                         selectedDate={selectedDate} 

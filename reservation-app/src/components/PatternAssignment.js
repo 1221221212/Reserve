@@ -36,7 +36,7 @@ const PatternAssignment = ({ selectedDates, closedDates, onPatternSelect }) => {
 
     return (
         <div className="pattern-assignment">
-            <h2>パターンの割り当て</h2>
+            <p>パターンの割り当て</p>
             <p>以下の日付は休業日のため予約枠が作成されません！</p>
             <ul className="date-list close">
                 {closedDates.map((date, index) => (
@@ -50,7 +50,7 @@ const PatternAssignment = ({ selectedDates, closedDates, onPatternSelect }) => {
                     <li key={index}>{new Date(date).toLocaleDateString()}</li>
                 ))}
             </ul>
-            <h3>利用可能なパターン</h3>
+            <p>利用可能なパターン</p>
             <ul className="pattern-list">
                 {patterns.map((pattern) => (
                     <li

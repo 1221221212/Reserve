@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-const AdminNav = () => {
+const AdminNav = ({ isOpen, toggleMenu }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
 
-    // メニューの親子構造
+    // メニュー構造
     const menuItems = [
         {
             parent: 'カレンダー',
@@ -39,17 +38,8 @@ const AdminNav = () => {
         },
     ];
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen); // メニューを開閉
-    };
-
-    const handleParentSelect = (menu) => {
-        setIsOpen(false); // メニューを閉じる
-        navigate(menu.children?.length > 0 ? menu.defaultChild : menu.path); // 子メニューがない場合は直接親のpathへ
-    };
-
+    // リンクのアクティブ状態を判定
     const getLinkClass = (menu) => {
-        // 親メニューのパスまたは子メニューのパスが一致している場合に "active"
         if (location.pathname.startsWith(menu.path)) {
             return 'active';
         }
@@ -59,39 +49,36 @@ const AdminNav = () => {
         return '';
     };
 
+    // ナビゲーション描画
     return (
-        <>
-            <button className="hamburger-menu" onClick={toggleMenu}>
-                ☰
-            </button>
-            <nav className={`admin-nav ${isOpen ? 'open' : ''}`}>
-                <h2>管理メニュー</h2>
-                <ul>
-                    {menuItems.map((menu) => (
-                        <li key={menu.parent}>
-                            <button
-                                className={`parent-item ${getLinkClass(menu)}`}
-                                onClick={() => handleParentSelect(menu)}
-                            >
-                                {menu.parent}
-                            </button>
-                            {getLinkClass(menu) === 'active' && menu.children?.length > 0 && (
-                                <ul className="child-menu">
-                                    {menu.children.map((child) => (
-                                        <li key={child.path}>
-                                            <Link to={child.path} className={getLinkClass({ path: child.path })}>
-                                                {child.name}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-            {isOpen && <div className="overlay" onClick={toggleMenu}></div>}
-        </>
+        <nav className={`admin-nav ${isOpen ? 'open' : ''}`}>
+            <ul>
+                {menuItems.map((menu) => (
+                    <li key={menu.parent}>
+                        <button
+                            className={`parent-item ${getLinkClass(menu)}`}
+                            onClick={() => {
+                                toggleMenu();
+                                navigate(menu.children?.length > 0 ? menu.defaultChild : menu.path);
+                            }}
+                        >
+                            {menu.parent}
+                        </button>
+                        {getLinkClass(menu) === 'active' && menu.children?.length > 0 && (
+                            <ul className="child-menu">
+                                {menu.children.map((child) => (
+                                    <li key={child.path}>
+                                        <Link to={child.path} className={getLinkClass({ path: child.path })}>
+                                            {child.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </nav>
     );
 };
 

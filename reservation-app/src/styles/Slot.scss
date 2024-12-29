@@ -1,5 +1,4 @@
 // src/styles/SlotManagement.scss
-@import './AdminPage.scss';
 @import "./colors";
 
 .slot-confirmation {
@@ -23,9 +22,6 @@
 }
 
 .slot-management-page {
-    .slot-table {
-        @extend .table;
-    }
 
     .edit-button, .delete-button {
         background-color: #ffc107;

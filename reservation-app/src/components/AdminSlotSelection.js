@@ -30,7 +30,7 @@ const AdminSlotSelection = ({ selectedDate, onSlotSelect, selectedSlot }) => {
 
     return (
         <div className="admin-slot-selection">
-            <h3>{selectedDate} のスロット一覧</h3>
+            <p>{selectedDate} のスロット一覧</p>
             <ul className="slot-list">
                 {slots.map((slot) => (
                     <li

@@ -32,7 +32,7 @@ const ReservationList = ({ token }) => {
 
     return (
         <div>
-            <h2>予約一覧</h2>
+            <p>予約一覧</p>
             <ul>
                 {reservations.map((reservation) => (
                     <li key={reservation.id}>

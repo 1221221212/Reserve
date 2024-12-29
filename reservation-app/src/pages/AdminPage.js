@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import AdminHeader from '../components/AdminHeader';
 import AdminNav from '../components/AdminNav';
 import AdminCalendarPage from './AdminCalendarPage'
 import SlotManagementPage from './SlotManagementPage';
@@ -18,7 +19,12 @@ import "../styles/AdminPage.scss";
 
 const AdminPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen); // メニュー開閉を切り替え
+    };
 
     useEffect(() => {
         const checkAndRefreshToken = async () => {
@@ -49,7 +55,9 @@ const AdminPage = () => {
 
     return (
         <div className="admin-page">
-            <AdminNav />
+            <AdminHeader isOpen={isOpen} toggleMenu={toggleMenu} />
+            <div className={`overlay ${isOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
+            <AdminNav isOpen={isOpen} toggleMenu={toggleMenu} />
             <div className="admin-content">
                 <Routes>
                     <Route path="/" element={<Navigate to="/admin/reservations" />} />
