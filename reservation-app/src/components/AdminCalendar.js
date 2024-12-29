@@ -129,7 +129,9 @@ const AdminCalendar = ({ onDateSelect, selectedDate }) => {
                         return (
                             <div
                                 key={index}
-                                className={`calendar-date ${className} ${date === selectedDate ? 'selected' : ''}`}
+                                className={`calendar-date ${className} ${
+                                    selectedDate && date === selectedDate ? 'selected' : ''
+                                }`}
                                 onClick={() => date && onDateSelect(date)}
                             >
                                 {date && moment(date).date()}
