@@ -67,7 +67,6 @@ exports.createReservation = async (req, res) => {
                     end_time: result.reservation.end_time,
                     group_size,
                 });
-                console.log("予約確認メールが送信されました");
             } catch (emailError) {
                 console.error("メール送信中にエラーが発生しました:", emailError.message);
                 // メール送信に失敗しても予約は成功したので、エラーにはしない

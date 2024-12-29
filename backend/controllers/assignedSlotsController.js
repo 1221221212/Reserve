@@ -34,7 +34,6 @@ exports.createAssignedSlot = async (req, res) => {
     try {
         // 整形処理
         const organizedSlots = organizeSlots(dates, patterns);
-        console.log('整形済みのスロット:', organizedSlots);
 
         // 重複チェック
         const newSlots = await assignedSlotsModel.checkDuplicates(organizedSlots);

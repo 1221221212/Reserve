@@ -1,4 +1,3 @@
-// src/pages/SlotManagementPage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +10,7 @@ const SlotManagementPage = () => {
     const token = localStorage.getItem('token');
     const apiUrl = process.env.REACT_APP_API_URL;
 
+    // 予約枠データを取得
     useEffect(() => {
         const fetchAssignedSlots = async () => {
             try {
@@ -24,6 +24,34 @@ const SlotManagementPage = () => {
         };
         fetchAssignedSlots();
     }, [token, apiUrl]);
+
+    // 予約枠の受付停止処理
+    const handleCloseSlot = async (slotId) => {
+        const confirmClose = window.confirm('この予約枠を受付停止しますか？');
+        if (!confirmClose) return;
+
+        try {
+            const response = await axios.put(
+                `${apiUrl}/assigned-slots/status`,
+                {
+                    slotIds: [slotId],
+                    status: 'close'
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+
+            alert(response.data.message);
+
+            // ページをリフレッシュ
+            window.location.reload();
+
+        } catch (error) {
+            console.error('受付停止に失敗しました:', error);
+            alert('受付停止に失敗しました。エラーを確認してください。');
+        }
+    };
 
     return (
         <div className="slot-management-page">
@@ -48,7 +76,13 @@ const SlotManagementPage = () => {
                             <td>{slot.max_groups || 'なし'}</td>
                             <td>{slot.max_people}</td>
                             <td>
-                                <button className="delete-button">受付停止</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleCloseSlot(slot.id)}
+                                    disabled={slot.status === 'close'}
+                                >
+                                    {slot.status === 'close' ? '停止済み' : '受付停止'}
+                                </button>
                             </td>
                         </tr>
                     ))}

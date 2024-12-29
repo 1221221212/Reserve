@@ -30,7 +30,6 @@ const sendMessage = async (to, message) => {
                 },
             }
         );
-        console.log('LINEメッセージが送信されました:', response.data);
     } catch (error) {
         console.error('LINEメッセージの送信に失敗しました:', error.response?.data || error.message);
     }

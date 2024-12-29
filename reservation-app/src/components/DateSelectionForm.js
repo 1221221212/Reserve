@@ -64,10 +64,6 @@ const DateSelectionForm = ({ onDateSelection }) => {
         const removeClosedDates = filterClosedDays( extractedDates, closedDates);
         const filteredDates = filterHolidays(removeClosedDates, fetchedHolidays, holidayOption);
     
-        console.log('Filtered Dates:', filteredDates); // デバッグ
-        console.log('Closed Days:', closedDates); // デバッグ
-        console.log(fetchedHolidays);
-    
         // 親コンポーネントにデータを渡す
         onDateSelection({ filteredDates, closedDates });
     };

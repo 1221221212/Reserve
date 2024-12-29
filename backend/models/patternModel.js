@@ -44,7 +44,7 @@ exports.isPatternDuplicate = async ({ start_time, end_time, max_groups, max_peop
         const query = `
             SELECT COUNT(*) AS count
             FROM reservation_patterns
-            WHERE start_time = ? AND end_time = ? AND max_groups = ? AND max_people = ?
+            WHERE start_time = ? AND end_time = ? AND max_groups = ? AND max_people = ? AND status = 'active'
         `;
         const [results] = await db.query(query, [start_time, end_time, max_groups, max_people]);
         return results[0].count > 0; // 重複がある場合はtrue

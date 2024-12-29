@@ -100,7 +100,6 @@ exports.createReservation = async ({ slot_id, customer_name, phone_number, email
         const formattedEndTime = moment(slotDetails.end_time, 'HH:mm:ss').format('HH:mm');
         await connection.commit();
 
-        console.log("予約が正常に作成されました");
 
         return {
             success: true,

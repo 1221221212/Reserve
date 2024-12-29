@@ -34,7 +34,6 @@ exports.saveSettings = async (infoSettings, reservationSettings) => {
             `,
             [infoSettingsJson, reservationSettingsJson]  // 個別に情報を送信
         );
-        console.log("Settings saved:", result);
     } catch (error) {
         console.error("Error executing query:", error);
         throw error;

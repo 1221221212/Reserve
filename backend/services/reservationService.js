@@ -35,8 +35,6 @@ exports.checkSlotAvailability = async (slot_id, reservation_settings) => {
             available_until: available_until.format('YYYY-MM-DD'),
         };
 
-        console.log("予約可能期間:", reservationPeriodInfo);
-
         // 今日の日付の開始時刻を取得
         const currentDate = moment().startOf('day');
 

@@ -109,8 +109,6 @@ const SettingsPage = () => {
             address,
         };
 
-        console.log("Sending reservationSettings:", reservationSettings);
-
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -131,7 +129,6 @@ const SettingsPage = () => {
             });
 
             if (response.ok) {
-                console.log("Settings saved successfully");
             } else {
                 const errorData = await response.json();
                 console.error("Failed to save settings:", response.status, errorData);

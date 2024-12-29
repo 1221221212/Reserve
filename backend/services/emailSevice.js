@@ -23,7 +23,6 @@ const sendEmail = async ({ to, subject, text, html, bcc }) => {
         };
 
         const result = await transporter.sendMail(mailOptions);
-        console.log('メール送信成功:', result.messageId);
         return result;
     } catch (error) {
         console.error('メール送信失敗:', error);
@@ -139,7 +138,6 @@ const sendReservationConfirmation = async (to, reservationDetails) => {
         `,
         html,
     });
-    console.log('予約確認メール送信成功');
 };
 
 
