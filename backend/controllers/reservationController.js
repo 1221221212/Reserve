@@ -81,6 +81,7 @@ exports.createReservation = async (req, res) => {
                     date: result.reservation.date,
                     start_time: result.reservation.start_time,
                     end_time: result.reservation.end_time,
+                    comment,
                 })
             } catch (emailError) {
                 console.error("LINE通知送信中にエラーが発生しました:", emailError.message);
