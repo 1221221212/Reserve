@@ -9,18 +9,18 @@ const AdminCalendarPage = () => {
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);
-        setSelectedSlot(null); // 日付が変更されたらスロット選択をリセット
+        setSelectedSlot(null); // 日付が変わった場合、スロット選択をリセット
     };
 
     const handleSlotSelect = (slot) => {
-        setSelectedSlot(slot); // スロット選択時に状態を更新
+        setSelectedSlot(slot);
     };
 
     return (
         <div className="admin-calendar-page">
             <section className="calendar-section">
                 <h2>カレンダー</h2>
-                <AdminCalendar onDateSelect={handleDateSelect} />
+                <AdminCalendar onDateSelect={handleDateSelect} selectedDate={selectedDate} />
             </section>
 
             <section className="slot-selection-section">
@@ -29,6 +29,7 @@ const AdminCalendarPage = () => {
                     <AdminSlotSelection 
                         selectedDate={selectedDate} 
                         onSlotSelect={handleSlotSelect} 
+                        selectedSlot={selectedSlot}
                     />
                 ) : (
                     <p>日付を選択してください</p>

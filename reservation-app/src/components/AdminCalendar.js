@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 
-const AdminCalendar = ({ onDateSelect }) => {
+const AdminCalendar = ({ onDateSelect, selectedDate }) => {
     const [dates, setDates] = useState([]);
     const [closedDays, setClosedDays] = useState([]);
     const [slotDays, setSlotDays] = useState([]);
@@ -129,7 +129,7 @@ const AdminCalendar = ({ onDateSelect }) => {
                         return (
                             <div
                                 key={index}
-                                className={`calendar-date ${className}`}
+                                className={`calendar-date ${className} ${date === selectedDate ? 'selected' : ''}`}
                                 onClick={() => date && onDateSelect(date)}
                             >
                                 {date && moment(date).date()}

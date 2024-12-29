@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { removeSecond } from '../utils/utils';
 
-const AdminSlotSelection = ({ selectedDate, onSlotSelect }) => {
+const AdminSlotSelection = ({ selectedDate, onSlotSelect, selectedSlot }) => {
     const [slots, setSlots] = useState([]);
 
     useEffect(() => {
@@ -28,17 +29,17 @@ const AdminSlotSelection = ({ selectedDate, onSlotSelect }) => {
     };
 
     return (
-        <div className="slot-selection">
+        <div className="admin-slot-selection">
             <h3>{selectedDate} のスロット一覧</h3>
             <ul className="slot-list">
                 {slots.map((slot) => (
                     <li
                         key={slot.id}
-                        className={`slot-item ${slot.reservation_count > 0 ? 'reserved' : 'non-reserved'} ${slot.status}`}
+                        className={`slot-item ${slot.reservation_count > 0 ? 'reserved' : 'non-reserved'} ${slot.status} ${selectedSlot?.id === slot.id ? 'selected' : ''}`}
                         onClick={() => handleSlotClick(slot)} // スロットをクリックした際の処理
                     >
                         <div className="slot-time">
-                            {slot.start_time} - {slot.end_time}
+                            {removeSecond(slot.start_time)} - {removeSecond(slot.end_time)}
                         </div>
                         <div className="slot-info">
                             {`${slot.reservation_count}件 - ${slot.status}`}

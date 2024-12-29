@@ -52,7 +52,7 @@
                 cursor: default;
             }
 
-            &.status-available {
+            &.status-available, &.selected {
                 background-color: $primary-color;
                 color: $text-color;
 
