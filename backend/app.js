@@ -18,6 +18,7 @@ const assignedSlotsRoutes = require('./routes/assignedSlotsRoutes');
 const holidayRoutes = require('./routes/holidayRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const closedDayRoutes = require('./routes/closedDayRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 // APIルーターの設定
 const apiRouter = express.Router();
@@ -38,6 +39,7 @@ apiRouter.get('/test', (req, res) => {
 // 認証が必要なエンドポイント
 apiRouter.use('/patterns', authenticateToken, patternRoutes);
 apiRouter.use('/assigned-slots', authenticateToken, assignedSlotsRoutes);
+apiRouter.use('/comment', authenticateToken, commentRoutes);
 
 // 全てのエンドポイントに /api プレフィックスを追加
 app.use('/api', apiRouter);

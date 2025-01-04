@@ -7,8 +7,8 @@
         margin-bottom: 15px;
 
         label {
-            width: 150px; /* ラベルの幅を設定 */
-            margin-right: 20px; /* ラベルとフォームの間にスペースを追加 */
+            width: 150px;
+            margin-right: 20px;
             text-align: right;
         }
 
@@ -18,7 +18,7 @@
         textarea,
         select {
             width: 100%;
-            max-width: 300px; /* フォームの最大幅 */
+            max-width: 300px;
             padding: 8px;
         }
 

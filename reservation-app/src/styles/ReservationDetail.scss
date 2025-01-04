@@ -1,0 +1,36 @@
+.reservation-detail-wrap {
+    .reservation-detail {
+        .reservation-field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+
+            .label {
+                width: 150px;
+                margin-right: 20px;
+                text-align: right;
+            }
+
+            .value {
+                width: 100%;
+                max-width: 300px;
+                padding: 8px;
+            }
+        }
+    }
+
+    .admin-comment {
+        margin-top: 30px;
+
+        .comments-list {
+            li {
+                list-style: none;
+                padding-bottom: 10px;
+
+                p {
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
