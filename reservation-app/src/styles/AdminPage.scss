@@ -5,13 +5,17 @@
 }
 
 .admin-content {
-    max-width: 1200px;
+    max-width: 1450px;
     margin: 0 auto;
     padding: 20px;
     width: 100%;
 }
 
-.table, .reservation-table, .closed-day-table, .pattern-table, .slot-table{
+.table,
+.reservation-table,
+.closed-day-table,
+.pattern-table,
+.slot-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
@@ -33,20 +37,25 @@
     width: 250px;
     background-color: #333;
     color: #fff;
-    padding: 30px;
+    padding: 30px 10px;
     position: fixed; // デスクトップでも固定
     height: 100%;
     top: 60px;
     left: 0;
     transition: transform 0.3s ease;
 
-    & button{
+    & button {
         background: none;
         color: #fff;
         border-radius: 0;
+        margin: 0;
+    }
+    
+    > ul > li{
+        margin-bottom: 15px;
     }
 
-    & li{
+    & li {
         list-style: none;
     }
 
@@ -60,28 +69,28 @@
         transition: background-color 0.3s ease, color 0.3s ease;
 
         &.active {
-        background-color: darkorange;
-        color: black;
-        font-weight: bold;
+            background-color: darkorange;
+            color: black;
+            font-weight: bold;
         }
     }
 
-    .child-menu{
+    .child-menu {
         margin-left: 25px;
 
-        & li a{
-                    color: #fff;
-        display: block;
-        text-decoration: none;
-        padding: 8px 15px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        & li a {
+            color: #fff;
+            display: block;
+            text-decoration: none;
+            padding: 8px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
 
-        &.active{
-                    background-color: darkorange;
-        color: black;
-        font-weight: bold;
-        padding-left: 25px;
-        }
+            &.active {
+                background-color: darkorange;
+                color: black;
+                font-weight: bold;
+                padding-left: 25px;
+            }
         }
     }
 
@@ -134,9 +143,10 @@
     top: 60px;
     width: 100vw;
     z-index: 999;
-    background-color: #f8f9fa;
+    background-color: #333;
+    color: #fff;
     padding: 0 1rem;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #666;
     font-size: 0.9rem;
 
     ul {
@@ -150,22 +160,19 @@
             margin-right: 0.5rem;
 
             &:not(:last-child)::after {
-                content: '＞'; /* 区切りの矢印 */
+                content: '＞';
+                /* 区切りの矢印 */
                 margin-left: 0.5rem;
-                color: #888;
+                color: #fff;
             }
 
             a {
                 text-decoration: none;
-                color: #007bff;
+                color: #fff;
 
                 &:hover {
                     text-decoration: underline;
                 }
-            }
-
-            span {
-                color: #333; /* 最後の項目はリンクではなくテキスト */
             }
         }
     }
@@ -185,6 +192,7 @@
         padding-left: 270px;
     }
 }
+
 // モバイル表示
 @media (max-width: 767px) {
     .hamburger-menu {
@@ -192,35 +200,47 @@
     }
 
     .admin-nav {
-        position: fixed; /* 固定表示 */
-        right: 0; /* 右側に配置 */
-        left: auto; /* 左側は無効 */
-        width: 250px; /* 必要に応じて調整 */
+        position: fixed;
+        /* 固定表示 */
+        right: 0;
+        /* 右側に配置 */
+        left: auto;
+        /* 左側は無効 */
+        width: 250px;
+        /* 必要に応じて調整 */
         height: 100vh;
-        transform: translateX(100%); /* 初期状態は右に隠れる */
+        transform: translateX(100%);
+        /* 初期状態は右に隠れる */
         background-color: #333;
         color: #fff;
-        z-index: 1000; /* Overlayより上 */
+        z-index: 1000;
+        /* Overlayより上 */
         transition: transform 0.3s ease-in-out;
     }
 
     .admin-nav.open {
-        transform: translateX(0); /* 表示時 */
+        transform: translateX(0);
+        /* 表示時 */
     }
 
     .overlay {
-        position: fixed; /* 画面全体に配置 */
+        position: fixed;
+        /* 画面全体に配置 */
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* 半透明の背景色 */
-        z-index: 900; /* AdminNavより下 */
-        display: none; /* 初期状態は非表示 */
+        background: rgba(0, 0, 0, 0.5);
+        /* 半透明の背景色 */
+        z-index: 900;
+        /* AdminNavより下 */
+        display: none;
+        /* 初期状態は非表示 */
     }
 
     .overlay.active {
-        display: block; /* AdminNav表示時に有効化 */
+        display: block;
+        /* AdminNav表示時に有効化 */
     }
 
     .admin-content {

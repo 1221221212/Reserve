@@ -7,7 +7,7 @@ const AdminHeader = ({ isOpen, toggleMenu }) => {
         <header className="admin-header">
             <div>
                 <img src={logo} className='logo' alt="美山お香のロゴ" />
-                <span>美山お香　予約管理画面</span>
+                <span>美香　予約管理画面</span>
             </div>
             <button className="hamburger-menu" onClick={toggleMenu}>
                 {isOpen ? "×" : "☰"}
