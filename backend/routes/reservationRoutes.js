@@ -26,4 +26,6 @@ router.patch('/:id/cancel', authenticateToken, reservationController.cancelReser
 router.get('/month', authenticateToken, reservationController.getMonthlyReservationCounts);
 router.get('/day', authenticateToken, reservationController.getDailyReservationCounts);
 
+router.patch('/:id/toggle-action-required', authenticateToken, reservationController.toggleActionRequired);
+
 module.exports = router;

@@ -112,6 +112,48 @@ const ReservationDetailPage = () => {
         }
     };
 
+    const toggleActionRequired = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('トークンが見つかりません。再度ログインしてください。');
+                navigate('/admin/login');
+                return;
+            }
+    
+            // 現在のステータスを取得
+            const currentStatus = reservation?.action_required;
+    
+            // リクエストを送信
+            const response = await axios.patch(
+                `${process.env.REACT_APP_API_URL}/reservations/${id}/toggle-action-required`,
+                { currentStatus }, // currentStatus をリクエストボディに含める
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+    
+            // 更新結果を反映
+            alert(response.data.message);
+            setReservation({
+                ...reservation,
+                action_required: response.data.newStatus,
+            });
+
+            const updatedComments = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setComments(updatedComments.data.reverse());
+        } catch (error) {
+            console.error('ActionRequiredの切り替えに失敗しました:', error);
+            alert('ActionRequiredの切り替えに失敗しました。もう一度お試しください。');
+        }
+    };
+    
     return (
         <div className='reservation-detail-wrap'>
             <div className="reservation-detail">
@@ -147,6 +189,17 @@ const ReservationDetailPage = () => {
                     <span className="label">予約作成日:</span>
                     <span className="value">{reservation?.created_at}</span>
                 </div>
+                <div className="reservation-field">
+                    <span className="label">対応状況:</span>
+                    <span className="value">{reservation?.action_required ? '要対応' : '不要'}</span>
+                </div>
+                <button
+                    className="toggle-action-button"
+                    onClick={toggleActionRequired}
+                >
+                    {reservation?.action_required ? '対応済みにする' : '要対応としてマークする'}
+                </button>
+
                 <button className="delete-button" onClick={handleCancelReservation}>
                     予約をキャンセル
                 </button>

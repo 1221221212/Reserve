@@ -6,6 +6,8 @@ const reservationService = require('../services/reservationService');
 const { sendReservationConfirmation } = require('../services/emailSevice');
 const { notifyReservationCreated } = require('../services/LINEService');
 
+const commentsController = require('./commentsController');
+
 /**
  * スロットの予約可否を確認
  * @param {object} req - リクエストオブジェクト
@@ -234,5 +236,54 @@ exports.getDailyReservationCounts = async (req, res) => {
     } catch (error) {
         console.error("日ごとの予約枠ごとの予約件数取得エラー:", error);
         res.status(500).json({ message: "日ごとの予約枠ごとの予約件数取得に失敗しました", error: error.message });
+    }
+};
+
+exports.toggleActionRequired = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { currentStatus } = req.body;
+
+        if (currentStatus === undefined) {
+            return res.status(400).json({ success: false, message: "currentStatus が必要です" });
+        }
+
+        const newStatus = !currentStatus;
+        const result = await reservationModel.updateActionRequired(id, newStatus);
+
+        if (!result.success) {
+            return res.status(404).json({ success: false, message: "該当する予約が見つかりませんでした" });
+        }
+
+        // ユーザー名を取得
+        const username = req.user.username;
+
+        // システムコメント作成
+        const systemComment = newStatus
+            ? `${username} によって要対応とされました。`
+            : `${username} によって対応済みとされました。`;
+
+        const commentRequest = {
+            body: {
+                reservation_id: id,
+                comment: systemComment,
+                isSystem: true,
+            },
+        };
+
+        await commentsController.createComment(commentRequest, {
+            status: () => ({
+                json: () => null,
+            }),
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: `ActionRequired が ${newStatus ? '要対応' : '対応済み'} に更新されました`,
+            newStatus,
+        });
+    } catch (error) {
+        console.error("ActionRequired 更新中にエラーが発生しました:", error);
+        return res.status(500).json({ success: false, message: "ActionRequired 更新中にエラーが発生しました" });
     }
 };

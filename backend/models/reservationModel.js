@@ -134,12 +134,7 @@ exports.getReservationById = async (reservationId) => {
                 reservations.id,
                 reservations.reservation_number,
                 reservations.customer_name,
-                reservations.phone_number,
-                reservations.email,
                 reservations.group_size,
-                reservations.comment,
-                reservations.status,
-                reservations.created_at,
                 assigned_slots.date AS reservation_date,
                 reservation_patterns.start_time,
                 reservation_patterns.end_time
@@ -222,6 +217,7 @@ exports.getReservationDetail = async (id) => {
                 reservations.group_size,
                 reservations.comment,
                 reservations.status,
+                reservations.action_required,
                 reservations.created_at,
                 assigned_slots.date AS reservation_date,
                 reservation_patterns.start_time,
@@ -295,6 +291,24 @@ exports.getDailyReservationCounts = async (date) => {
         return rows;
     } catch (error) {
         console.error("日ごとの予約枠ごとの予約件数取得エラー:", error);
+        throw error;
+    }
+};
+
+exports.updateActionRequired = async (id, newStatus) => {
+    try {
+        const [result] = await db.query(
+            `UPDATE reservations SET action_required = ? WHERE id = ?`,
+            [newStatus, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return { success: false }; // 該当するレコードがない場合
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("action_required 更新中にエラーが発生しました:", error);
         throw error;
     }
 };

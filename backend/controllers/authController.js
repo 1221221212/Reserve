@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
         }
 
         // JWTトークンの作成
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, role: user.role, username: user,username }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, message: 'ログイン成功' });
     } catch (error) {
         res.status(500).json({ message: 'ログインに失敗しました', error });
