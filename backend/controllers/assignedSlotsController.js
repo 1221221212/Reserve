@@ -76,6 +76,8 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
             return res.status(404).json({ message: '指定されたスロットが見つかりません' });
         }
 
+        let alertMessage = `スロットのステータスが更新されました (${result.affectedRows} 件)`;
+
         // スロットが Close に設定された場合
         if (status === 'close') {
             const { affectedRows, reservationIds } = await reservationModel.markReservationsForClosedSlot(slotIds);
@@ -86,7 +88,7 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
                 const commentRequest = {
                     body: {
                         reservation_id: reservationId,
-                        comment: 'この予約枠はCloseされています。Closeした時点ですでに存在していた予約はキャンセルされません。',
+                        comment: '予約枠がクローズされました。',
                         isSystem: true,
                     },
                     user: null,
@@ -98,16 +100,22 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
                     }),
                 });
             }
+
+            // 要注意予約がある場合のメッセージ追加
+            if (reservationIds.length > 0) {
+                alertMessage += ` Closeした予約枠に、すでに${reservationIds.length} 件の予約があります。詳細は要対応予約より確認してください`;
+            }
         }
 
         res.status(200).json({
-            message: `スロットのステータスが更新されました (${result.affectedRows} 件)`,
+            message: alertMessage,
         });
     } catch (error) {
         console.error('スロットステータスの更新エラー:', error);
         res.status(500).json({ message: 'スロットステータスの更新に失敗しました', error });
     }
 };
+
 
 exports.getSlotIdsByPattern = async (patternId) => {
     try {
