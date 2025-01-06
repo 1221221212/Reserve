@@ -17,6 +17,11 @@ const menuItems = [
     {
         parent: '予約管理',
         path: '/admin/reservations',
+        defaultChild: '/admin/reservations',
+        children: [
+            { name: '予約リスト', path: '/admin/reservations' },
+            { name: '要対応予約', path: '/admin/reservations/action-required' },
+        ],
     },
     {
         parent: '設定',

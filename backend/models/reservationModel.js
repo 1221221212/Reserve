@@ -205,6 +205,31 @@ exports.getFilteredReservations = async ({ startDate, endDate, customerName, pho
     }
 };
 
+exports.getActionRequiredReservations = async () => {
+    try {
+        let query = `
+            SELECT 
+                reservations.id,
+                reservations.reservation_number,
+                reservations.customer_name,
+                reservations.group_size,
+                assigned_slots.date AS reservation_date,
+                reservation_patterns.start_time,
+                reservation_patterns.end_time
+            FROM reservations
+            JOIN assigned_slots ON reservations.slot_id = assigned_slots.id
+            JOIN reservation_patterns ON assigned_slots.pattern_id = reservation_patterns.id
+            WHERE reservations.action_required = TRUE
+        `;
+
+        const [reservations] = await db.query(query);
+        return reservations;
+    } catch (error) {
+        console.error("要対応予約の取得に失敗しました:", error);
+        throw error;
+    }
+};
+
 exports.getReservationDetail = async (id) => {
     try {
         const [reservations] = await db.query(`
@@ -309,6 +334,42 @@ exports.updateActionRequired = async (id, newStatus) => {
         return { success: true };
     } catch (error) {
         console.error("action_required 更新中にエラーが発生しました:", error);
+        throw error;
+    }
+};
+
+//予約枠がクローズされる際に、当該予約枠に関連する予約をフラグづけする
+exports.markReservationsForClosedSlot = async (slotIds) => {
+    try {
+        // まず更新対象の予約を取得
+        const querySelect = `
+            SELECT id
+            FROM reservations
+            WHERE slot_id IN (${slotIds.map(() => '?').join(',')})
+        `;
+        const [rows] = await db.query(querySelect, [...slotIds]);
+
+        if (rows.length === 0) {
+            return { affectedRows: 0, reservationIds: [] };
+        }
+
+        // 対象の予約IDを取得
+        const reservationIds = rows.map(row => row.id);
+
+        // 更新クエリを実行
+        const queryUpdate = `
+            UPDATE reservations
+            SET action_required = true
+            WHERE id IN (${reservationIds.map(() => '?').join(',')})
+        `;
+        const [result] = await db.query(queryUpdate, [...reservationIds]);
+
+        return {
+            affectedRows: result.affectedRows,
+            reservationIds,
+        };
+    } catch (error) {
+        console.error('ActionRequired 更新エラー:', error);
         throw error;
     }
 };

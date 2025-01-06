@@ -10,6 +10,7 @@ import CloseSettingPage from './CloseSettingPage';
 import SlotCreationPage from './SlotCreationPage';
 import ReservationManagementPage from './ReservationManagementPage';
 import ReservationDetailPage from './ReservationDetailPage';
+import ActionRequiredPage from './ActionRequired';
 import PatternManagementPage from './PatternManagementPage';
 import PatternCreationPage from './PatternCreationPage';
 import SettingsPage from './SettingsPage';
@@ -73,6 +74,7 @@ const AdminPage = () => {
                     <Route path="slots/close/settings" element={<CloseSettingPage />} />
                     <Route path="reservations" element={<ReservationManagementPage />} />
                     <Route path="reservations/:id" element={<ReservationDetailPage />} />
+                    <Route path="reservations/action-required" element={<ActionRequiredPage />} />
                     <Route path="settings" element={<SettingsPage />}>
                         <Route path="info" element={<InfoSettings />} />
                         <Route path="reservation" element={<ReservationSettings />} />

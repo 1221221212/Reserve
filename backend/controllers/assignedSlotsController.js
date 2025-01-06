@@ -1,5 +1,8 @@
 const assignedSlotsModel = require('../models/assignedSlotsModel');
+const reservationModel = require('../models/reservationModel');
 const { utcToJstDate } = require('../utils/utils');
+
+const commentsController = require('./commentsController');
 
 // 予約枠の取得
 exports.getAssignedSlots = async (req, res) => {
@@ -73,8 +76,32 @@ exports.updateAssignedSlotsStatus = async (req, res) => {
             return res.status(404).json({ message: '指定されたスロットが見つかりません' });
         }
 
+        // スロットが Close に設定された場合
+        if (status === 'close') {
+            const { affectedRows, reservationIds } = await reservationModel.markReservationsForClosedSlot(slotIds);
+            console.log(`${affectedRows} 件の予約の ActionRequired が更新されました`);
+
+            // コメント追加処理
+            for (const reservationId of reservationIds) {
+                const commentRequest = {
+                    body: {
+                        reservation_id: reservationId,
+                        comment: 'この予約枠はCloseされています。Closeした時点ですでに存在していた予約はキャンセルされません。',
+                        isSystem: true,
+                    },
+                    user: null,
+                };
+
+                await commentsController.createComment(commentRequest, {
+                    status: () => ({
+                        json: () => null,
+                    }),
+                });
+            }
+        }
+
         res.status(200).json({
-            message: `スロットのステータスが更新されました (${result.affectedRows} 件)`
+            message: `スロットのステータスが更新されました (${result.affectedRows} 件)`,
         });
     } catch (error) {
         console.error('スロットステータスの更新エラー:', error);

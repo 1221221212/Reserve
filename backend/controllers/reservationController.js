@@ -164,6 +164,27 @@ exports.getFilteredReservations = async (req, res) => {
     }
 };
 
+// 要対応の予約情報を取得
+exports.getActionRequiredReservations = async (req, res) => {
+    try {
+
+        let reservations = await reservationModel.getActionRequiredReservations();
+
+        // 各予約情報の日付を整形
+        const formattedReservations = reservations.map((reservation) => ({
+            ...reservation,
+            reservation_date: util.utcToJstDate(reservation.reservation_date),
+            start_time: util.removeSecond(reservation.start_time),
+            end_time: util.removeSecond(reservation.end_time),
+        }));
+
+        res.status(200).json(formattedReservations);
+    } catch (error) {
+        console.error("要対応予約情報の取得に失敗しました:", error);
+        res.status(500).json({ message: "予約情報の取得に失敗しました", error: error.message });
+    }
+};
+
 exports.getReservationDetail = async (req, res) => {
     try {
         const reservationId = req.params.id;

@@ -17,6 +17,9 @@ router.get('/', authenticateToken, reservationController.getAllReservations);
 // 予約情報を取得するエンドポイント (フィルター付き)
 router.get('/filtered', authenticateToken, reservationController.getFilteredReservations);
 
+// 予約情報を取得するエンドポイント (フィルター付き)
+router.get('/action-required', authenticateToken, reservationController.getActionRequiredReservations);
+
 // 予約IDで予約情報を取得するエンドポイント
 router.get('/:id', authenticateToken, reservationController.getReservationDetail);
 
